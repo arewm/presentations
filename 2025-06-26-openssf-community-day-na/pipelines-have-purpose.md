@@ -1,0 +1,534 @@
+# Who Are You Building For: Pipelines Have a Purpose
+
+Andrew McNamara & Julen Landa Alustiza, Red Hat
+
+OpenSSF Community Day North America 2025
+
+
+---
+
+
+# Pipelines serve dual purposes
+
+<div style="display: flex; align-items: center; gap: 40px;">
+  <div style="flex: 1;">
+    <h3>🔒 Security Controls</h3>
+    <ul>
+      <li>Establish organizational trust</li>
+      <li>Policy compliance</li>
+      <li>Audit requirements</li>
+      <li>Supply chain protection</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h3>🛠️ Developer Flexibility</h3>
+    <ul>
+      <li>Build once, release multiple times</li>
+      <li>Customizable workflows</li>
+      <li>Community contribution</li>
+      <li>Innovation enablement</li>
+    </ul>
+  </div>
+</div>
+
+<!--
+Andrew: Focus on security controls perspective
+Julen: Focus on developer flexibility perspective
+Both purposes must be served simultaneously
+-->
+
+
+---
+
+
+# The Challenge: Balance Trust and Flexibility
+
+<img src="../shared/images/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats">
+
+<small>Source: https://slsa.dev/spec/v1.1/threats-overview</small>
+
+<!--
+We need to protect against supply chain threats while enabling developer productivity
+Traditional approaches often sacrifice one for the other
+-->
+
+
+---
+
+
+# Our Approach: Progressive Trust Model
+
+<div style="display: flex; gap: 40px; align-items: flex-start;">
+  <div style="flex: 1;">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
+      <!-- Empty placeholders for future layers -->
+      <div style="height: 50px;"></div>
+      <div style="height: 50px;"></div>
+      <div style="height: 50px;"></div>
+      <div style="height: 50px;"></div>
+      <div style="height: 50px;"></div>
+      <!-- Foundation layer -->
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        K8s + Tekton
+      </div>
+    </div>
+  </div>
+  <div style="flex: 1;">
+    <h3>Foundation Platform</h3>
+    <p>Kubernetes provides RBAC, containerization, and namespace isolation. Tekton provides the pipeline execution framework with observer attestations.</p>
+    <img src="../shared/images/tekton-logo.png" width="200" alt="Tekton" style="margin-top: 20px;">
+  </div>
+</div>
+
+
+---
+
+
+# Community Contribution Workflow
+
+```
+Personal Sandbox → Violations → Trusted Tasks → Community Sharing
+```
+
+<div style="display: flex; gap: 30px; align-items: center; margin-top: 40px;">
+  <div style="text-align: center; flex: 1;">
+    <h4>🧪 Experiment</h4>
+    <p>Start with custom tasks in your own namespace</p>
+  </div>
+  <div style="text-align: center; flex: 1;">
+    <h4>🔍 Identify Issues</h4>
+    <p>Policy violations guide improvements</p>
+  </div>
+  <div style="text-align: center; flex: 1;">
+    <h4>✅ Promote</h4>
+    <p>Push to trusted task bundles</p>
+  </div>
+  <div style="text-align: center; flex: 1;">
+    <h4>🤝 Share</h4>
+    <p>Others can leverage your work</p>
+  </div>
+</div>
+
+<!--
+This is the core workflow we want to demonstrate
+Shows how individual innovation becomes community benefit
+Policy-driven development guides the process
+-->
+
+
+---
+
+
+# Demo: From Personal Task to Community Asset
+
+## Starting Point: Custom Container Build
+
+<div style="display: flex; gap: 20px; align-items: center;">
+  <div style="flex: 1;">
+    <h4>Personal Repository</h4>
+    <ul>
+      <li>Custom build script</li>
+      <li>Dynamic Containerfile generation</li>
+      <li>Make target integration</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h4>Initial Challenges</h4>
+    <ul>
+      <li>Policy violations</li>
+      <li>Trust model gaps</li>
+      <li>Compliance issues</li>
+    </ul>
+  </div>
+</div>
+
+<!--
+Julen will demonstrate this workflow
+Shows real-world progression from experiment to production
+Example: Microshift or similar Kubernetes project
+-->
+
+
+---
+
+
+# Building Trust: Trusted Task Library
+
+<div style="display: flex; gap: 40px; align-items: flex-start;">
+  <div style="flex: 1;">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
+      <!-- Empty placeholders for future layers -->
+      <div style="height: 50px;"></div>
+      <div style="height: 50px;"></div>
+      <div style="height: 50px;"></div>
+      <div style="height: 50px;"></div>
+      <!-- Trusted Task Library layer -->
+      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Trusted Task Library
+      </div>
+      <!-- Foundation layer -->
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        K8s + Tekton
+      </div>
+    </div>
+  </div>
+  <div style="flex: 1;">
+    <h3>Curated and Verified Tasks</h3>
+    <p>Community-contributed tasks that have been reviewed, tested, and approved for broader use.</p>
+    <ul>
+      <li>Security scanning integration</li>
+      <li>Build process standardization</li>
+      <li>Policy compliance helpers</li>
+    </ul>
+  </div>
+</div>
+
+
+---
+
+
+# Building Trust: Trusted Artifacts
+
+<div style="display: flex; gap: 40px; align-items: flex-start;">
+  <div style="flex: 1;">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
+      <!-- Empty placeholders for future layers -->
+      <div style="height: 50px;"></div>
+      <div style="height: 50px;"></div>
+      <div style="height: 50px;"></div>
+      <!-- Trusted Artifacts layer -->
+      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Trusted Artifacts
+      </div>
+      <!-- Trusted Task Library layer -->
+      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Trusted Task Library
+      </div>
+      <!-- Foundation layer -->
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        K8s + Tekton
+      </div>
+    </div>
+  </div>
+  <div style="flex: 1;">
+    <h3>Tamper-Proof Data Flow</h3>
+    <p>Secure artifact sharing between tasks with integrity verification.</p>
+    <ul>
+      <li>Cryptographic signatures</li>
+      <li>Tamper detection</li>
+      <li>Build reproducibility</li>
+    </ul>
+  </div>
+</div>
+
+
+---
+
+
+# Building Trust: Observer Generated Attestations
+
+<div style="display: flex; gap: 40px; align-items: flex-start;">
+  <div style="flex: 1;">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
+      <!-- Empty placeholders for future layers -->
+      <div style="height: 50px;"></div>
+      <div style="height: 50px;"></div>
+      <!-- Observer Generated Attestations layer -->
+      <div style="background: #ff6666; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Observer Generated Attestations
+      </div>
+      <!-- Trusted Artifacts layer -->
+      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Trusted Artifacts
+      </div>
+      <!-- Trusted Task Library layer -->
+      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Trusted Task Library
+      </div>
+      <!-- Foundation layer -->
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        K8s + Tekton
+      </div>
+    </div>
+  </div>
+  <div style="flex: 1;">
+    <h3>Independent Verification</h3>
+    <p>Tekton Chains generates SLSA provenance independently from the pipeline, preventing manipulation.</p>
+    <ul>
+      <li>SLSA Build Level 3</li>
+      <li>Tamper-resistant provenance</li>
+      <li>Complete build record</li>
+    </ul>
+  </div>
+</div>
+
+
+---
+
+
+# Building Trust: Policy Engine
+
+<div style="display: flex; gap: 40px; align-items: flex-start;">
+  <div style="flex: 1;">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
+      <!-- Empty placeholder for future layer -->
+      <div style="height: 50px;"></div>
+      <!-- Policy Engine layer -->
+      <div style="background: #ff3333; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Policy Engine
+      </div>
+      <!-- Observer Generated Attestations layer -->
+      <div style="background: #ff6666; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Observer Generated Attestations
+      </div>
+      <!-- Trusted Artifacts layer -->
+      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Trusted Artifacts
+      </div>
+      <!-- Trusted Task Library layer -->
+      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Trusted Task Library
+      </div>
+      <!-- Foundation layer -->
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        K8s + Tekton
+      </div>
+    </div>
+  </div>
+  <div style="flex: 1;">
+    <h3>Policy-Driven Development</h3>
+    <p>Automated policy evaluation guides developers toward compliance.</p>
+    <ul>
+      <li>Real-time violation feedback</li>
+      <li>PR-based policy guidance</li>
+      <li>Conforma policy engine</li>
+    </ul>
+  </div>
+</div>
+
+
+---
+
+
+# Complete Trust Model: Release Service
+
+<div style="display: flex; gap: 40px; align-items: flex-start;">
+  <div style="flex: 1;">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
+      <!-- Release Service layer (complete model) -->
+      <div style="background: #cc0000; color: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Release Service
+      </div>
+      <!-- Policy Engine layer -->
+      <div style="background: #ff3333; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Policy Engine
+      </div>
+      <!-- Observer Generated Attestations layer -->
+      <div style="background: #ff6666; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Observer Generated Attestations
+      </div>
+      <!-- Trusted Artifacts layer -->
+      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Trusted Artifacts
+      </div>
+      <!-- Trusted Task Library layer -->
+      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        Trusted Task Library
+      </div>
+      <!-- Foundation layer -->
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+        K8s + Tekton
+      </div>
+    </div>
+  </div>
+  <div style="flex: 1;">
+    <h3>Build Once, Release Everywhere</h3>
+    <p>Single build artifacts can be safely promoted to multiple environments based on policy compliance.</p>
+    <ul>
+      <li>Environment-specific policies</li>
+      <li>Automated release gating</li>
+      <li>Audit trail preservation</li>
+    </ul>
+  </div>
+</div>
+
+
+---
+
+
+# Demo: Policy-Driven Development in Action
+
+## Violation Detection and Resolution
+
+<div style="display: flex; gap: 30px; align-items: center;">
+  <div style="flex: 1;">
+    <h4>1. Initial Violation</h4>
+    <ul>
+      <li>Custom task triggers policy</li>
+      <li>Clear violation feedback</li>
+      <li>PR shows compliance status</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h4>2. Iterative Improvement</h4>
+    <ul>
+      <li>Refactor to trusted task</li>
+      <li>Push to task bundle</li>
+      <li>Validation and approval</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h4>3. Community Benefit</h4>
+    <ul>
+      <li>Others can reuse task</li>
+      <li>Knowledge sharing</li>
+      <li>Platform improvement</li>
+    </ul>
+  </div>
+</div>
+
+<!--
+Live demo showing:
+- Repository with custom task
+- Policy violation in PR
+- Switching to trusted task bundle
+- Clean build with compliance
+- Another user leveraging the same task
+-->
+
+
+---
+
+
+# Real Example: Container Build Generalization
+
+```bash
+# From specific implementation...
+COPY Containerfile /tmp/
+RUN buildah build -t $IMAGE /tmp/
+
+# To generalized trusted task...
+make containerfile
+buildah build -t $IMAGE .
+```
+
+<div style="margin-top: 30px;">
+  <h4>Benefits of Generalization</h4>
+  <ul>
+    <li><strong>Reusability:</strong> Works for Ansible, Microshift, and other projects</li>
+    <li><strong>Trust:</strong> No network access during build ensures reproducibility</li>
+    <li><strong>Community:</strong> Shared solution benefits everyone</li>
+  </ul>
+</div>
+
+<!--
+Shows how contributor thinking shifts from "solving my problem" to "solving everyone's problem"
+This is the key to successful community contribution
+-->
+
+
+---
+
+
+# The Developer Experience
+
+<div style="display: flex; gap: 40px; align-items: center;">
+  <div style="flex: 1;">
+    <h3>Before: Friction</h3>
+    <ul>
+      <li>"I didn't know I had to do that!"</li>
+      <li>Pipeline changes by others</li>
+      <li>Compliance surprises</li>
+      <li>Manual security tasks</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h3>After: Guided Flow</h3>
+    <ul>
+      <li>Policy guidance in PRs</li>
+      <li>Self-service customization</li>
+      <li>Community task library</li>
+      <li>Automatic compliance</li>
+    </ul>
+  </div>
+</div>
+
+<!--
+This shows the transformation in developer experience
+From reactive compliance to proactive guidance
+-->
+
+
+---
+
+
+# Key Takeaways
+
+<div style="display: flex; gap: 40px;">
+  <div style="flex: 1;">
+    <h3>🎯 Pipeline Purpose</h3>
+    <ul>
+      <li>Security + Flexibility simultaneously</li>
+      <li>Community-driven improvements</li>
+      <li>Policy as guidance, not blocker</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h3>🔧 Implementation</h3>
+    <ul>
+      <li>Progressive trust model</li>
+      <li>Tekton + Tekton Chains</li>
+      <li>Observer attestations</li>
+      <li>Community task contributions</li>
+    </ul>
+  </div>
+</div>
+
+<div style="text-align: center; margin-top: 50px;">
+  <h3>Build platforms should enable innovation while ensuring security</h3>
+</div>
+
+
+---
+
+
+# Thank you!
+
+<div style="text-align: center; margin: 40px 0;">
+  <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
+    <div style="text-align: center;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 10px;">
+        <img src="../shared/images/github-logo.png" width="50" alt="GitHub" style="margin: 0;">
+        <span style="font-size: 1.5em; font-weight: bold;">@arewm</span>
+      </div>
+      <div style="font-size: 1.1em;">arewm@redhat.com</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 10px;">
+        <img src="../shared/images/github-logo.png" width="50" alt="GitHub" style="margin: 0;">
+        <span style="font-size: 1.5em; font-weight: bold;">@Zokormazo</span>
+      </div>
+      <div style="font-size: 1.1em;">julen@redhat.com</div>
+    </div>
+  </div>
+</div>
+
+<div style="display: flex; justify-content: center; align-items: center; gap: 200px; margin-top: 50px;">
+     <div style="text-align: center;">
+     <img src="../shared/images/qr-konflux-ci.png" width="300" alt="Konflux CI QR Code">
+     <div style="margin-top: 10px; font-size: 0.8em;">konflux-ci.dev</div>
+   </div>
+   <!--div style="text-align: center;">
+     <img src="../shared/images/qr-tekton-chains.png" width="150" alt="Tekton Chains QR Code">
+     <div style="margin-top: 10px; font-size: 0.8em;">tekton.dev/docs/chains</div>
+   </div-->
+   <div style="text-align: center;">
+     <img src="../shared/images/qr-conforma.png" width="300" alt="Conforma QR Code">
+     <div style="margin-top: 10px; font-size: 0.8em;">conforma.dev</div>
+   </div>
+</div>
+
+<!--
+Questions and discussion
+Connect with us for more details about implementation
+--> 
