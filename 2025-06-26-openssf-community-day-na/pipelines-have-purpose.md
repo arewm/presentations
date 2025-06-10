@@ -84,74 +84,6 @@ Traditional approaches often sacrifice one for the other
 ---
 
 
-# Community Contribution Workflow
-
-```
-Personal Sandbox → Violations → Trusted Tasks → Community Sharing
-```
-
-<div style="display: flex; gap: 30px; align-items: center; margin-top: 40px;">
-  <div style="text-align: center; flex: 1;">
-    <h4>🧪 Experiment</h4>
-    <p>Start with custom tasks in your own namespace</p>
-  </div>
-  <div style="text-align: center; flex: 1;">
-    <h4>🔍 Identify Issues</h4>
-    <p>Policy violations guide improvements</p>
-  </div>
-  <div style="text-align: center; flex: 1;">
-    <h4>✅ Promote</h4>
-    <p>Push to trusted task bundles</p>
-  </div>
-  <div style="text-align: center; flex: 1;">
-    <h4>🤝 Share</h4>
-    <p>Others can leverage your work</p>
-  </div>
-</div>
-
-<!--
-This is the core workflow we want to demonstrate
-Shows how individual innovation becomes community benefit
-Policy-driven development guides the process
--->
-
-
----
-
-
-# Demo: From Personal Task to Community Asset
-
-## Starting Point: Custom Container Build
-
-<div style="display: flex; gap: 20px; align-items: center;">
-  <div style="flex: 1;">
-    <h4>Personal Repository</h4>
-    <ul>
-      <li>Custom build script</li>
-      <li>Dynamic Containerfile generation</li>
-      <li>Make target integration</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <h4>Initial Challenges</h4>
-    <ul>
-      <li>Policy violations</li>
-      <li>Trust model gaps</li>
-      <li>Compliance issues</li>
-    </ul>
-  </div>
-</div>
-
-<!--
-Julen will demonstrate this workflow
-Shows real-world progression from experiment to production
-Example: Microshift or similar Kubernetes project
--->
-
-
----
-
-
 # Building Trust: Trusted Task Library
 
 <div style="display: flex; gap: 40px; align-items: flex-start;">
@@ -356,51 +288,71 @@ Example: Microshift or similar Kubernetes project
 ---
 
 
-# Demo: Policy-Driven Development in Action
+# Community Contribution Workflow
 
-## Violation Detection and Resolution
+```
+Personal Sandbox → Trusted Tasks → Community Sharing
+```
 
-<div style="display: flex; gap: 30px; align-items: center;">
-  <div style="flex: 1;">
-    <h4>1. Initial Violation</h4>
-    <ul>
-      <li>Custom task triggers policy</li>
-      <li>Clear violation feedback</li>
-      <li>PR shows compliance status</li>
-    </ul>
+<div style="display: flex; gap: 30px; align-items: center; margin-top: 40px;">
+  <div style="text-align: center; flex: 1;">
+    <h4>🧪 Experiment</h4>
+    <p>Start with custom tasks in your own namespace</p>
   </div>
-  <div style="flex: 1;">
-    <h4>2. Iterative Improvement</h4>
-    <ul>
-      <li>Refactor to trusted task</li>
-      <li>Push to task bundle</li>
-      <li>Validation and approval</li>
-    </ul>
+  <div style="text-align: center; flex: 1;">
+    <h4>✅ Promote</h4>
+    <p>Push to trusted task bundles</p>
   </div>
-  <div style="flex: 1;">
-    <h4>3. Community Benefit</h4>
-    <ul>
-      <li>Others can reuse task</li>
-      <li>Knowledge sharing</li>
-      <li>Platform improvement</li>
-    </ul>
+  <div style="text-align: center; flex: 1;">
+    <h4>🤝 Share</h4>
+    <p>Others can leverage your work</p>
   </div>
 </div>
 
 <!--
-Live demo showing:
-- Repository with custom task
-- Policy violation in PR
-- Switching to trusted task bundle
-- Clean build with compliance
-- Another user leveraging the same task
+This is the core workflow we want to demonstrate
+Shows how individual innovation becomes community benefit
+Policy-driven development guides the process
 -->
 
 
 ---
 
 
-# Real Example: Container Build Generalization
+# Demo: From Personal Task to Community Asset
+
+## Starting Point: Custom Container Build
+
+<div style="display: flex; gap: 20px; align-items: center;">
+  <div style="flex: 1;">
+    <h4>Personal Repository</h4>
+    <ul>
+      <li>Custom build script</li>
+      <li>Dynamic Containerfile generation</li>
+      <li>Make target integration</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h4>Initial Challenges</h4>
+    <ul>
+      <li>Policy violations</li>
+      <li>Trust model gaps</li>
+      <li>Compliance issues</li>
+    </ul>
+  </div>
+</div>
+
+<!--
+Julen will demonstrate this workflow
+Shows real-world progression from experiment to production
+Example: Microshift or similar Kubernetes project
+-->
+
+
+---
+
+
+# Real Example: Extending builds before Containerfiles
 
 ```bash
 # From specific implementation...
@@ -415,8 +367,8 @@ buildah build -t $IMAGE .
 <div style="margin-top: 30px;">
   <h4>Benefits of Generalization</h4>
   <ul>
-    <li><strong>Reusability:</strong> Works for Ansible, Microshift, and other projects</li>
-    <li><strong>Trust:</strong> No network access during build ensures reproducibility</li>
+    <li><strong>Reusability:</strong> Works for Ansible, and other projects</li>
+    <li><strong>Trust:</strong> No network access during script ensures compliance</li>
     <li><strong>Community:</strong> Shared solution benefits everyone</li>
   </ul>
 </div>
@@ -470,7 +422,7 @@ From reactive compliance to proactive guidance
     <ul>
       <li>Security + Flexibility simultaneously</li>
       <li>Community-driven improvements</li>
-      <li>Policy as guidance, not blocker</li>
+      <li>Policy driven development</li>
     </ul>
   </div>
   <div style="flex: 1;">
@@ -478,8 +430,7 @@ From reactive compliance to proactive guidance
     <ul>
       <li>Progressive trust model</li>
       <li>Tekton + Tekton Chains</li>
-      <li>Observer attestations</li>
-      <li>Community task contributions</li>
+      <li>Trust established at a task level</li>
     </ul>
   </div>
 </div>
