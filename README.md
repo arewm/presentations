@@ -7,7 +7,8 @@ Source controlled presentations using Remark.js and Markdown in dedicated direct
 | Date | Event | Title |
 |------|-------|-------|
 | 2024-04-16 | NC PACE 2024 | [Let Devs Be Devs](https://arewm.github.io/presentations/2025-04-16-nc-pace/let-devs-be-devs.html) |
-| 2025-06-26 | OpenSSF Community Day NA | [Pipelines Have a Purpose](https://arewm.github.io/presentations/2025-06-26-openssf-community-day-na/pipelines-have-purpose.html) |
+| 2025-06-24 | Open Source Summit NA | [Pipelines Have a Purpose](https://arewm.github.io/presentations/2025-06-24-oss-na/pipelines-have-a-purpose.html) |
+| 2025-06-26 | OpenSSF Community Day NA | [Pipelines Have a Purpose](https://arewm.github.io/presentations/2025-06-26-openssf-community-day-na/pipelines-have-a-purpose.html) |
 
 ---
 
@@ -59,7 +60,8 @@ Simply open your HTML file: `open 2025-12-01-my-awesome-talk/my-awesome-talk.htm
 
 ## Directory Structure
 
-Each presentation is self-contained in its own directory.
+Each presentation is self-contained in its own directory except for shared content that is common
+between multiple presentations.
 
 ```
 presentations/
@@ -185,8 +187,8 @@ cp templates/template.html converted-presentation/converted-presentation.html
 ### Local Development
 ```bash
 # Serve locally for testing and development
-python -m http.server 8000
-# Visit: http://localhost:8000/2024-04-16-let-devs-be-devs/let-devs-be-devs.html
+python3 -m http.server 8000
+# Visit: http://localhost:8000/examples/sample-presentationhtml
 ```
 
 ### File Sharing
@@ -199,7 +201,6 @@ python -m http.server 8000
 - [Remark.js Documentation](https://remarkjs.com/)
 - [Markdown Guide](https://www.markdownguide.org/)
 - **Examples**: Check `examples/sample-presentation.md` for all features
-- **Structure**: See `STRUCTURE.md` for detailed organization guide
 
 ---
 
