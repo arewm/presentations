@@ -58,35 +58,16 @@
 </head>
 <body>
     <textarea id="source"></textarea>
-    
     <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
     <script>
-        // Load markdown content
-        fetch('pipelines-have-purpose.md')
-            .then(response => response.text())
-            .then(markdown => {
-                document.getElementById('source').innerHTML = markdown;
-                
-                var slideshow = remark.create({
-                    sourceUrl: null,
-                    highlightStyle: 'github',
-                    highlightLines: true,
-                    countIncrementalSlides: false,
-                    ratio: '16:9'
-                });
-            })
-            .catch(error => {
-                console.error('Error loading markdown:', error);
-                document.getElementById('source').innerHTML = '# Error\n\nCould not load presentation content. Please ensure you are running a local server.\n\nTry: `python3 -m http.server 8000`';
-                
-                var slideshow = remark.create({
-                    sourceUrl: null,
-                    highlightStyle: 'github',
-                    highlightLines: true,
-                    countIncrementalSlides: false,
-                    ratio: '16:9'
-                });
-            });
+      var slideshow = remark.create({
+        sourceUrl: 'pipelines-have-a-purpose.md',
+        highlightStyle: 'monokai',
+        highlightLanguage: 'remark',
+        highlightLines: true,
+        slideNumberFormat: '%current% / %total%',
+        ratio: '16:9'
+      });
     </script>
-</body>
+  </body>
 </html> 
