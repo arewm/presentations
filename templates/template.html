@@ -114,24 +114,17 @@
     </style>
   </head>
   <body>
-    <textarea id="source"></textarea>
-    <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
-    <script>
-      // Get the markdown file name from URL parameter
-      const urlParams = new URLSearchParams(window.location.search);
-      const sourceFile = urlParams.get('source') || 'sample-presentation.md';
-      
-      // Update the page title based on the source file
-      document.title = sourceFile.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      
-      var slideshow = remark.create({
-        sourceUrl: sourceFile,
-        highlightStyle: 'monokai',
-        highlightLanguage: 'remark',
-        highlightLines: true,
-        slideNumberFormat: '%current% / %total%',
-        ratio: '16:9'
-      });
-    </script>
-  </body>
+      <textarea id="source"></textarea>
+      <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+      <script>
+        var slideshow = remark.create({
+          sourceUrl: 'MARKDOWN_FILE.md',
+          highlightStyle: 'monokai',
+          highlightLanguage: 'remark',
+          highlightLines: true,
+          slideNumberFormat: '%current% / %total%',
+          ratio: '16:9'
+        });
+      </script>
+    </body>
 </html> 
