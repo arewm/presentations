@@ -315,44 +315,12 @@ Shows how individual innovation becomes community benefit
 Policy-driven development guides the process
 -->
 
-
 ---
 
 
 # Demo: From Personal Task to Community Asset
 
-## Starting Point: Custom Container Build
-
-<div style="display: flex; gap: 20px; align-items: center;">
-  <div style="flex: 1;">
-    <h4>Personal Repository</h4>
-    <ul>
-      <li>Custom build script</li>
-      <li>Dynamic Containerfile generation</li>
-      <li>Make target integration</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <h4>Initial Challenges</h4>
-    <ul>
-      <li>Policy violations</li>
-      <li>Trust model gaps</li>
-      <li>Compliance issues</li>
-    </ul>
-  </div>
-</div>
-
-<!--
-Julen will demonstrate this workflow
-Shows real-world progression from experiment to production
-Example: Microshift or similar Kubernetes project
--->
-
-
----
-
-
-# Real Example: Extending builds before Containerfiles
+### Dynamic Containerfile generation
 
 ```bash
 # From specific implementation...
@@ -360,7 +328,7 @@ COPY Containerfile /tmp/
 RUN buildah build -t $IMAGE /tmp/
 
 # To generalized trusted task...
-make containerfile
+exec ${MY_SCRIPT}
 buildah build -t $IMAGE .
 ```
 
@@ -378,6 +346,110 @@ Shows how contributor thinking shifts from "solving my problem" to "solving ever
 This is the key to successful community contribution
 -->
 
+
+---
+
+
+# Demo: From Personal Task to Community Asset
+
+### Sandbox custom task
+
+<div style="display: flex; gap: 10px; align-items: center;">
+  <div style="flex: 1;">
+    <img src="img/sandbox-task.png" width="400" alt="Sandbox custom task resolver">
+    <div style="height: 50px;"></div>
+    <img src="img/builder-pipeline.png" width="400" alt="Custom build pipeline using ansible-builder">
+  </div>
+  <div style="flex: 1;">
+    <ul style="list-style-type: '❌ '">
+      <li>Policy violations</li>
+      <li>Trust model gaps</li>
+      <li>Compliance issues</li>
+    </ul>
+    <img src="img/conforma-red-result.png" width="400" alt="Non-compliant Conforma policy result">
+    <img src="img/tasks-are-trusted-fail.png" width="400" alt="Task are trusted rule failure">
+  </div>
+</div>
+
+<!--
+Julen will demonstrate this workflow
+Shows real-world progression from experiment to production
+The task works but there are trust issues
+-->
+
+
+---
+# Demo: From Personal Task to Community Asset
+
+### Community contributed trusted task
+
+<div style="display: flex; gap: 10px; align-items: center;">
+  <div style="flex: 1;">
+    <h4></h4>
+    <img src="img/community-contribution.png" width="400" alt="Sandbox custom task resolver">
+    <div style="height: 30px;"></div>
+    <img src="img/trusted-task.png" width="400" alt="Trusted task resolver">
+    <div style="height: 30px;"></div>
+    <img src="img/builder-pipeline.png" width="400" alt="Custom build pipeline using ansible-builder">
+  </div>
+  <div style="flex: 1;">
+    <ul style="list-style-type: '✅ '">
+      <li>Policy violations</li>
+      <li>Trust model</li>
+      <li>Compliant</li>
+    </ul>
+    <img src="img/conforma-green-result.png" width="400" alt="Compliant Conforma policy result">
+    <img src="img/tasks-are-trusted.png" width="400" alt="Tasks are trusted rule pass">
+  </div>
+</div>
+<!--
+Julen will demonstrate this workflow
+Shows real-world progression from experiment to production
+Contributing upstream solves the trust issues
+-->
+
+---
+
+
+# Demo: From Personal Task to Community Asset
+
+### Reusability
+
+<div style="display: flex; gap: 10px; align-items: center;">
+  <div style="flex: 1;">
+    Ansible Execution Environments
+  </div>
+  <div style="flex: 1;">
+    <img src="img/builder-pipeline.png" width="400" alt="ansible-builder pipeline">
+  </div>
+</div>
+<div style="height: 30px;"></div>
+<div style="display: flex; gap: 10px; align-items: center;">
+  <div style="flex: 1;">
+    Red Hat Developer Hub (Backstage) dynamic plugins
+  </div>
+  <div style="flex: 1;">
+    <img src="img/rhdh-dynamic-plugins-pipeline.png" width="400" alt="dynamic-plugins pipeline">
+  </div>
+</div>
+<div style="height: 30px;"></div>
+<div style="display: flex; gap: 10px; align-items: center;">
+  <div style="flex: 1;">
+    Generic make target
+  </div>
+  <div style="flex: 1;">
+    <img src="img/make-pipeline.png" width="400" alt="make pipeline">
+  </div>
+</div>
+<div style="height: 20px;"></div>
+
+https://github.com/Zokormazo/oss-na-2025-demo
+
+<!--
+Julen will demonstrate this workflow
+Shows real-world progression from experiment to production
+The task works but there are trust issues
+-->
 
 ---
 
