@@ -246,6 +246,8 @@ Julen: Show the UI for onboarding a repository
 Show how Konflux auto-detects the project type
 Show the generated Pipelines-as-Code configuration
 Emphasize how this "just works" for most projects
+
+img/onboarding*
 -->
 
 ---
@@ -309,8 +311,12 @@ This is Andrew's trust model in action
 # .tekton/build-pipeline.yaml
 spec:
   params:
-    - name: build-args
-      value: ["--build-arg", "VERSION=1.2.3"]
+    - name: build-platforms
+      value:
+      - linux/x86_64
+      - linux/arm64
+    - name: build-source-image
+      value: 'true'
 ```
 
 <!--
