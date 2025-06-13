@@ -394,9 +394,9 @@ The task works but there are trust issues
   </div>
   <div style="flex: 1;">
     <ul style="list-style-type: '✅ '">
-      <li>Policy violations</li>
-      <li>Trust model</li>
-      <li>Compliant</li>
+      <li>No more blocking policy violations</li>
+      <li>Trust model extended to include this task</li>
+      <li>Adheres to policy requirements</li>
     </ul>
     <img src="img/conforma-green-result.png" width="400" alt="Compliant Conforma policy result">
     <img src="img/tasks-are-trusted.png" width="400" alt="Tasks are trusted rule pass">
