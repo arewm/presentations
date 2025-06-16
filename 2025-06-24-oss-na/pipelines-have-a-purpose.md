@@ -233,7 +233,7 @@ Set expectations for what's coming next
     </ul>
   </div>
   <div style="flex: 1;">
-    <img src="img/onboard-repository-ui.svg" width="400" alt="Onboarding UI">
+    <img src="img/onboarding.png" width="400" alt="Onboarding UI">
   </div>
 </div>
 
@@ -241,11 +241,36 @@ Set expectations for what's coming next
   <strong>Demo:</strong> Julen will show the actual onboarding process with a real repository
 </div>
 
+---
+
+# Hands-On: Quick Onboarding - From Zero to Building
+
+<div style="display: flex; gap: 30px; align-items: center;">
+  <div style="flex: 1;">
+    <img src="img/onboarding-pr.png" width="400" alt="Onboarding pull request">
+  </div>
+  <div style="flex: 1;">
+    <img src="img/onboarding-pipeline-on-repo.png" width="400" alt="Onboarding tekton pipeline">
+  </div>
+</div>
+
+---
+
+# Hands-On: Quick Onboarding - From Zero to Building
+
+<div style="display: flex; gap: 30px; align-items: center;">
+  <div style="flex: 1;">
+    <img src="img/onboarding-pipeline-ui.png" width="800" alt="Onboarding pull request">
+  </div>
+</div>
+
 <!--
 Julen: Show the UI for onboarding a repository
 Show how Konflux auto-detects the project type
 Show the generated Pipelines-as-Code configuration
 Emphasize how this "just works" for most projects
+
+img/onboarding*
 -->
 
 ---
@@ -309,8 +334,12 @@ This is Andrew's trust model in action
 # .tekton/build-pipeline.yaml
 spec:
   params:
-    - name: build-args
-      value: ["--build-arg", "VERSION=1.2.3"]
+    - name: build-platforms
+      value:
+      - linux/x86_64
+      - linux/arm64
+    - name: build-source-image
+      value: 'true'
 ```
 
 <!--
@@ -361,9 +390,6 @@ These are the trusted tasks from Andrew's model
       <li><strong>Auditable:</strong> Complete dependency record</li>
     </ul>
   </div>
-  <div style="flex: 1;">
-    <img src="img/hermetic-prefetch-flow.svg" width="400" alt="Hermetic prefetch flow">
-  </div>
 </div>
 
 ```yaml
@@ -381,6 +407,16 @@ Julen: Demonstrate enabling hermetic builds
 Show the prefetch configuration for different package managers
 This is SLSA Build Level 3 in practice
 -->
+
+---
+
+# Hands-On: Hermetic Builds + Prefetch
+
+<div style="display: flex; gap: 30px; align-items: center;">
+  <div style="flex: 1;">
+    <img src="img/prefetch-transient-deps.png" width="800" alt="Prefetching logs">
+  </div>
+</div>
 
 ---
 
