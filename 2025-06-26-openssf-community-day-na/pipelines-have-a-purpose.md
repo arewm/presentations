@@ -372,9 +372,8 @@ This is the key to successful community contribution
 </div>
 
 <!--
-Julen will demonstrate this workflow
-Shows real-world progression from experiment to production
-The task works but there are trust issues
+Julen: Using a task on the same repo makes iterating easy for the developer.
+However the solution break the supply chain security.
 -->
 
 
@@ -403,9 +402,9 @@ The task works but there are trust issues
   </div>
 </div>
 <!--
-Julen will demonstrate this workflow
-Shows real-world progression from experiment to production
-Contributing upstream solves the trust issues
+Julen: will demonstrate this workflow
+Contributing the task upstream solves the trust issues and provides the solution to the rest of the community.
+Win-win scenario
 -->
 
 ---
@@ -446,9 +445,7 @@ Contributing upstream solves the trust issues
 https://github.com/Zokormazo/oss-na-2025-demo
 
 <!--
-Julen will demonstrate this workflow
-Shows real-world progression from experiment to production
-The task works but there are trust issues
+Julen: Generalization is great. One task, many use cases.
 -->
 
 ---
