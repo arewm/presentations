@@ -43,7 +43,7 @@ Both purposes must be served simultaneously
 
 # The Challenge: Balance Trust and Flexibility
 
-<img src="../shared/images/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats">
+<img src="../shared/diagrams/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats">
 
 <small>Source: https://slsa.dev/spec/v1.1/threats-overview</small>
 
@@ -76,7 +76,7 @@ Traditional approaches often sacrifice one for the other
   <div style="flex: 1;">
     <h3>Foundation Platform</h3>
     <p>Kubernetes provides RBAC, containerization, and namespace isolation. Tekton provides the pipeline execution framework with observer attestations.</p>
-    <img src="../shared/images/tekton-logo.png" width="200" alt="Tekton" style="margin-top: 20px;">
+    <img src="../shared/logos/tekton.png" width="200" alt="Tekton" style="margin-top: 20px;">
   </div>
 </div>
 
@@ -518,14 +518,14 @@ From reactive compliance to proactive guidance
   <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
     <div style="text-align: center;">
       <div style="display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 10px;">
-        <img src="../shared/images/github-logo.png" width="50" alt="GitHub" style="margin: 0;">
+        <img src="../shared/logos/github.png" width="50" alt="GitHub" style="margin: 0;">
         <span style="font-size: 1.5em; font-weight: bold;">@arewm</span>
       </div>
       <div style="font-size: 1.1em;">arewm@redhat.com</div>
     </div>
     <div style="text-align: center;">
       <div style="display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 10px;">
-        <img src="../shared/images/github-logo.png" width="50" alt="GitHub" style="margin: 0;">
+        <img src="../shared/logos/github.png" width="50" alt="GitHub" style="margin: 0;">
         <span style="font-size: 1.5em; font-weight: bold;">@Zokormazo</span>
       </div>
       <div style="font-size: 1.1em;">julen@redhat.com</div>
@@ -535,15 +535,15 @@ From reactive compliance to proactive guidance
 
 <div style="display: flex; justify-content: center; align-items: center; gap: 200px; margin-top: 50px;">
      <div style="text-align: center;">
-     <img src="../shared/images/qr-konflux-ci.png" width="300" alt="Konflux CI QR Code">
+     <img src="../shared/qr-codes/konflux-ci.png" width="300" alt="Konflux CI QR Code">
      <div style="margin-top: 10px; font-size: 0.8em;">konflux-ci.dev</div>
    </div>
    <!--div style="text-align: center;">
-     <img src="../shared/images/qr-tekton-chains.png" width="150" alt="Tekton Chains QR Code">
+     <img src="../shared/qr-codes/tekton-chains.png" width="150" alt="Tekton Chains QR Code">
      <div style="margin-top: 10px; font-size: 0.8em;">tekton.dev/docs/chains</div>
    </div-->
    <div style="text-align: center;">
-     <img src="../shared/images/qr-conforma.png" width="300" alt="Conforma QR Code">
+     <img src="../shared/qr-codes/conforma.png" width="300" alt="Conforma QR Code">
      <div style="margin-top: 10px; font-size: 0.8em;">conforma.dev</div>
    </div>
 </div>

@@ -78,7 +78,7 @@ This is the core problem we're solving
 # Mitigate threats to the supply chain
 
 <div style="display: flex; flex-direction: column; align-items: center; margin: 0 auto; max-width: 100%;">
-  <img src="../shared/images/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats" style="display: block;">
+  <img src="../shared/diagrams/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats" style="display: block;">
 </div>
 <small style="margin-top: 10px; display: block;">Source: https://slsa.dev/spec/v1.1/threats-overview</small>
 
@@ -96,37 +96,37 @@ Is this something that we really need?
       <!-- Complete trust model stack -->
       <div style="background: #ffe6e6; border: 2px solid #ff4444; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
         <div style="width: 30px; height: 30px; margin-right: 10px;">
-          <img src="../shared/images/konflux-logo-square.png" alt="Release Service" style="width: 100%; height: 100%; object-fit: scale-down;">
+          <img src="../shared/logos/konflux-k-square.png" alt="Release Service" style="width: 100%; height: 100%; object-fit: scale-down;">
         </div>
         Release Service
       </div>
       <div style="background: #e6f3ff; border: 2px solid #0066cc; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
         <div style="width: 30px; height: 30px; margin-right: 10px;">
-          <img src="../shared/images/conforma-icon.png" alt="Conforma" style="width: 100%; height: 100%; object-fit: scale-down;"> 
+          <img src="../shared/logos/conforma.png" alt="Conforma" style="width: 100%; height: 100%; object-fit: scale-down;"> 
         </div>
         Policy-Driven Development
       </div>
       <div style="background: #fff0e6; border: 2px solid #ff8c00; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
         <div style="width: 30px; height: 30px; margin-right: 10px;">
-          <img src="../shared/images/tekton-chains-logo.png" alt="Tekton Chains" style="width: 100%; height: 100%; object-fit: scale-down;">
+          <img src="../shared/logos/tekton-chains.png" alt="Tekton Chains" style="width: 100%; height: 100%; object-fit: scale-down;">
         </div>
         Observer Attestations
       </div>
       <div style="background: #f0e6ff; border: 2px solid #8c00ff; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
         <div style="width: 30px; height: 30px; margin-right: 10px;">
-          <img src="../shared/images/oci-logo.png" alt="OCI" style="width: 100%; height: 100%; object-fit: scale-down;">
+          <img src="../shared/logos/oci.png" alt="OCI" style="width: 100%; height: 100%; object-fit: scale-down;">
         </div>
         Trusted Artifacts
       </div>
       <div style="background: #ffe6e6; border: 2px solid #ff4444; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
         <div style="width: 30px; height: 30px; margin-right: 10px;">
-          <img src="../shared/images/pipelines-as-code-logo.png" alt="Pipelines as Code" style="width: 100%; height: 100%; object-fit: scale-down;">
+          <img src="../shared/logos/pipelines-as-code.png" alt="Pipelines as Code" style="width: 100%; height: 100%; object-fit: scale-down;">
         </div>
         Trusted Tasks
       </div>
       <div style="background: #e6ffe6; border: 2px solid #00cc66; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
         <div style="width: 30px; height: 30px; margin-right: 10px;">
-          <img src="../shared/images/tekton-logo.png" alt="Tekton" style="width: 100%; height: 100%; object-fit: scale-down;">
+          <img src="../shared/logos/tekton.png" alt="Tekton" style="width: 100%; height: 100%; object-fit: scale-down;">
         </div>
         Tekton + Kubernetes
       </div>
@@ -670,14 +670,14 @@ Make sure people understand these are complementary, not repetitive
   <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
     <div style="text-align: center;">
       <div style="display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 10px;">
-        <img src="../shared/images/github-logo.png" width="50" alt="GitHub" style="margin: 0;">
+        <img src="../shared/logos/github.png" width="50" alt="GitHub" style="margin: 0;">
         <span style="font-size: 1.5em; font-weight: bold;">@arewm</span>
       </div>
       <div style="font-size: 1.1em;">arewm@redhat.com</div>
     </div>
     <div style="text-align: center;">
       <div style="display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 10px;">
-        <img src="../shared/images/github-logo.png" width="50" alt="GitHub" style="margin: 0;">
+        <img src="../shared/logos/github.png" width="50" alt="GitHub" style="margin: 0;">
         <span style="font-size: 1.5em; font-weight: bold;">@Zokormazo</span>
       </div>
       <div style="font-size: 1.1em;">julen@redhat.com</div>
@@ -687,15 +687,15 @@ Make sure people understand these are complementary, not repetitive
 
 <div style="display: flex; justify-content: center; align-items: center; gap: 100px; margin-top: 50px;">
      <div style="text-align: center;">
-     <img src="../shared/images/qr-konflux-ci.png" width="250" alt="Konflux CI QR Code">
+     <img src="../shared/qr-codes/konflux-ci.png" width="250" alt="Konflux CI QR Code">
      <div style="margin-top: 10px; font-size: 0.8em;">konflux-ci.dev</div>
    </div>
    <div style="text-align: center;">
-     <img src="../shared/images/qr-hermeto.png" width="250" alt="Hermeto QR Code">
+     <img src="../shared/qr-codes/hermeto.png" width="250" alt="Hermeto QR Code">
      <div style="margin-top: 10px; font-size: 0.8em;">hermetoproject.github.io/hermeto</div>
    </div>
    <div style="text-align: center;">
-     <img src="../shared/images/qr-conforma.png" width="250" alt="Conforma QR Code">
+     <img src="../shared/qr-codes/conforma.png" width="250" alt="Conforma QR Code">
      <div style="margin-top: 10px; font-size: 0.8em;">conforma.dev</div>
    </div>
 </div>

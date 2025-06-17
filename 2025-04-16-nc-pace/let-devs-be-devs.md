@@ -8,7 +8,7 @@ Andrew McNamara; Red Hat
 
 # Devs need to be protected from threats
 
-<img src="../shared/images/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats">
+<img src="../shared/diagrams/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats">
 
 <small>Source: https://slsa.dev/spec/v1.1/threats-overview</small>
 
@@ -30,7 +30,7 @@ Use tooling that is supportive not disruptive
 
 Background: this is the journey that we have been making at Red Hat, we extensively use open source software
 
-These are some of the key metrics that I see for developers. This isn’t always the case though, especially when open source software is being consumed in more closed environments. I want to share some lessons which are grounded in some of my experiences.
+These are some of the key metrics that I see for developers. This isn't always the case though, especially when open source software is being consumed in more closed environments. I want to share some lessons which are grounded in some of my experiences.
 -->
 
 ---
@@ -98,7 +98,7 @@ More pipelines, waiting for someone else to complete the work. - wait, does this
 ---
 
 
-# Devs don’t need to be this unhappy
+# Devs don't need to be this unhappy
 
 SLSA Build L3:
 
@@ -135,7 +135,7 @@ Who has heard of SLSA build track? I have been asked many questions about what t
   <div style="flex: 1;">
     <h3>Foundation Platform</h3>
     <p>Kubernetes provides RBAC, containerization, and namespace isolation. Tekton provides the pipeline execution framework.</p>
-    <img src="../shared/images/tekton-logo.png" width="200" alt="Tekton" style="margin-top: 20px;">
+    <img src="../shared/logos/tekton.png" width="200" alt="Tekton" style="margin-top: 20px;">
   </div>
 </div>
 
@@ -271,7 +271,7 @@ Tekton Chains was the first attestation generation service to use the 'observer'
 ---
 
 
-![](../shared/images/tekton-chains-how-it-works.png)
+![](../shared/diagrams/tekton-chains-how-it-works.png)
 
 # https://tekton.dev/docs/chains/slsa-provenance/#how-does-tekton-chains-work
 
@@ -315,7 +315,7 @@ Tekton Chains was the first attestation generation service to use the 'observer'
   <div style="flex: 1;">
     <h3>Policy Engine</h3>
     <p>A policy engine is used to compare the attestations against required policy (we use <a href="https://conforma.dev/">Conforma</a>).</p>
-    <img src="../shared/images/conforma-screenshot.png" width="400" alt="Conforma screenshot" style="margin-top: 20px;">
+    <img src="../shared/logos/conforma-screenshot.png" width="400" alt="Conforma screenshot" style="margin-top: 20px;">
   </div>
 </div>
 
@@ -329,7 +329,7 @@ Policies can precisely define things which need to be true about pipeline runs t
 
 <div style="display: flex; align-items: center; gap: 20px;">
   <img src="img/policy-base-images-example.png" width="300" alt="Policy base images example">
-  <img src="../shared/images/conforma-screenshot.png" width="300" alt="Conforma screenshot">
+  <img src="../shared/logos/conforma-screenshot.png" width="300" alt="Conforma screenshot">
   <img src="img/base-images-icon.png" width="300" alt="Base images icon">
 </div>
 
@@ -383,7 +383,7 @@ Allowed base images
   <div style="flex: 1;">
     <h3>Release Service</h3>
     <p>Release service gates access to protected destinations based on policy evaluation.</p>
-    <img src="../shared/images/konflux-logo.png" width="300" alt="Konflux logo" style="margin-top: 20px;">
+    <img src="../shared/logos/konflux.png" width="300" alt="Konflux logo" style="margin-top: 20px;">
   </div>
 </div>
 
@@ -445,12 +445,12 @@ Talking points:
 You have your pipeline, you can see the tasks that are run
 Change from a tekton resolver to in-line the task
 Iterate on the failing step to troubleshoot
-Don’t worry – these will fail EC if the build or critical tests are modified
+Don't worry – these will fail EC if the build or critical tests are modified
 
 
 Modify the build command locally, resubmit job
 
-If any of the critical tasks have been modified, potentially compromising the guarantees, the artifacts won’t be able to be released
+If any of the critical tasks have been modified, potentially compromising the guarantees, the artifacts won't be able to be released
 -->
 
 
@@ -486,12 +486,12 @@ Talking points:
 You have your pipeline, you can see the tasks that are run
 Change from a tekton resolver to in-line the task
 Iterate on the failing step to troubleshoot
-Don’t worry – these will fail EC if the build or critical tests are modified
+Don't worry – these will fail EC if the build or critical tests are modified
 
 
 Modify the build command locally, resubmit job
 
-If any of the critical tasks have been modified, potentially compromising the guarantees, the artifacts won’t be able to be released
+If any of the critical tasks have been modified, potentially compromising the guarantees, the artifacts won't be able to be released
 -->
 
 
@@ -507,11 +507,11 @@ If any of the critical tasks have been modified, potentially compromising the gu
 
 Talking points: 
 You have your pipeline, you can customize it with your own tasks
-Don’t worry – these will fail EC if the build or critical tests are modified
+Don't worry – these will fail EC if the build or critical tests are modified
 Functionality can be expanded by adding to the trusted tasks … and performing necessary reviews of those additions. Tasks need to adhere to naming conventions (i.e. parameter/results)
 
 
-Fork the project, reconfigure for build environment (maybe create a new Task or two), commit. Push this to your own registries, use it in personal or dev deployments. It won’t get to production until the pipelines are approved
+Fork the project, reconfigure for build environment (maybe create a new Task or two), commit. Push this to your own registries, use it in personal or dev deployments. It won't get to production until the pipelines are approved
 -->
 
 
@@ -519,13 +519,13 @@ Fork the project, reconfigure for build environment (maybe create a new Task or 
 ---
 
 
-# Devs don’t need to be this unhappy
+# Devs don't need to be this unhappy
 
 <div style="display: flex; align-items: center; justify-content: center; gap: 30px; margin-bottom: 20px;">
-  <img src="../shared/images/tekton-logo.png" width="200" alt="Tekton">
-  <img src="../shared/images/tekton-chains-logo.png" width="200" alt="Tekton Chains">
-  <img src="../shared/images/pipelines-as-code-logo.png" width="200" alt="Pipelines as Code">
-  <img src="../shared/images/conforma-icon.png" width="200" alt="Conforma">
+  <img src="../shared/logos/tekton.png" width="200" alt="Tekton">
+  <img src="../shared/logos/tekton-chains.png" width="200" alt="Tekton Chains">
+  <img src="../shared/logos/pipelines-as-code.png" width="200" alt="Pipelines as Code">
+  <img src="../shared/logos/conforma.png" width="200" alt="Conforma">
 </div>
 
 <div style="text-align: center; margin: 30px 0;">
@@ -533,7 +533,7 @@ Fork the project, reconfigure for build environment (maybe create a new Task or 
 </div>
 
 <div style="text-align: center;">
-  <img src="../shared/images/konflux-banner.png" width="500" alt="Konflux">
+  <img src="../shared/logos/konflux-banner.png" width="500" alt="Konflux">
 </div>
 
 
@@ -544,7 +544,7 @@ Fork the project, reconfigure for build environment (maybe create a new Task or 
 
 <div style="text-align: center; margin: 40px 0;">
   <div style="display: flex; justify-content: center; align-items: center; gap: 5px; margin-bottom: 20px;">
-         <img src="../shared/images/github-logo.png" width="50" alt="GitHub" style="margin: 0;"><span style="font-size: 1.5em; font-weight: bold; ">@arewm</span>
+         <img src="../shared/logos/github.png" width="50" alt="GitHub" style="margin: 0;"><span style="font-size: 1.5em; font-weight: bold; ">@arewm</span>
   </div>
   <div style="font-size: 1.2em;">
     arewm@redhat.com
@@ -553,15 +553,15 @@ Fork the project, reconfigure for build environment (maybe create a new Task or 
 
 <div style="display: flex; justify-content: center; align-items: center; gap: 60px; margin-top: 50px;">
   <div style="text-align: center;">
-    <img src="../shared/images/qr-konflux-ci.png" width="200" alt="Konflux CI QR Code">
+    <img src="../shared/qr-codes/konflux-ci.png" width="200" alt="Konflux CI QR Code">
     <div style="margin-top: 15px; font-size: 0.9em;">konflux-ci.dev</div>
   </div>
   <div style="text-align: center;">
-    <img src="../shared/images/qr-hermeto.png" width="200" alt="Hermeto QR Code">
+    <img src="../shared/qr-codes/hermeto.png" width="200" alt="Hermeto QR Code">
     <div style="margin-top: 15px; font-size: 0.9em;">hermetoproject.github.io/hermeto</div>
   </div>
   <div style="text-align: center;">
-    <img src="../shared/images/qr-conforma.png" width="200" alt="Conforma QR Code">
+    <img src="../shared/qr-codes/conforma.png" width="200" alt="Conforma QR Code">
     <div style="margin-top: 15px; font-size: 0.9em;">conforma.dev</div>
   </div>
 </div>
