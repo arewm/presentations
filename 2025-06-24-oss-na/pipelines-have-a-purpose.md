@@ -32,50 +32,10 @@ Open Source Summit North America 2025
     </ul>
   </div>
 </div>
-
-<!--
-Andrew: Focus on the progressive trust model, security architecture, and usable security
-Julen: Focus on hands-on developer experience, demos, practical steps
-20 minutes total - Andrew covers concepts, then Julen shows them in action
--->
-
----
-
-# Balancing pipeline security and developer experience
-
-<div style="display: flex; gap: 40px; align-items: center;">
-  <div style="flex: 1;">
-    <h3>🔒 Traditional Security</h3>
-    <ul>
-      <li>Checkbox-driven security</li>
-      <li>Few, restrictive configurations</li>
-      <li>Late-stage feedback</li>
-      <li>Developer friction</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <h3>🚀 What Developers Want</h3>
-    <ul>
-      <li>Fast iteration cycles</li>
-      <li>Simple onboarding</li>
-      <li>Flexible workflows</li>
-      <li>Clear feedback</li>
-    </ul>
-  </div>
-</div>
-
-<div style="margin-top: 40px; text-align: center; font-size: 1.3em; color: #0066cc;">
-  <strong>How do we achieve both simultaneously?</strong>
-</div>
-
-<!--
-Andrew: Set up the fundamental tension
-This is the core problem we're solving
 -->
 ---
 
-
-# Mitigate threats to the supply chain
+# Threats to the supply chain
 
 <div style="display: flex; flex-direction: column; align-items: center; margin: 0 auto; max-width: 100%;">
   <img src="../shared/diagrams/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats" style="display: block;">
@@ -85,6 +45,64 @@ This is the core problem we're solving
 <!--
 Is this something that we really need? 
 -->
+
+---
+
+# Pipeline security vs developer experience
+
+<div style="display: flex; gap: 40px; align-items: center;">
+  <div style="flex: 1;">
+    <h3>🚀 What Developers Want</h3>
+    <ul>
+      <li>Fast iteration cycles</li>
+      <li>Simple onboarding</li>
+      <li>Flexible workflows</li>
+      <li>Clear feedback</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h3>🔒 Typical Security</h3>
+    <ul>
+      <li>Checkbox-driven security</li>
+      <li>Few, restrictive configurations</li>
+      <li>Late-stage feedback</li>
+      <li>Developer friction</li>
+    </ul>
+  </div>
+</div>
+
+<div style="margin-top: 40px; text-align: center; font-size: 1.3em; color: #0066cc;">
+  <strong>How do we achieve what developers want securely?</strong>
+</div>
+
+---
+
+# Pipeline security vs developer experience
+
+<div style="display: flex; gap: 40px; align-items: center;">
+  <div style="flex: 1;">
+    <h3>🚀 What Developers Want</h3>
+    <ul>
+      <li>Fast iteration cycles</li>
+      <li>Simple onboarding</li>
+      <li>Flexible workflows</li>
+      <li>Clear feedback</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h3>🔒 Typical Security</h3>
+    <ul>
+      <li>Checkbox-driven security</li>
+      <li>Few, restrictive configurations</li>
+      <li>Late-stage feedback</li>
+      <li>Developer friction</li>
+    </ul>
+  </div>
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: center; margin: 0 auto; max-width: 100%;">
+  <img src="../shared/logos/konflux-banner.png" alt="Konflux Banner" style="max-width: 100%; height: auto;">
+</div>
 
 ---
 
@@ -106,7 +124,7 @@ Is this something that we really need?
         </div>
         Policy-Driven Development
       </div>
-      <div style="background: #fff0e6; border: 2px solid #ff8c00; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+      <div style="background: #fff0e6; border: 2px solid #ff8c00; padding: 15px; text-align: center; font-weight: bold, height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
         <div style="width: 30px; height: 30px; margin-right: 10px;">
           <img src="../shared/logos/tekton-chains.png" alt="Tekton Chains" style="width: 100%; height: 100%; object-fit: scale-down;">
         </div>
@@ -128,7 +146,7 @@ Is this something that we really need?
         <div style="width: 30px; height: 30px; margin-right: 10px;">
           <img src="../shared/logos/tekton.png" alt="Tekton" style="width: 100%; height: 100%; object-fit: scale-down;">
         </div>
-        Tekton + Kubernetes
+        Kubernetes + Tekton
       </div>
     </div>
   </div>
@@ -154,23 +172,22 @@ This is what enables usable security
 
 # Konflux's design philosophy
 
-<div style="display: flex; gap: 40px; align-items: center;">
-  <div style="flex: 1;">
-    <h3>🎯 Security by Default</h3>
+<div style="display: flex; gap: 40px; align-items: flex-start; justify-content: center;">
+  <div style="flex: 1; min-width: 250px;">
+    <h3 style="text-align: center;">🎯 Security by Default</h3>
     <ul>
       <li><strong>Immediate protection:</strong> SLSA Build Level 3 from the first build</li>
       <li><strong>Minimal configuration:</strong> Secure defaults work out of the box</li>
       <li><strong>Progressive enhancement:</strong> Enable additional scans as necessary</li>
-      <li><strong>Transparent operation:</strong> See the target you are working towards</li>
     </ul>
   </div>
-  <div style="flex: 1;">
-    <h3>🔄 Policy driven development</h3>
+  <div style="flex: 1; min-width: 250px;">
+    <h3 style="text-align: center;">🔄 Policy driven development</h3>
     <ul>
       <li><strong>Early detection:</strong> Find issues in development</li>
       <li><strong>Learning opportunities:</strong> Violations become education</li>
       <li><strong>Continuous improvement:</strong> Policies evolve with team</li>
-      <li><strong>Flexibility allowed:</strong> </li>
+      <li><strong>Flexibility allowed:</strong> Policies allow for some changes</li>
     </ul>
   </div>
 </div>
@@ -271,19 +288,15 @@ Set expectations for what's coming next
   </div>
 </div>
 
-<div style="margin-top: 30px; padding: 15px; background: #f0f8ff; border-left: 4px solid #0066cc;">
-  <strong>Demo:</strong> Julen will show the actual onboarding process with a real repository
-</div>
-
 ---
 
 # Hands-On: Quick Onboarding - From Zero to Building
 
 <div style="display: flex; gap: 30px; align-items: center;">
-  <div style="flex: 1;">
+  <div style="flex: 1; display: flex; justify-content: center;">
     <img src="img/onboarding-pr.png" width="400" alt="Onboarding pull request">
   </div>
-  <div style="flex: 1;">
+  <div style="flex: 1; display: flex; justify-content: center;">
     <img src="img/onboarding-pipeline-on-repo.png" width="400" alt="Onboarding tekton pipeline">
   </div>
 </div>

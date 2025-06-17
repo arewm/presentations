@@ -533,17 +533,17 @@ From reactive compliance to proactive guidance
   </div>
 </div>
 
-<div style="display: flex; justify-content: center; align-items: center; gap: 200px; margin-top: 50px;">
+<div style="display: flex; justify-content: center; align-items: center; gap: 100px; margin-top: 50px;">
      <div style="text-align: center;">
-     <img src="../shared/qr-codes/konflux-ci.png" width="300" alt="Konflux CI QR Code">
+     <img src="../shared/qr-codes/konflux-ci.png" width="250" alt="Konflux CI QR Code">
      <div style="margin-top: 10px; font-size: 0.8em;">konflux-ci.dev</div>
    </div>
-   <!--div style="text-align: center;">
-     <img src="../shared/qr-codes/tekton-chains.png" width="150" alt="Tekton Chains QR Code">
-     <div style="margin-top: 10px; font-size: 0.8em;">tekton.dev/docs/chains</div>
-   </div-->
    <div style="text-align: center;">
-     <img src="../shared/qr-codes/conforma.png" width="300" alt="Conforma QR Code">
+     <img src="../shared/qr-codes/hermeto.png" width="250" alt="Hermeto QR Code">
+     <div style="margin-top: 10px; font-size: 0.8em;">hermetoproject.github.io/hermeto</div>
+   </div>
+   <div style="text-align: center;">
+     <img src="../shared/qr-codes/conforma.png" width="250" alt="Conforma QR Code">
      <div style="margin-top: 10px; font-size: 0.8em;">conforma.dev</div>
    </div>
 </div>
