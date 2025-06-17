@@ -86,7 +86,7 @@ open 2025-06-24-oss-na.html
 From the repository root:
 ```bash
 python3 -m http.server 8000
-# Then visit: http://localhost:8000/2025-06-24-oss-na/2025-06-24-oss-na.html
+# Then visit: http://localhost:8000/2025-06-24-oss-na/pipelines-have-a-purpose.html
 ```
 
 ## Presenting

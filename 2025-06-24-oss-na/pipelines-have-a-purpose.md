@@ -4,7 +4,7 @@ Andrew McNamara & Julen Landa Alustiza, Red Hat
 
 Open Source Summit North America 2025
 
----
+<!---
 
 # Today's Focus: The Developer Experience
 
@@ -41,14 +41,14 @@ Julen: Focus on hands-on developer experience, demos, practical steps
 
 ---
 
-# The Challenge: Security vs. Developer Experience
+# Balancing pipeline security and developer experience
 
 <div style="display: flex; gap: 40px; align-items: center;">
   <div style="flex: 1;">
     <h3>🔒 Traditional Security</h3>
     <ul>
-      <li>Compliance-first approach</li>
-      <li>Complex configurations</li>
+      <li>Checkbox-driven security</li>
+      <li>Few, restrictive configurations</li>
       <li>Late-stage feedback</li>
       <li>Developer friction</li>
     </ul>
@@ -72,41 +72,75 @@ Julen: Focus on hands-on developer experience, demos, practical steps
 Andrew: Set up the fundamental tension
 This is the core problem we're solving
 -->
+---
+
+
+# Mitigate threats to the supply chain
+
+<div style="display: flex; flex-direction: column; align-items: center; margin: 0 auto; max-width: 100%;">
+  <img src="../shared/images/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats" style="display: block;">
+</div>
+<small style="margin-top: 10px; display: block;">Source: https://slsa.dev/spec/v1.1/threats-overview</small>
+
+<!--
+Is this something that we really need? 
+-->
 
 ---
 
-# Our Approach: Progressive Trust Model
+# Building up trust in the platform
 
 <div style="display: flex; gap: 40px; align-items: flex-start;">
   <div style="flex: 1;">
     <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
       <!-- Complete trust model stack -->
+      <div style="background: #ffe6e6; border: 2px solid #ff4444; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+        <div style="width: 30px; height: 30px; margin-right: 10px;">
+          <img src="../shared/images/konflux-logo-square.png" alt="Release Service" style="width: 100%; height: 100%; object-fit: scale-down;">
+        </div>
+        Release Service
+      </div>
       <div style="background: #e6f3ff; border: 2px solid #0066cc; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-        🔐 Policy-Driven Development
+        <div style="width: 30px; height: 30px; margin-right: 10px;">
+          <img src="../shared/images/conforma-icon.png" alt="Conforma" style="width: 100%; height: 100%; object-fit: scale-down;"> 
+        </div>
+        Policy-Driven Development
       </div>
       <div style="background: #fff0e6; border: 2px solid #ff8c00; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-        📋 Observer Attestations
+        <div style="width: 30px; height: 30px; margin-right: 10px;">
+          <img src="../shared/images/tekton-chains-logo.png" alt="Tekton Chains" style="width: 100%; height: 100%; object-fit: scale-down;">
+        </div>
+        Observer Attestations
       </div>
       <div style="background: #f0e6ff; border: 2px solid #8c00ff; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-        📦 Trusted Artifacts
+        <div style="width: 30px; height: 30px; margin-right: 10px;">
+          <img src="../shared/images/oci-logo.png" alt="OCI" style="width: 100%; height: 100%; object-fit: scale-down;">
+        </div>
+        Trusted Artifacts
       </div>
       <div style="background: #ffe6e6; border: 2px solid #ff4444; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-        ✅ Trusted Tasks
+        <div style="width: 30px; height: 30px; margin-right: 10px;">
+          <img src="../shared/images/pipelines-as-code-logo.png" alt="Pipelines as Code" style="width: 100%; height: 100%; object-fit: scale-down;">
+        </div>
+        Trusted Tasks
       </div>
       <div style="background: #e6ffe6; border: 2px solid #00cc66; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-        🏗️ Tekton + Kubernetes
+        <div style="width: 30px; height: 30px; margin-right: 10px;">
+          <img src="../shared/images/tekton-logo.png" alt="Tekton" style="width: 100%; height: 100%; object-fit: scale-down;">
+        </div>
+        Tekton + Kubernetes
       </div>
     </div>
   </div>
   <div style="flex: 1;">
-    <h3>Building Trust Layer by Layer</h3>
-    <ul>
-      <li><strong>Foundation:</strong> Secure execution environment</li>
-      <li><strong>Trusted Tasks:</strong> Community-vetted components</li>
-      <li><strong>Trusted Artifacts:</strong> Tamper-proof data flow</li>
-      <li><strong>Observer Attestations:</strong> Independent verification</li>
-      <li><strong>Policy-Driven:</strong> Guidance at the right time</li>
-    </ul>
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
+      <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Destination specific policies</div>
+      <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Guidance at the right time</div>
+      <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Fine-grained SLSA provenance</div>
+      <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Tamper-proof data flow</div>
+      <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Community-vetted build steps</div>
+      <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Secure execution environment</div>
+    </div>
   </div>
 </div>
 
@@ -118,25 +152,25 @@ This is what enables usable security
 
 ---
 
-# Usable Security: Konflux's Design Philosophy
+# Konflux's design philosophy
 
 <div style="display: flex; gap: 40px; align-items: center;">
   <div style="flex: 1;">
     <h3>🎯 Security by Default</h3>
     <ul>
-      <li><strong>Immediate protection:</strong> SLSA Build Level 3 from day one</li>
-      <li><strong>Zero configuration:</strong> Secure defaults work out of the box</li>
-      <li><strong>Progressive enhancement:</strong> Add security as you learn</li>
-      <li><strong>Transparent operation:</strong> See what's happening</li>
+      <li><strong>Immediate protection:</strong> SLSA Build Level 3 from the first build</li>
+      <li><strong>Minimal configuration:</strong> Secure defaults work out of the box</li>
+      <li><strong>Progressive enhancement:</strong> Enable additional scans as necessary</li>
+      <li><strong>Transparent operation:</strong> See the target you are working towards</li>
     </ul>
   </div>
   <div style="flex: 1;">
-    <h3>🔄 Feedback Loops</h3>
+    <h3>🔄 Policy driven development</h3>
     <ul>
       <li><strong>Early detection:</strong> Find issues in development</li>
-      <li><strong>Clear guidance:</strong> Actionable remediation steps</li>
       <li><strong>Learning opportunities:</strong> Violations become education</li>
       <li><strong>Continuous improvement:</strong> Policies evolve with team</li>
+      <li><strong>Flexibility allowed:</strong> </li>
     </ul>
   </div>
 </div>
@@ -152,7 +186,7 @@ This is different from traditional security approaches
 
 ---
 
-# Policy-Driven Development in Practice
+# Policy-driven development in practice
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
@@ -175,18 +209,18 @@ This is different from traditional security approaches
   </div>
 </div>
 
-<div style="margin-top: 30px; padding: 15px; background: #e8f5e8; border-left: 4px solid #4caf50;">
+<!--div style="margin-top: 30px; padding: 15px; background: #e8f5e8; border-left: 4px solid #4caf50;">
   <strong>The goal:</strong> Turn policy violations into learning opportunities, not roadblocks
-</div>
+</div-->
 
 <!--
 Andrew: Explain the shift from reactive to proactive security
 This is what makes security usable
 -->
 
----
+<!---
 
-# From Theory to Practice
+# From theory to practice
 
 <div style="display: flex; gap: 40px; align-items: center;">
   <div style="flex: 1;">
@@ -273,14 +307,13 @@ Emphasize how this "just works" for most projects
 img/onboarding*
 -->
 
----
+<!---
 
 # The Magic: Secure by Default
 
 <div style="display: flex; gap: 40px; align-items: flex-start;">
   <div style="flex: 1;">
     <div style="display: flex; flex-direction: column; justify-content: center; height: 300px; gap: 8px;">
-      <!-- Progressive trust model - foundation -->
       <div style="background: #e6f3ff; border: 2px solid #0066cc; padding: 10px; text-align: center; font-weight: bold; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
         🔐 Secure-by-Default Pipeline
       </div>
@@ -309,6 +342,8 @@ img/onboarding*
 <!--
 Julen: Show what the developer gets automatically
 This is Andrew's trust model in action
+
+... I don't think we need this.
 -->
 
 ---
@@ -612,29 +647,15 @@ This is what it looks like when security and developer experience align
 
 ---
 
-# What's Next? Community Day Talk (June 26)
+# Join us again
+### OpenSSF Community Day
 
-<div style="display: flex; gap: 40px; align-items: center;">
-  <div style="flex: 1;">
-    <h3>🔍 Deeper Dive Topics</h3>
-    <ul>
-      <li>Progressive trust model architecture</li>
-      <li>Community contribution workflow</li>
-      <li>Task promotion and sharing</li>
-      <li>Policy engine implementation</li>
-      <li>Real-world examples at scale</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <h3>📅 Same Speakers, Different Angle</h3>
-    <p>Today: <strong>Developer experience</strong></p>
-    <p>Thursday: <strong>Architecture & community</strong></p>
-    <br>
-    <p style="background: #e3f2fd; padding: 15px; border-radius: 5px;">
-      <strong>Perfect complement!</strong> See how the user experience you saw today maps to the technical architecture.
-    </p>
-  </div>
-</div>
+#### 🔍 Deeper Dive Topics
+
+* Another look at the trust model
+* Extending the build platform with community contribution
+* Designing flexible tasks
+
 
 <!--
 Set expectations for the Community Day talk
