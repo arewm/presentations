@@ -271,7 +271,7 @@ Set expectations for what's coming next
 
 ---
 
-# Hands-On: Quick Onboarding - From Zero to Building
+# Quick Onboarding - From Zero to Building
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
@@ -288,130 +288,60 @@ Set expectations for what's coming next
   </div>
 </div>
 
+<!--
+Julen: Show how easy is to onboard a new build.
+You just need to point Konflux to a git repository and the Containerfile
+-->
+
 ---
 
-# Hands-On: Quick Onboarding - From Zero to Building
+# Quick Onboarding - From Zero to Building
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1; display: flex; justify-content: center;">
-    <img src="img/onboarding-pr.png" width="400" alt="Onboarding pull request">
+    <img src="img/onboarding-pr.png" width="500" alt="Onboarding pull request">
   </div>
   <div style="flex: 1; display: flex; justify-content: center;">
-    <img src="img/onboarding-pipeline-on-repo.png" width="400" alt="Onboarding tekton pipeline">
+    <img src="img/onboarding-pipeline-on-repo.png" width="500" alt="Onboarding tekton pipeline">
   </div>
 </div>
 
+<!--
+Julen: Konflux will open a pull request to onboard the repository.
+The build pipeline is on the git repo. The developer owns it going forward.
+-->
+
 ---
 
-# Hands-On: Quick Onboarding - From Zero to Building
+# Quick Onboarding - From Zero to Building
 
 <div style="display: flex; gap: 30px; align-items: center;">
-  <div style="flex: 1;">
-    <img src="img/onboarding-pipeline-ui.png" width="800" alt="Onboarding pull request">
+  <div style="flex: 1; justify-content: center;">
+    <img src="img/onboarding-pipeline-ui.png" width="1000" alt="Onboarding pull request">
   </div>
 </div>
 
 <!--
-Julen: Show the UI for onboarding a repository
-Show how Konflux auto-detects the project type
-Show the generated Pipelines-as-Code configuration
-Emphasize how this "just works" for most projects
-
-img/onboarding*
--->
-
-<!---
-
-# The Magic: Secure by Default
-
-<div style="display: flex; gap: 40px; align-items: flex-start;">
-  <div style="flex: 1;">
-    <div style="display: flex; flex-direction: column; justify-content: center; height: 300px; gap: 8px;">
-      <div style="background: #e6f3ff; border: 2px solid #0066cc; padding: 10px; text-align: center; font-weight: bold; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-        🔐 Secure-by-Default Pipeline
-      </div>
-      <div style="background: #fff0e6; border: 2px solid #ff8c00; padding: 10px; text-align: center; font-weight: bold; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-        📦 Trusted Artifacts
-      </div>
-      <div style="background: #f0e6ff; border: 2px solid #8c00ff; padding: 10px; text-align: center; font-weight: bold; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-        ✅ Trusted Tasks
-      </div>
-      <div style="background: #e6ffe6; border: 2px solid #00cc66; padding: 10px; text-align: center; font-weight: bold; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-        🏗️ Tekton + Kubernetes
-      </div>
-    </div>
-  </div>
-  <div style="flex: 1;">
-    <h3>Instant Security Benefits</h3>
-    <ul>
-      <li><strong>Observer attestations:</strong> Tekton Chains generates SLSA provenance</li>
-      <li><strong>Tamper detection:</strong> Artifacts signed and verified</li>
-      <li><strong>Audit trail:</strong> Every step recorded</li>
-      <li><strong>Policy compliance:</strong> Built-in security checks</li>
-    </ul>
-  </div>
-</div>
-
-<!--
-Julen: Show what the developer gets automatically
-This is Andrew's trust model in action
-
-... I don't think we need this.
+Julen: It works out of the box. The build pipeline almost always builds successfully with the
+default configuration.
 -->
 
 ---
 
-# Hands-On: Making Your First Pipeline Changes
-
-<div style="display: flex; gap: 30px; align-items: center;">
-  <div style="flex: 1;">
-    <h3>🛠️ Customization</h3>
-    <ul>
-      <li>Pipeline lives in **your** repo</li>
-      <li>Modify `.tekton/` directory</li>
-      <li>Add custom build args</li>
-      <li>Test changes in PRs</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <img src="img/pac-pipeline-in-repo.svg" width="400" alt="Pipeline-as-Code in repository">
-  </div>
-</div>
-
-```yaml
-# .tekton/build-pipeline.yaml
-spec:
-  params:
-    - name: build-platforms
-      value:
-      - linux/x86_64
-      - linux/arm64
-    - name: build-source-image
-      value: 'true'
-```
-
-<!--
-Julen: Show how the pipeline configuration lives in the developer's repository
-Show making a simple change like adding build arguments
-Emphasize developer ownership and control
--->
-
----
-
-# Hands-On: Enabling Security Tasks
+# Built-in Security Tasks
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
     <h3>🔍 Security Integration</h3>
     <ul>
-      <li>Vulnerability scanning with Snyk</li>
+      <li>Vulnerability scanning with Clair</li>
       <li>SAST analysis</li>
-      <li>Container image scanning</li>
+      <li>Malware scanning with ClamAV</li>
       <li>License compliance</li>
     </ul>
   </div>
   <div style="flex: 1;">
-    <img src="img/enable-security-tasks.svg" width="400" alt="Enabling security tasks">
+    <img src="img/builtin-checks.png" width="400" alt="Built-in security checks">
   </div>
 </div>
 
@@ -420,8 +350,71 @@ Emphasize developer ownership and control
 </div>
 
 <!--
-Julen: Show the practical configuration
+Julen: Lot of security tasks are built in and will work out of the box or after providing credentials.
 These are the trusted tasks from Andrew's model
+-->
+
+---
+
+# Road to compliance
+
+Conforma CI check
+
+<div style="display: flex; gap: 40px; align-items: center; justify-content: center;">
+  <img src="img/conforma-its-violations-github.png" width="800" alt="Onboarding tekton pipeline">
+</div>
+
+<!--
+Julen: Konflux allows to check compliance with the policies on CI checks.
+Great feedback loop to iterate fast and get compliant to conforma policy builds.
+-->
+
+---
+
+# Road to compliance
+
+Conforma CI check
+
+<div style="display: flex; gap: 40px; align-items: center; flex-direction: column;">
+  <img src="img/conforma-its-violations.png" width="1000" alt="Onboarding tekton pipeline">
+</div>
+
+<!--
+Julen: Deeper details of the violations can be found on Konflux UI, including instructions to fix
+or exclude them from your policy..
+-->
+
+---
+
+# Road to compliance
+
+Making Your First Pipeline Changes
+
+<div style="display: flex; gap: 30px; align-items: center;">
+  <div style="flex: 1;">
+    <h3>🛠️ Customization</h3>
+    <ul>
+      <li>Pipeline lives in **your** repo</li>
+      <li>Modify `.tekton/` directory</li>
+      <li>Test changes in PRs</li>
+    </ul>
+    <code style="display: flex; align-tems: left;">
+    # Enable source image build<br>
+    spec:<br>
+      &nbsp&nbspparams:<br>
+        &nbsp&nbsp&nbsp&nbsp- name: build-source-image<br>
+          &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue: 'true'<br>
+    </code>
+  </div>
+  <div style="flex: 1;">
+    <img src="img/conforma-its-iterating-towards-compliance.png" width="400" alt="Iterating towards compliance conforma">
+    <img src="img/conforma-its-iterating-towards-compliance-github.png" width="400" alt="Iterating towards compliance conforma GitHub">
+  </div>
+</div>
+
+<!--
+Julen: Easy iteration to harden your builds modifying the parameters of the build pipelines
+the developer owns. Easily fix the compliance violations one at a time.
 -->
 
 ---
@@ -438,17 +431,33 @@ These are the trusted tasks from Andrew's model
       <li><strong>Auditable:</strong> Complete dependency record</li>
     </ul>
   </div>
+  <div style="flex: 1;">
+    <code style="display: flex; align-tems: left; font-size: 12pt; width=500">
+      # Enable hermetic builds and prefetch<br>
+      # gomod<br>
+      spec:<br>
+        &nbsp&nbspparams:<br>
+          &nbsp&nbsp&nbsp&nbsp- name: hermetic<br>
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue: 'true'<br>
+          &nbsp&nbsp&nbsp&nbsp- name: prefetch-input<br>
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue: '{"type": "gomod", "path": "."}'<br>
+    </code>
+    <hr>
+    <code style="display: flex; align-tems: left; font-size: 12pt; width=500">
+      # Enable hermetic builds and prefetch<br>
+      # Multiple package managers<br>
+      spec:<br>
+        &nbsp&nbspparams:<br>
+          &nbsp&nbsp&nbsp&nbsp- name: hermetic<br>
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue: 'true'<br>
+          &nbsp&nbsp&nbsp&nbsp- name: prefetch-input<br>
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue: '[<br>
+              &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{"type": "pip", "path": "."},<br>
+              &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{"type": "npm", "path": "."}<br>
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp]'<br>
+    </code>
+  </div>
 </div>
-
-```yaml
-# Enable hermetic builds and prefetch
-spec:
-  params:
-    - name: hermetic
-      value: "true"
-    - name: prefetch-input
-      value: '{"type": "gomod", "path": "."}'
-```
 
 <!--
 Julen: Demonstrate enabling hermetic builds
@@ -465,6 +474,10 @@ This is SLSA Build Level 3 in practice
     <img src="img/prefetch-transient-deps.png" width="800" alt="Prefetching logs">
   </div>
 </div>
+
+<!--
+Julen: The build pipeline is prefetching the deps and isolating the build now
+-->
 
 ---
 
@@ -500,8 +513,7 @@ Julen: Show the practical developer benefit
 This is where Andrew's usable security philosophy pays off
 -->
 
----
-
+<!-- We don't need this, already explained while customizing
 # Hands-On: Responding to Policy Violations
 
 <div style="display: flex; gap: 30px; align-items: center;">
@@ -588,7 +600,8 @@ This is proactive security maintenance
 
 <!--
 Julen: Show the developer experience of creating a release
-This is where all the trust building pays off
+This is where all the trust building pays off.
+The developer knows in advance the build is ready to release thanks to the Conforma ITS
 -->
 
 ---
