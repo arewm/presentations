@@ -178,7 +178,8 @@ This is what enables usable security
     <ul>
       <li><strong>Immediate protection:</strong> SLSA Build Level 3 from the first build</li>
       <li><strong>Minimal configuration:</strong> Secure defaults work out of the box</li>
-      <li><strong>Progressive enhancement:</strong> Enable additional scans as necessary</li>
+      <li><strong>See vulnerabilities:</strong> Scanners configured and ready to run</li>
+      <li><strong>Progressive enhancement:</strong> Add custom tasks and scans as necessary</li>
     </ul>
   </div>
   <div style="flex: 1; min-width: 250px;">
@@ -192,10 +193,6 @@ This is what enables usable security
   </div>
 </div>
 
-<div style="margin-top: 30px; text-align: center; font-size: 1.2em; color: #0066cc;">
-  <strong>Security that helps, not hinders</strong>
-</div>
-
 <!--
 Andrew: Explain the usable security philosophy
 This is different from traditional security approaches
@@ -207,7 +204,7 @@ This is different from traditional security approaches
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
-    <h3>🚨 Traditional Approach</h3>
+    <h3>Less of that</h3>
     <ul>
       <li>Security team creates policies</li>
       <li>Developers find out at release time</li>
@@ -216,7 +213,7 @@ This is different from traditional security approaches
     </ul>
   </div>
   <div style="flex: 1;">
-    <h3>✅ Policy-Driven Approach</h3>
+    <h3>More of this</h3>
     <ul>
       <li>Policies integrated into workflow</li>
       <li>Immediate feedback in PRs</li>
@@ -225,49 +222,6 @@ This is different from traditional security approaches
     </ul>
   </div>
 </div>
-
-<!--div style="margin-top: 30px; padding: 15px; background: #e8f5e8; border-left: 4px solid #4caf50;">
-  <strong>The goal:</strong> Turn policy violations into learning opportunities, not roadblocks
-</div-->
-
-<!--
-Andrew: Explain the shift from reactive to proactive security
-This is what makes security usable
--->
-
-<!---
-
-# From theory to practice
-
-<div style="display: flex; gap: 40px; align-items: center;">
-  <div style="flex: 1;">
-    <h3>🎓 What Andrew Covered</h3>
-    <ul>
-      <li>Progressive trust model architecture</li>
-      <li>Usable security principles</li>
-      <li>Policy-driven development approach</li>
-      <li>Why this matters for developers</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <h3>🛠️ What Julen Will Show</h3>
-    <ul>
-      <li>How this looks in practice</li>
-      <li>Actual developer workflow</li>
-      <li>Real onboarding experience</li>
-      <li>Security without friction</li>
-    </ul>
-  </div>
-</div>
-
-<div style="margin-top: 40px; text-align: center; font-size: 1.3em; color: #0066cc;">
-  <strong>Let's see the trust model in action!</strong>
-</div>
-
-<!--
-Andrew: Transition to Julen
-Set expectations for what's coming next
--->
 
 ---
 
@@ -345,10 +299,6 @@ default configuration.
   </div>
 </div>
 
-<div style="margin-top: 20px; padding: 15px; background: #fff8e1; border-left: 4px solid #ffa000;">
-  <strong>Key Insight:</strong> These tasks are from the trusted task library - vetted by the community, configured by you
-</div>
-
 <!--
 Julen: Lot of security tasks are built in and will work out of the box or after providing credentials.
 These are the trusted tasks from Andrew's model
@@ -392,10 +342,9 @@ Making Your First Pipeline Changes
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
-    <h3>🛠️ Customization</h3>
     <ul>
-      <li>Pipeline lives in **your** repo</li>
-      <li>Modify `.tekton/` directory</li>
+      <li>Pipelines lives in <strong>your</strong> repo</li>
+      <li>Update the <code>.tekton/</code> directory</li>
       <li>Test changes in PRs</li>
     </ul>
     <code style="display: flex; align-tems: left;">
@@ -423,12 +372,11 @@ the developer owns. Easily fix the compliance violations one at a time.
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
-    <h3>🔒 Supply Chain Hardening</h3>
     <ul>
       <li><strong>Hermetic:</strong> No network access during build</li>
-      <li><strong>Prefetch:</strong> Dependencies downloaded once</li>
+      <li><strong>Prefetch:</strong> Build platform controls dependency download</li>
       <li><strong>Reproducible:</strong> Same inputs = same outputs</li>
-      <li><strong>Auditable:</strong> Complete dependency record</li>
+      <li><strong>Auditable:</strong> Complete dependency record in SBOM</li>
     </ul>
   </div>
   <div style="flex: 1;">
@@ -436,25 +384,25 @@ the developer owns. Easily fix the compliance violations one at a time.
       # Enable hermetic builds and prefetch<br>
       # gomod<br>
       spec:<br>
-        &nbsp&nbspparams:<br>
-          &nbsp&nbsp&nbsp&nbsp- name: hermetic<br>
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue: 'true'<br>
-          &nbsp&nbsp&nbsp&nbsp- name: prefetch-input<br>
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue: '{"type": "gomod", "path": "."}'<br>
+        &nbsp params:<br>
+          &nbsp&nbsp&nbsp - name: hermetic<br>
+            &nbsp&nbsp&nbsp&nbsp&nbsp value: 'true'<br>
+          &nbsp&nbsp&nbsp - name: prefetch-input<br>
+            &nbsp&nbsp&nbsp&nbsp&nbsp value: '{"type": "gomod", "path": "."}'<br>
     </code>
     <hr>
     <code style="display: flex; align-tems: left; font-size: 12pt; width=500">
       # Enable hermetic builds and prefetch<br>
       # Multiple package managers<br>
       spec:<br>
-        &nbsp&nbspparams:<br>
-          &nbsp&nbsp&nbsp&nbsp- name: hermetic<br>
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue: 'true'<br>
-          &nbsp&nbsp&nbsp&nbsp- name: prefetch-input<br>
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue: '[<br>
-              &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{"type": "pip", "path": "."},<br>
-              &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{"type": "npm", "path": "."}<br>
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp]'<br>
+        &nbsp params:<br>
+          &nbsp&nbsp&nbsp - name: hermetic<br>
+            &nbsp&nbsp&nbsp&nbsp&nbsp value: 'true'<br>
+          &nbsp&nbsp&nbsp - name: prefetch-input<br>
+            &nbsp&nbsp&nbsp&nbsp&nbsp value: '[<br>
+              &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp {"type": "pip", "path": "."},<br>
+              &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp {"type": "npm", "path": "."}<br>
+            &nbsp&nbsp&nbsp&nbsp&nbsp ]'<br>
     </code>
   </div>
 </div>
@@ -462,7 +410,7 @@ the developer owns. Easily fix the compliance violations one at a time.
 <!--
 Julen: Demonstrate enabling hermetic builds
 Show the prefetch configuration for different package managers
-This is SLSA Build Level 3 in practice
+This is SLSA Build Level 3+ in practice
 -->
 
 ---
@@ -489,56 +437,22 @@ Julen: The build pipeline is prefetching the deps and isolating the build now
     <ul>
       <li>No surprise downloads</li>
       <li>Complete dependency manifest</li>
-      <li>Protection from typosquatting</li>
-      <li>Reproducible builds</li>
+      <li>Repeatable builds</li>
     </ul>
   </div>
   <div style="flex: 1;">
     <h3>📊 Compliance Benefits</h3>
     <ul>
       <li>Full SBOM generation</li>
-      <li>License analysis</li>
-      <li>Vulnerability scanning</li>
+      <li>Fewer scanning false positives</li>
       <li>Audit trail</li>
     </ul>
   </div>
 </div>
 
-<div style="margin-top: 30px; text-align: center; font-size: 1.2em; color: #0066cc;">
-  <strong>This is SLSA Build Level 3 in action!</strong>
-</div>
-
 <!--
 Julen: Show the practical developer benefit
 This is where Andrew's usable security philosophy pays off
--->
-
-<!-- We don't need this, already explained while customizing
-# Hands-On: Responding to Policy Violations
-
-<div style="display: flex; gap: 30px; align-items: center;">
-  <div style="flex: 1;">
-    <h3>🚨 Policy Guidance</h3>
-    <ul>
-      <li>Violations shown in PRs</li>
-      <li>Clear remediation steps</li>
-      <li>Progressive enforcement</li>
-      <li>Learn as you go</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <img src="img/policy-violation-pr.svg" width="400" alt="Policy violation in PR">
-  </div>
-</div>
-
-<div style="margin-top: 20px; padding: 15px; background: #fce4ec; border-left: 4px solid #e91e63;">
-  <strong>Gone are the days of:</strong> "I didn't know I had to do that!"
-</div>
-
-<!--
-Julen: Show a real policy violation in a PR
-Show how the feedback is actionable
-This is Andrew's policy-driven development in practice
 -->
 
 ---
@@ -583,10 +497,9 @@ This is proactive security maintenance
   <div style="flex: 1;">
     <h3>🚀 Release Service</h3>
     <ul>
-      <li>Build once, release everywhere</li>
-      <li>Environment-specific policies</li>
+      <li>Build once, release multiple times</li>
+      <li>Destination-specific policies</li>
       <li>Automated promotion gates</li>
-      <li>Complete audit trail</li>
     </ul>
   </div>
   <div style="flex: 1;">
@@ -643,25 +556,36 @@ This is the complete developer experience
 
 # Key Takeaways for Developers
 
-<div style="display: flex; gap: 40px; align-items: center;">
+<div style="display: flex;">
   <div style="flex: 1;">
-    <h3>🎯 What We Achieved</h3>
+    <h3>What developers get</h3>
+  </div>
+  <div style="flex: 1;">
+    <h3>Made possible by Konflux</h3>
+  </div>
+</div>
+<div style="display: flex; gap: 20px; margin-top: -20px;">
+  <div style="flex: 1;">
     <ul>
-      <li><strong>Quick start:</strong> Working pipeline in minutes</li>
-      <li><strong>Full control:</strong> Pipeline lives in your repo</li>
-      <li><strong>Progressive security:</strong> Add protections incrementally</li>
-      <li><strong>Guided compliance:</strong> Policy violations help you learn</li>
-      <li><strong>Automated maintenance:</strong> Security updates handled</li>
+      <dt><strong>Start quickly</strong></dt>
+      <dd>Working pipeline in minutes</dd>
+      <dt><strong>With full control</strong></dt>
+      <dd>Pipeline lives in your repo</dd>
+      <dt><strong>Progressively adding security</strong></dt>
+      <dd>Add protections incrementally</dd>
+      <dt><strong>Planning for compliance</strong></dt>
+      <dd>Policy violations prep for release</dd>
+      <dt><strong>And automated maintenance</strong></dt>
+      <dd>Security updates handled</dd>
     </ul>
   </div>
   <div style="flex: 1;">
-    <h3>🔗 Connection to Trust Model</h3>
     <ul>
-      <li>Every step builds more trust</li>
-      <li>Community-contributed tasks</li>
+      <li>Built on a strong foundation</li>
+      <li>Trust established on a task level</li>
       <li>Observer-generated attestations</li>
       <li>Policy-driven development</li>
-      <li>Build once, release everywhere</li>
+      <li>Build once, automate release</li>
     </ul>
   </div>
 </div>
@@ -673,14 +597,20 @@ This is what it looks like when security and developer experience align
 
 ---
 
-# Join us again
-### OpenSSF Community Day
+# More talks about Konflux
+<dl>
+  <dt><strong>Monday, June 23 (cdCon)</strong></dt>
+  <dd><em>Lock the Chef in the Kitchen: Enabling Accurate SBOMs Via Hermetic Builds</em></dd>
 
-#### 🔍 Deeper Dive Topics
+  <dt><strong>Wednesday, June 25 (cdCon)</strong></dt>
+  <dd><em>Not Just Ticking a Box ☑️ Establishing Trust in Artifacts with Provenance 🔐🔗</em></dd>
 
-* Another look at the trust model
-* Extending the build platform with community contribution
-* Designing flexible tasks
+  <dt><strong>Wednesday, June 25 (OpenGovCon)</strong></dt>
+  <dd><em>Building Trust Through Proactive Security - Key Parts of the Trusted Software Supply Chain</em></dd>
+
+  <dt><strong>Thursday, June 26 (OpenSSF Community Day)</strong></dt>
+  <dd><em>Who Are You Building For: Pipelines Have a Purpose</em></dd>
+</dl>
 
 
 <!--
