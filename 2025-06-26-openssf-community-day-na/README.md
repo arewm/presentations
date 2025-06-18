@@ -70,7 +70,7 @@ open pipelines-have-purpose.html
 From the repository root:
 ```bash
 python3 -m http.server 8000
-# Then visit: http://localhost:8000/2025-06-26-pipelines-have-purpose/pipelines-have-purpose.html
+# Then visit: http://localhost:8000/2025-06-26-openssf-community-day-na/pipelines-have-a-purpose.html
 ```
 
 ## Presenting
