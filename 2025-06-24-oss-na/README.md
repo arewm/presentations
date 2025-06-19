@@ -1,12 +1,12 @@
 # Who Are You Building For: Pipelines Have a Purpose
 
-**Open Source Summit North America 2025**
+## Open Source Summit North America 2025
 
 **Speakers:** Andrew McNamara & Julen Landa Alustiza, Red Hat  
 **Duration:** 20 minutes  
 **Event:** June 24, 2025, Denver, Colorado
 
-https://sched.co/1zfjl
+[sched.co](https://sched.co/1zfjl)
 
 ## Abstract
 
@@ -37,6 +37,7 @@ This talk walks through the complete developer journey in Konflux:
 ### Key Differentiators from Community Day Talk
 
 **June 24 (This Talk):**
+
 - Hands-on developer workflow
 - Step-by-step practical implementation
 - Real demos and screenshots
@@ -44,6 +45,7 @@ This talk walks through the complete developer journey in Konflux:
 - "How do I actually use this?"
 
 **June 26 (Community Day):**
+
 - Progressive trust model architecture
 - Community contribution workflow
 - Task bundle promotion process
@@ -53,7 +55,7 @@ This talk walks through the complete developer journey in Konflux:
 ### Demo Components
 
 - Live onboarding of a repository
-- Pipeline customization in `.tekton/` directory  
+- Pipeline customization in `.tekton/` directory
 - Enabling security tasks and hermetic builds
 - Policy violation examples and remediation
 - Mintmaker automated dependency updates
@@ -77,13 +79,16 @@ This talk walks through the complete developer journey in Konflux:
 ## Viewing the Presentation
 
 ### Option 1: Direct HTML Access
+
 ```bash
 cd 2025-06-24-oss-na
 open 2025-06-24-oss-na.html
 ```
 
 ### Option 2: Local Server (Recommended for development)
+
 From the repository root:
+
 ```bash
 python3 -m http.server 8000
 # Then visit: http://localhost:8000/2025-06-24-oss-na/pipelines-have-a-purpose.html

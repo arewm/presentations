@@ -1,12 +1,12 @@
+<!-- markdownlint-disable-file single-h1 no-inline-html line-length no-duplicate-heading no-trailing-punctuation heading-increment -->
+
 # Who Are You Building For: Pipelines Have a Purpose
 
 Andrew McNamara & Julen Landa Alustiza, Red Hat
 
 OpenSSF Community Day North America 2025
 
-
 ---
-
 
 # Pipelines serve dual purposes
 
@@ -37,9 +37,7 @@ Julen: Focus on developer flexibility perspective
 Both purposes must be served simultaneously
 -->
 
-
 ---
-
 
 # The Challenge: Balance Trust and Flexibility
 
@@ -52,9 +50,7 @@ We need to protect against supply chain threats while enabling developer product
 Traditional approaches often sacrifice one for the other
 -->
 
-
 ---
-
 
 # Our Approach: Progressive Trust Model
 
@@ -80,9 +76,7 @@ Traditional approaches often sacrifice one for the other
   </div>
 </div>
 
-
 ---
-
 
 # Building Trust: Trusted Task Library
 
@@ -115,9 +109,7 @@ Traditional approaches often sacrifice one for the other
   </div>
 </div>
 
-
 ---
-
 
 # Building Trust: Trusted Artifacts
 
@@ -153,9 +145,7 @@ Traditional approaches often sacrifice one for the other
   </div>
 </div>
 
-
 ---
-
 
 # Building Trust: Observer Generated Attestations
 
@@ -194,9 +184,7 @@ Traditional approaches often sacrifice one for the other
   </div>
 </div>
 
-
 ---
-
 
 # Building Trust: Policy Engine
 
@@ -238,9 +226,7 @@ Traditional approaches often sacrifice one for the other
   </div>
 </div>
 
-
 ---
-
 
 # Complete Trust Model: Release Service
 
@@ -284,15 +270,23 @@ Traditional approaches often sacrifice one for the other
   </div>
 </div>
 
-
 ---
-
 
 # Community Contribution Workflow
 
-```
-Personal Sandbox → Trusted Tasks → Community Sharing
-```
+<div style="display: flex; gap: 20px; align-items: center; justify-content: center;">
+  <div style="text-align: center; padding: 15px; border-radius: 10px; flex: 1;">
+    Personal Sandbox
+  </div>
+  <div style="font-size: 2em; color: #666;">→</div>
+  <div style="text-align: center; padding: 15px; border-radius: 10px; flex: 1;">
+    Establish trust
+  </div>
+  <div style="font-size: 2em; color: #666;">→</div>
+  <div style="text-align: center; padding: 15px; border-radius: 10px; flex: 1;">
+    Community Sharing
+  </div>
+</div>
 
 <div style="display: flex; gap: 30px; align-items: center; margin-top: 40px;">
   <div style="text-align: center; flex: 1;">
@@ -316,7 +310,6 @@ Policy-driven development guides the process
 -->
 
 ---
-
 
 # Demo: From Personal Task to Community Asset
 
@@ -346,9 +339,7 @@ Shows how contributor thinking shifts from "solving my problem" to "solving ever
 This is the key to successful community contribution
 -->
 
-
 ---
-
 
 # Demo: From Personal Task to Community Asset
 
@@ -376,8 +367,8 @@ Julen: Using a task on the same repo makes iterating easy for the developer.
 However the solution break the supply chain security.
 -->
 
-
 ---
+
 # Demo: From Personal Task to Community Asset
 
 ### Community contributed trusted task
@@ -408,7 +399,6 @@ Win-win scenario
 -->
 
 ---
-
 
 # Demo: From Personal Task to Community Asset
 
@@ -442,14 +432,13 @@ Win-win scenario
 </div>
 <div style="height: 20px;"></div>
 
-https://github.com/Zokormazo/oss-na-2025-demo
+[github.com/Zokormazo/oss-na-2025-demo](https://github.com/Zokormazo/oss-na-2025-demo)
 
 <!--
 Julen: Generalization is great. One task, many use cases.
 -->
 
 ---
-
 
 # The Developer Experience
 
@@ -479,9 +468,7 @@ This shows the transformation in developer experience
 From reactive compliance to proactive guidance
 -->
 
-
 ---
-
 
 # Key Takeaways
 
@@ -508,9 +495,7 @@ From reactive compliance to proactive guidance
   <h3>Build platforms should enable innovation while ensuring security</h3>
 </div>
 
-
 ---
-
 
 # Thank you!
 
@@ -551,4 +536,4 @@ From reactive compliance to proactive guidance
 <!--
 Questions and discussion
 Connect with us for more details about implementation
---> 
+-->

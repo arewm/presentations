@@ -1,6 +1,6 @@
 # Who Are You Building For: Pipelines Have a Purpose
 
-**OpenSSF Community Day North America 2025**
+## OpenSSF Community Day North America 2025
 
 **Speakers:** Andrew McNamara & Julen Landa Alustiza, Red Hat  
 **Duration:** 20 minutes  
@@ -20,14 +20,16 @@ We won't send the artifacts just anywhere, however, as we can tailor policies to
 
 **Core Theme:** Balancing security controls with developer flexibility through community contribution
 
-### Key Sections:
+### Key Sections
+
 1. **Dual Purpose Introduction** - Security controls vs developer flexibility
 2. **Progressive Trust Model** - Building security from foundation up
 3. **Community Contribution Workflow** - From personal sandbox to shared assets
 4. **Policy-Driven Development** - Violations as guidance, not blockers
 5. **Real-World Examples** - Container build generalization and Microshift use cases
 
-### Trust Model Layers:
+### Trust Model Layers
+
 - **Foundation:** K8s + Tekton
 - **Trusted Task Library:** Community-contributed verified tasks
 - **Trusted Artifacts:** Tamper-proof data flow
@@ -45,11 +47,12 @@ We won't send the artifacts just anywhere, however, as we can tailor policies to
 
 ## Links
 
-- **Event:** https://events.linuxfoundation.org/openssf-community-day-north-america/
-- **Session:** https://sched.co/1zhmp
-- **Konflux:** https://konflux-ci.dev
-- **Tekton Chains:** https://tekton.dev/docs/chains
-- **Conforma:** https://conforma.dev
+- **Event:** [OpenSSF Community Day NA](ttps://events.linuxfoundation.org/openssf-community-day-north-america/)
+- **Session:** [sched.co](https://sched.co/1zhmp)
+- **Konflux:** [konflux-ci.dev](https://konflux-ci.dev)
+- **Tekton Chains:** [tekton.dev](https://tekton.dev/docs/chains)
+- **Conforma:** [conforma.dev](https://conforma.dev)
+- **Hermeto:** [hermetoproject.github.io](https://hermetoproject.github.io/hermeto)
 
 ## Files
 
@@ -61,13 +64,16 @@ We won't send the artifacts just anywhere, however, as we can tailor policies to
 ## Viewing the Presentation
 
 ### Option 1: Direct HTML Access
+
 ```bash
 cd 2025-06-26-pipelines-have-purpose
 open pipelines-have-purpose.html
 ```
 
 ### Option 2: Local Server (Recommended for development)
+
 From the repository root:
+
 ```bash
 python3 -m http.server 8000
 # Then visit: http://localhost:8000/2025-06-26-openssf-community-day-na/pipelines-have-a-purpose.html
@@ -84,4 +90,4 @@ python3 -m http.server 8000
 
 **Andrew McNamara:** Focus on security controls perspective, SLSA compliance, and organizational trust establishment.
 
-**Julen Landa Alustiza:** Focus on developer flexibility, community contribution workflow, and real-world examples from Ansible/Microshift use cases. 
+**Julen Landa Alustiza:** Focus on developer flexibility, community contribution workflow, and real-world examples from Ansible/Microshift use cases.

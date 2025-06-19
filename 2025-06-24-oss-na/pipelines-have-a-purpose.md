@@ -1,50 +1,19 @@
+<!-- markdownlint-disable-file single-h1 no-inline-html line-length no-duplicate-heading no-trailing-punctuation -->
+
 # Who Are You Building For: Pipelines Have a Purpose
 
 Andrew McNamara & Julen Landa Alustiza, Red Hat
 
 Open Source Summit North America 2025
 
-<!---
-
-# Today's Focus: The Developer Experience
-
-<div style="display: flex; gap: 40px; align-items: center;">
-  <div style="flex: 1;">
-    <h3>📋 Our Journey Today</h3>
-    <ol>
-      <li><strong>Andrew:</strong> Progressive trust model</li>
-      <li><strong>Andrew:</strong> Usable security by default</li>
-      <li><strong>Andrew:</strong> Policy-driven development</li>
-      <li><strong>Julen:</strong> Hands-on onboarding</li>
-      <li><strong>Julen:</strong> Pipeline customization</li>
-      <li><strong>Julen:</strong> Security in practice</li>
-      <li><strong>Julen:</strong> Release workflow</li>
-    </ol>
-  </div>
-  <div style="flex: 1;">
-    <h3>🎯 What You'll Learn</h3>
-    <ul>
-      <li>Progressive trust model</li>
-      <li>Usable security concepts</li>
-      <li>Policy-driven development</li>
-      <li>Real developer workflow</li>
-      <li>Build once, release anywhere</li>
-    </ul>
-  </div>
-</div>
--->
 ---
 
-# Threats to the supply chain
+# Why care about pipelines?
 
 <div style="display: flex; flex-direction: column; align-items: center; margin: 0 auto; max-width: 100%;">
   <img src="../shared/diagrams/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats" style="display: block;">
 </div>
 <small style="margin-top: 10px; display: block;">Source: https://slsa.dev/spec/v1.1/threats-overview</small>
-
-<!--
-Is this something that we really need? 
--->
 
 ---
 
@@ -106,6 +75,24 @@ Is this something that we really need?
 
 ---
 
+<div style="display: flex; flex-direction: column; align-items: center; margin: 0 auto; max-width: 100%;">
+  <img src="../shared/logos/konflux-banner.png" alt="Konflux Banner" style="max-width: 100%; height: auto;">
+</div>
+
+Open source, cloud native software factory, focused on supply chain security
+
+- 🔧 **Kubernetes-based**: Everything as Custom Resources
+- 🏗️ **Comprehensive**: Build → Test → Release pipeline
+- 🛡️ **Security-first**: Attestations throughout the process
+- 📊 **Policy-driven**: Machine-readable policies gate releases
+- 📋 **SBOM**: Accurate with network restricted builds "Hermeto".
+
+.footnote[
+**Each step creates verifiable evidence**
+]
+
+---
+
 # Building up trust in the platform
 
 <div style="display: flex; gap: 40px; align-items: flex-start;">
@@ -120,7 +107,7 @@ Is this something that we really need?
       </div>
       <div style="background: #e6f3ff; border: 2px solid #0066cc; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
         <div style="width: 30px; height: 30px; margin-right: 10px;">
-          <img src="../shared/logos/conforma.png" alt="Conforma" style="width: 100%; height: 100%; object-fit: scale-down;"> 
+          <img src="../shared/logos/conforma.png" alt="Conforma" style="width: 100%; height: 100%; object-fit: scale-down;">
         </div>
         Policy-Driven Development
       </div>
@@ -204,21 +191,21 @@ This is different from traditional security approaches
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
-    <h3>Less of that</h3>
-    <ul>
-      <li>Security team creates policies</li>
-      <li>Developers find out at release time</li>
-      <li>"Why did my release fail?"</li>
-      <li>Scramble to fix issues</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
     <h3>More of this</h3>
     <ul>
       <li>Policies integrated into workflow</li>
       <li>Immediate feedback in PRs</li>
       <li>Clear violation descriptions</li>
       <li>Suggested remediation steps</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h3>Less of that</h3>
+    <ul>
+      <li>Security team create policies</li>
+      <li>Developers find out at release time</li>
+      <li>"Why did my release fail?"</li>
+      <li>Scramble to fix issues</li>
     </ul>
   </div>
 </div>
@@ -598,6 +585,7 @@ This is what it looks like when security and developer experience align
 ---
 
 # More talks about Konflux
+
 <dl>
   <dt><strong>Monday, June 23 (cdCon)</strong></dt>
   <dd><em>Lock the Chef in the Kitchen: Enabling Accurate SBOMs Via Hermetic Builds</em></dd>
@@ -611,7 +599,6 @@ This is what it looks like when security and developer experience align
   <dt><strong>Thursday, June 26 (OpenSSF Community Day)</strong></dt>
   <dd><em>Who Are You Building For: Pipelines Have a Purpose</em></dd>
 </dl>
-
 
 <!--
 Set expectations for the Community Day talk
