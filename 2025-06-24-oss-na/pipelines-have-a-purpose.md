@@ -187,31 +187,6 @@ This is different from traditional security approaches
 
 ---
 
-# Policy-driven development in practice
-
-<div style="display: flex; gap: 30px; align-items: center;">
-  <div style="flex: 1;">
-    <h3>More of this</h3>
-    <ul>
-      <li>Policies integrated into workflow</li>
-      <li>Immediate feedback in PRs</li>
-      <li>Clear violation descriptions</li>
-      <li>Suggested remediation steps</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <h3>Less of that</h3>
-    <ul>
-      <li>Security team create policies</li>
-      <li>Developers find out at release time</li>
-      <li>"Why did my release fail?"</li>
-      <li>Scramble to fix issues</li>
-    </ul>
-  </div>
-</div>
-
----
-
 # Quick Onboarding - From Zero to Building
 
 <div style="display: flex; gap: 30px; align-items: center;">
@@ -293,7 +268,62 @@ These are the trusted tasks from Andrew's model
 
 ---
 
-# Road to compliance
+# Making Your First Pipeline Changes
+
+<div style="display: flex; gap: 30px; align-items: center;">
+  <div style="flex: 1;">
+    <ul>
+      <li>Pipelines live in <strong>your</strong> repo</li>
+      <li>Update the <code>.tekton/</code> directory</li>
+      <li>Test changes in PRs</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <code style="display: flex; align-tems: left;">
+    # Enable arm64 image build<br>
+    spec:<br>
+      &nbsp&nbspparams:<br>
+        &nbsp&nbsp&nbsp&nbsp- name: build-platforms<br>
+          &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue:<br>
+          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp:- linux/x86_64<br>
+          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp:- linux/arm64<br>
+    </code>
+  </div>
+</div>
+<div style="height: 50px">
+</div>
+<div style="display: flex; gap: 40px; align-items: center; justify-content: center;">
+  <img src="img/multiarch-builds.png" width="1000" alt="Onboarding tekton pipeline">
+</div>
+
+---
+
+# Policy-driven development in practice
+
+<div style="display: flex; gap: 30px; align-items: center;">
+  <div style="flex: 1;">
+    <h3>More of this</h3>
+    <ul>
+      <li>Policies integrated into workflow</li>
+      <li>Immediate feedback in PRs</li>
+      <li>Clear violation descriptions</li>
+      <li>Suggested remediation steps</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h3>Less of that</h3>
+    <ul>
+      <li>Security team create policies</li>
+      <li>Developers find out at release time</li>
+      <li>"Why did my release fail?"</li>
+      <li>Scramble to fix issues</li>
+    </ul>
+  </div>
+</div>
+
+---
+
+# Policy-driven development in practice
 
 Conforma CI check
 
@@ -308,7 +338,7 @@ Great feedback loop to iterate fast and get compliant to conforma policy builds.
 
 ---
 
-# Road to compliance
+# Policy-driven development in practice
 
 Conforma CI check
 
@@ -323,16 +353,16 @@ or exclude them from your policy..
 
 ---
 
-# Road to compliance
+# Policy-driven development in practice
 
-Making Your First Pipeline Changes
+Iterating towards compliance
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
     <ul>
-      <li>Pipelines lives in <strong>your</strong> repo</li>
-      <li>Update the <code>.tekton/</code> directory</li>
+      <li>Tweak pipeline configuration <strong>your</strong> repo</li>
       <li>Test changes in PRs</li>
+      <li>Compliance feedback in PR checks</li>
     </ul>
     <code style="display: flex; align-tems: left;">
     # Enable source image build<br>
@@ -355,7 +385,7 @@ the developer owns. Easily fix the compliance violations one at a time.
 
 ---
 
-# Hands-On: Hermetic Builds + Prefetch
+# Hermetic Builds + Prefetch
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
@@ -402,12 +432,10 @@ This is SLSA Build Level 3+ in practice
 
 ---
 
-# Hands-On: Hermetic Builds + Prefetch
+# Hermetic Builds + Prefetch
 
-<div style="display: flex; gap: 30px; align-items: center;">
-  <div style="flex: 1;">
+<div style="display: flex; gap: 30px; align-items: center; justify-content: center;">
     <img src="img/prefetch-transient-deps.png" width="800" alt="Prefetching logs">
-  </div>
 </div>
 
 <!--
@@ -444,31 +472,21 @@ This is where Andrew's usable security philosophy pays off
 
 ---
 
-# Hands-On: Automated Dependency Updates
+# Automated Dependency Updates
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
     <h3>🤖 Mintmaker</h3>
     <ul>
       <li>Automated security updates</li>
-      <li>Policy-compliant changes</li>
-      <li>Tested before merging</li>
       <li>Policy-compliant updates</li>
+      <li>Tested before merging</li>
     </ul>
   </div>
   <div style="flex: 1;">
-    <img src="img/mintmaker-pr.svg" width="400" alt="Mintmaker PR">
+    <img src="img/mintmaker.png" width="600" alt="Mintmaker PR">
   </div>
 </div>
-
-```yaml
-# Mintmaker finds security issues
-CVE-2024-1234: High severity in dependency xyz
-# Creates PR with tested fix
-Updates xyz from 1.2.3 -> 1.2.4
-✅ All security checks pass
-✅ Policy compliance verified
-```
 
 <!--
 Julen: Show a real Mintmaker PR
@@ -478,19 +496,22 @@ This is proactive security maintenance
 
 ---
 
-# Hands-On: Triggering Releases
+# Triggering Releases
 
-<div style="display: flex; gap: 30px; align-items: center;">
+<h3 style="margin-bottom: 10px">🚀 Release Service</h3>
+<div style="display: flex; gap: 10px; align-items: center;">
   <div style="flex: 1;">
-    <h3>🚀 Release Service</h3>
     <ul>
       <li>Build once, release multiple times</li>
       <li>Destination-specific policies</li>
-      <li>Automated promotion gates</li>
     </ul>
   </div>
   <div style="flex: 1;">
-    <img src="img/release-promotion.svg" width="400" alt="Release promotion flow">
+    <ul>
+      <li>Automated promotion gates</li>
+      <li>Official releases</li>
+      <li>Developer releases</li>
+    </ul>
   </div>
 </div>
 
@@ -498,6 +519,9 @@ This is proactive security maintenance
   <strong>The payoff:</strong> Your artifact passes all dev/staging policies? It can automatically go to production.
 </div>
 
+<div style="margin-top: 20px; padding: 15px; background: #e6f3ff; justify-content: center">
+  <img src="img/release-pipelines.png" width="1000" alt="Release promotion flow">
+</div>
 <!--
 Julen: Show the developer experience of creating a release
 This is where all the trust building pays off.
