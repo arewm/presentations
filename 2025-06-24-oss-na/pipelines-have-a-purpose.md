@@ -385,7 +385,7 @@ the developer owns. Easily fix the compliance violations one at a time.
 
 ---
 
-# Hands-On: Hermetic Builds + Prefetch
+# Hermetic Builds + Prefetch
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
@@ -432,7 +432,7 @@ This is SLSA Build Level 3+ in practice
 
 ---
 
-# Hands-On: Hermetic Builds + Prefetch
+# Hermetic Builds + Prefetch
 
 <div style="display: flex; gap: 30px; align-items: center; justify-content: center;">
     <img src="img/prefetch-transient-deps.png" width="800" alt="Prefetching logs">
@@ -472,20 +472,19 @@ This is where Andrew's usable security philosophy pays off
 
 ---
 
-# Hands-On: Automated Dependency Updates
+# Automated Dependency Updates
 
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
     <h3>🤖 Mintmaker</h3>
     <ul>
       <li>Automated security updates</li>
-      <li>Policy-compliant changes</li>
-      <li>Tested before merging</li>
       <li>Policy-compliant updates</li>
+      <li>Tested before merging</li>
     </ul>
   </div>
   <div style="flex: 1;">
-    <img src="img/mintmaker.png" width="400" alt="Mintmaker PR">
+    <img src="img/mintmaker.png" width="600" alt="Mintmaker PR">
   </div>
 </div>
 
@@ -497,19 +496,22 @@ This is proactive security maintenance
 
 ---
 
-# Hands-On: Triggering Releases
+# Triggering Releases
 
-<div style="display: flex; gap: 30px; align-items: center;">
+<h3 style="margin-bottom: 10px">🚀 Release Service</h3>
+<div style="display: flex; gap: 10px; align-items: center;">
   <div style="flex: 1;">
-    <h3>🚀 Release Service</h3>
     <ul>
       <li>Build once, release multiple times</li>
       <li>Destination-specific policies</li>
-      <li>Automated promotion gates</li>
     </ul>
   </div>
   <div style="flex: 1;">
-    <img src="img/release-promotion.svg" width="400" alt="Release promotion flow">
+    <ul>
+      <li>Automated promotion gates</li>
+      <li>Official releases</li>
+      <li>Developer releases</li>
+    </ul>
   </div>
 </div>
 
@@ -517,6 +519,9 @@ This is proactive security maintenance
   <strong>The payoff:</strong> Your artifact passes all dev/staging policies? It can automatically go to production.
 </div>
 
+<div style="margin-top: 20px; padding: 15px; background: #e6f3ff; justify-content: center">
+  <img src="img/release-pipelines.png" width="1000" alt="Release promotion flow">
+</div>
 <!--
 Julen: Show the developer experience of creating a release
 This is where all the trust building pays off.
