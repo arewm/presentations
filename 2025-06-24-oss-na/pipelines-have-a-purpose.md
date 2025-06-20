@@ -143,7 +143,7 @@ Open source, cloud native software factory, focused on supply chain security
       <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Guidance at the right time</div>
       <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Fine-grained SLSA provenance</div>
       <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Tamper-proof data flow</div>
-      <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Community-vetted build steps</div>
+      <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Vetted build steps</div>
       <div style="height: 50px; display: flex; align-items: center; padding: 15px;">Secure execution environment</div>
     </div>
   </div>
@@ -156,6 +156,8 @@ This is what enables usable security
 -->
 
 ---
+
+<!-- TODO: arewm to merge with two slides earler. -->
 
 # Konflux's design philosophy
 
@@ -253,7 +255,6 @@ default configuration.
       <li>Vulnerability scanning with Clair</li>
       <li>SAST analysis</li>
       <li>Malware scanning with ClamAV</li>
-      <li>License compliance</li>
     </ul>
   </div>
   <div style="flex: 1;">
@@ -266,39 +267,6 @@ default configuration.
 Julen: Lot of security tasks are built in and will work out of the box or after providing credentials.
 These are the trusted tasks from Andrew's model
 -->
-
----
-
-# Making Your First Pipeline Changes
-
-<div style="display: flex; gap: 30px; align-items: top; padding-top: 30px">
-  <div style="flex: 1;">
-    <h3>🛠️ Customization</h3>
-    <ul>
-      <li>Pipelines live in <strong>your</strong> repo</li>
-      <li>Update the <code>.tekton/</code> directory</li>
-      <li>Test changes in PRs</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <code style="display: flex; flex-direction: column; align-tems: left; background: #343a40; color: #fff">
-    <span style="color: #6c757d;"># Enable arm64 image build</span><br>
-    spec:<br>
-      &nbsp&nbspparams:<br>
-        &nbsp&nbsp&nbsp&nbsp- name: build-platforms<br>
-          &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue:<br>
-          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- linux/x86_64<br>
-          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- linux/arm64
-    </code>
-  </div>
-</div>
-<div style="height: 50px">
-</div>
-<div style="display: flex; gap: 40px; align-items: center; justify-content: center;">
-  <img src="img/multiarch-builds.png" width="1000" alt="Onboarding tekton pipeline">
-</div>
-
----
 
 # Policy-driven development in practice
 
@@ -323,7 +291,7 @@ These are the trusted tasks from Andrew's model
   </div>
 </div>
 
----
+<!---
 
 # Policy-driven development in practice
 
@@ -338,7 +306,7 @@ Julen: Konflux allows to check compliance with the policies on CI checks.
 Great feedback loop to iterate fast and get compliant to conforma policy builds.
 -->
 
----
+<!---
 
 # Policy-driven development in practice
 
@@ -353,7 +321,7 @@ Julen: Deeper details of the violations can be found on Konflux UI, including in
 or exclude them from your policy..
 -->
 
----
+<!---
 
 # Policy-driven development in practice
 
@@ -386,6 +354,8 @@ the developer owns. Easily fix the compliance violations one at a time.
 -->
 
 ---
+
+<!-- julen to merge content from prior removed slides into this one -->
 
 # Hermetic Builds + Prefetch
 
@@ -446,34 +416,6 @@ Julen: The build pipeline is prefetching the deps and isolating the build now
 
 ---
 
-# What Hermetic + Prefetch Gives You
-
-<div style="display: flex; gap: 40px; align-items: center;">
-  <div style="flex: 1;">
-    <h3>🛡️ Security Benefits</h3>
-    <ul>
-      <li>No surprise downloads</li>
-      <li>Complete dependency manifest</li>
-      <li>Repeatable builds</li>
-    </ul>
-  </div>
-  <div style="flex: 1;">
-    <h3>📊 Compliance Benefits</h3>
-    <ul>
-      <li>Full SBOM generation</li>
-      <li>Fewer scanning false positives</li>
-      <li>Audit trail</li>
-    </ul>
-  </div>
-</div>
-
-<!--
-Julen: Show the practical developer benefit
-This is where Andrew's usable security philosophy pays off
--->
-
----
-
 # Automated Dependency Updates
 
 <div style="display: flex; gap: 30px; align-items: top;">
@@ -528,41 +470,6 @@ This is proactive security maintenance
 Julen: Show the developer experience of creating a release
 This is where all the trust building pays off.
 The developer knows in advance the build is ready to release thanks to the Conforma ITS
--->
-
----
-
-# The Complete Developer Journey
-
-<div style="display: flex; gap: 20px; align-items: center; justify-content: center;">
-  <div style="text-align: center; padding: 15px; background: #f0f8ff; border-radius: 10px; flex: 1;">
-    <strong>1. Onboard</strong><br>
-    Point & click
-  </div>
-  <div style="font-size: 2em; color: #666;">→</div>
-  <div style="text-align: center; padding: 15px; background: #fff8e1; border-radius: 10px; flex: 1;">
-    <strong>2. Customize</strong><br>
-    Your repo, your rules
-  </div>
-  <div style="font-size: 2em; color: #666;">→</div>
-  <div style="text-align: center; padding: 15px; background: #fce4ec; border-radius: 10px; flex: 1;">
-    <strong>3. Secure</strong><br>
-    Enable protections
-  </div>
-  <div style="font-size: 2em; color: #666;">→</div>
-  <div style="text-align: center; padding: 15px; background: #e8f5e8; border-radius: 10px; flex: 1;">
-    <strong>4. Release</strong><br>
-    Deploy with confidence
-  </div>
-</div>
-
-<div style="margin-top: 40px; text-align: center; font-size: 1.3em; color: #0066cc;">
-  <strong>Security and compliance, built into your development workflow</strong>
-</div>
-
-<!--
-Julen: Tie this back to the complete journey
-This is the complete developer experience
 -->
 
 ---
