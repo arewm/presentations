@@ -189,7 +189,7 @@ This is different from traditional security approaches
 
 # Quick Onboarding - From Zero to Building
 
-<div style="display: flex; gap: 30px; align-items: center;">
+<div style="display: flex; gap: 30px; align-items: top;">
   <div style="flex: 1;">
     <h3>🚀 Getting Started</h3>
     <ul>
@@ -199,7 +199,7 @@ This is different from traditional security approaches
       <li>Understand what happened</li>
     </ul>
   </div>
-  <div style="flex: 1;">
+  <div style="flex: 1; justify-content: center;">
     <img src="img/onboarding.png" width="400" alt="Onboarding UI">
   </div>
 </div>
@@ -246,7 +246,7 @@ default configuration.
 
 # Built-in Security Tasks
 
-<div style="display: flex; gap: 30px; align-items: center;">
+<div style="display: flex; gap: 30px; align-items: top;">
   <div style="flex: 1;">
     <h3>🔍 Security Integration</h3>
     <ul>
@@ -257,6 +257,7 @@ default configuration.
     </ul>
   </div>
   <div style="flex: 1;">
+    <h3></h3>
     <img src="img/builtin-checks.png" width="400" alt="Built-in security checks">
   </div>
 </div>
@@ -270,8 +271,9 @@ These are the trusted tasks from Andrew's model
 
 # Making Your First Pipeline Changes
 
-<div style="display: flex; gap: 30px; align-items: center;">
+<div style="display: flex; gap: 30px; align-items: top; padding-top: 30px">
   <div style="flex: 1;">
+    <h3>🛠️ Customization</h3>
     <ul>
       <li>Pipelines live in <strong>your</strong> repo</li>
       <li>Update the <code>.tekton/</code> directory</li>
@@ -279,14 +281,14 @@ These are the trusted tasks from Andrew's model
     </ul>
   </div>
   <div style="flex: 1;">
-    <code style="display: flex; align-tems: left;">
-    # Enable arm64 image build<br>
+    <code style="display: flex; flex-direction: column; align-tems: left; background: #343a40; color: #fff">
+    <span style="color: #6c757d;"># Enable arm64 image build</span><br>
     spec:<br>
       &nbsp&nbspparams:<br>
         &nbsp&nbsp&nbsp&nbsp- name: build-platforms<br>
           &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue:<br>
-          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp:- linux/x86_64<br>
-          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp:- linux/arm64<br>
+          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- linux/x86_64<br>
+          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- linux/arm64
     </code>
   </div>
 </div>
@@ -360,12 +362,12 @@ Iterating towards compliance
 <div style="display: flex; gap: 30px; align-items: center;">
   <div style="flex: 1;">
     <ul>
-      <li>Tweak pipeline configuration <strong>your</strong> repo</li>
+      <li>Update the <code>.tekton/</code> directory</li>
       <li>Test changes in PRs</li>
       <li>Compliance feedback in PR checks</li>
     </ul>
-    <code style="display: flex; align-tems: left;">
-    # Enable source image build<br>
+    <code style="display: flex; flex-direction: column; align-tems: left; background: #343a40; color: #fff">
+    <span style="color: #6c757d;"># Enable source image build</span><br>
     spec:<br>
       &nbsp&nbspparams:<br>
         &nbsp&nbsp&nbsp&nbsp- name: build-source-image<br>
@@ -387,7 +389,7 @@ the developer owns. Easily fix the compliance violations one at a time.
 
 # Hermetic Builds + Prefetch
 
-<div style="display: flex; gap: 30px; align-items: center;">
+<div style="display: flex; gap: 30px; align-items: top;">
   <div style="flex: 1;">
     <ul>
       <li><strong>Hermetic:</strong> No network access during build</li>
@@ -397,9 +399,9 @@ the developer owns. Easily fix the compliance violations one at a time.
     </ul>
   </div>
   <div style="flex: 1;">
-    <code style="display: flex; align-tems: left; font-size: 12pt; width=500">
-      # Enable hermetic builds and prefetch<br>
-      # gomod<br>
+    <code style="display: flex; flex-direction: column; align-tems: left; font-size: 12pt; width: 500; background: #343a40; color: #fff">
+      <span style="color: #6c757d;"># Enable hermetic builds and prefetch<br>
+      # gomod</span><br>
       spec:<br>
         &nbsp params:<br>
           &nbsp&nbsp&nbsp - name: hermetic<br>
@@ -407,10 +409,10 @@ the developer owns. Easily fix the compliance violations one at a time.
           &nbsp&nbsp&nbsp - name: prefetch-input<br>
             &nbsp&nbsp&nbsp&nbsp&nbsp value: '{"type": "gomod", "path": "."}'<br>
     </code>
-    <hr>
-    <code style="display: flex; align-tems: left; font-size: 12pt; width=500">
-      # Enable hermetic builds and prefetch<br>
-      # Multiple package managers<br>
+    <div style="height: 10px"></div>
+    <code style="display: flex; flex-direction: column; align-tems: left; font-size: 12pt; width: 500; background: #343a40; color: #fff">
+      <span style="color: #6c757d;"># Enable hermetic builds and prefetch<br>
+      # Multiple package managers<br></span>
       spec:<br>
         &nbsp params:<br>
           &nbsp&nbsp&nbsp - name: hermetic<br>
@@ -474,9 +476,9 @@ This is where Andrew's usable security philosophy pays off
 
 # Automated Dependency Updates
 
-<div style="display: flex; gap: 30px; align-items: center;">
+<div style="display: flex; gap: 30px; align-items: top;">
   <div style="flex: 1;">
-    <h3>🤖 Mintmaker</h3>
+    <h3>🤖 MintMaker</h3>
     <ul>
       <li>Automated security updates</li>
       <li>Policy-compliant updates</li>
@@ -484,7 +486,7 @@ This is where Andrew's usable security philosophy pays off
     </ul>
   </div>
   <div style="flex: 1;">
-    <img src="img/mintmaker.png" width="600" alt="Mintmaker PR">
+    <img src="img/mintmaker.png" width="600" alt="MintMaker PR">
   </div>
 </div>
 
@@ -499,7 +501,7 @@ This is proactive security maintenance
 # Triggering Releases
 
 <h3 style="margin-bottom: 10px">🚀 Release Service</h3>
-<div style="display: flex; gap: 10px; align-items: center;">
+<div style="display: flex; gap: 10px; align-items: top;">
   <div style="flex: 1;">
     <ul>
       <li>Build once, release multiple times</li>
