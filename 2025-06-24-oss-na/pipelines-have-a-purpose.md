@@ -263,6 +263,8 @@ default configuration.
   </div>
 </div>
 
+---
+
 <!--
 Julen: Lot of security tasks are built in and will work out of the box or after providing credentials.
 These are the trusted tasks from Andrew's model
@@ -270,9 +272,9 @@ These are the trusted tasks from Andrew's model
 
 # Policy-driven development in practice
 
-<div style="display: flex; gap: 30px; align-items: center;">
+<div style="display: flex; gap: 30px; align-items: top;">
   <div style="flex: 1;">
-    <h3>More of this</h3>
+    <h3>Hermetic Builds + Prefetch</h3>
     <ul>
       <li>Policies integrated into workflow</li>
       <li>Immediate feedback in PRs</li>
@@ -281,13 +283,9 @@ These are the trusted tasks from Andrew's model
     </ul>
   </div>
   <div style="flex: 1;">
-    <h3>Less of that</h3>
-    <ul>
-      <li>Security team create policies</li>
-      <li>Developers find out at release time</li>
-      <li>"Why did my release fail?"</li>
-      <li>Scramble to fix issues</li>
-    </ul>
+    <h3></h3>
+    <img src="img/conforma-its-iterating-towards-compliance.png" width="400" alt="Iterating towards compliance conforma">
+    <img src="img/conforma-its-iterating-towards-compliance-github.png" width="400" alt="Iterating towards compliance conforma GitHub">
   </div>
 </div>
 
