@@ -1,1 +1,3 @@
-reference-files/
+.reference-files/
+.devcontainer/.gitconfig.d/**
+.DS_Store
