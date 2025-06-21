@@ -13,7 +13,10 @@ Open Source Summit North America 2025
 <div style="display: flex; flex-direction: column; align-items: center; margin: 0 auto; max-width: 100%;">
   <img src="../shared/diagrams/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats" style="display: block;">
 </div>
-<small style="margin-top: 10px; display: block;">Source: https://slsa.dev/spec/v1.1/threats-overview</small>
+
+.footnote[
+Source: https://slsa.dev/spec/v1.1/threats-overview
+]
 
 ---
 
@@ -75,21 +78,29 @@ Open Source Summit North America 2025
 
 ---
 
-<div style="display: flex; flex-direction: column; align-items: center; margin: 0 auto; max-width: 100%;">
-  <img src="../shared/logos/konflux-banner.png" alt="Konflux Banner" style="max-width: 100%; height: auto;">
+# Design philosophy
+
+<div style="display: flex; gap: 40px; align-items: flex-start; justify-content: center;">
+  <div style="flex: 1; min-width: 250px;">
+    <h3 style="text-align: center;">🎯 Security by Default</h3>
+    <ul>
+      <li><strong>Immediate protection:</strong> SLSA Build Level 3 from the first build</li>
+      <li><strong>Minimal configuration:</strong> Secure defaults work out of the box</li>
+      <li><strong>See vulnerabilities:</strong> Scanners configured and ready to run</li>
+      <li><strong>Progressive enhancement:</strong> Add custom tasks and scans as necessary</li>
+      <li><strong>Accurate SBOMs:</strong> Configure network restricted builds with "Hermeto"</li>
+    </ul>
+  </div>
+  <div style="flex: 1; min-width: 250px;">
+    <h3 style="text-align: center;">🔄 Policy driven development</h3>
+    <ul>
+      <li><strong>Early detection:</strong> Find issues in development</li>
+      <li><strong>Learning opportunities:</strong> Violations become education</li>
+      <li><strong>Continuous improvement:</strong> Policies evolve with team</li>
+      <li><strong>Flexibility allowed:</strong> Policies allow for some changes</li>
+    </ul>
+  </div>
 </div>
-
-Open source, cloud native software factory, focused on supply chain security
-
-- 🔧 **Kubernetes-based**: Everything as Custom Resources
-- 🏗️ **Comprehensive**: Build → Test → Release pipeline
-- 🛡️ **Security-first**: Attestations throughout the process
-- 📊 **Policy-driven**: Machine-readable policies gate releases
-- 📋 **SBOM**: Accurate with network restricted builds "Hermeto".
-
-.footnote[
-**Each step creates verifiable evidence**
-]
 
 ---
 
@@ -111,7 +122,7 @@ Open source, cloud native software factory, focused on supply chain security
         </div>
         Policy-Driven Development
       </div>
-      <div style="background: #fff0e6; border: 2px solid #ff8c00; padding: 15px; text-align: center; font-weight: bold, height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+      <div style="background: #fff0e6; border: 2px solid #ff8c00; padding: 15px; text-align: center; font-weight: bold; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
         <div style="width: 30px; height: 30px; margin-right: 10px;">
           <img src="../shared/logos/tekton-chains.png" alt="Tekton Chains" style="width: 100%; height: 100%; object-fit: scale-down;">
         </div>
@@ -148,44 +159,6 @@ Open source, cloud native software factory, focused on supply chain security
     </div>
   </div>
 </div>
-
-<!--
-Andrew: This is the core architecture
-Each layer builds on the previous one
-This is what enables usable security
--->
-
----
-
-<!-- TODO: arewm to merge with two slides earler. -->
-
-# Konflux's design philosophy
-
-<div style="display: flex; gap: 40px; align-items: flex-start; justify-content: center;">
-  <div style="flex: 1; min-width: 250px;">
-    <h3 style="text-align: center;">🎯 Security by Default</h3>
-    <ul>
-      <li><strong>Immediate protection:</strong> SLSA Build Level 3 from the first build</li>
-      <li><strong>Minimal configuration:</strong> Secure defaults work out of the box</li>
-      <li><strong>See vulnerabilities:</strong> Scanners configured and ready to run</li>
-      <li><strong>Progressive enhancement:</strong> Add custom tasks and scans as necessary</li>
-    </ul>
-  </div>
-  <div style="flex: 1; min-width: 250px;">
-    <h3 style="text-align: center;">🔄 Policy driven development</h3>
-    <ul>
-      <li><strong>Early detection:</strong> Find issues in development</li>
-      <li><strong>Learning opportunities:</strong> Violations become education</li>
-      <li><strong>Continuous improvement:</strong> Policies evolve with team</li>
-      <li><strong>Flexibility allowed:</strong> Policies allow for some changes</li>
-    </ul>
-  </div>
-</div>
-
-<!--
-Andrew: Explain the usable security philosophy
-This is different from traditional security approaches
--->
 
 ---
 
@@ -289,71 +262,7 @@ These are the trusted tasks from Andrew's model
   </div>
 </div>
 
-<!---
-
-# Policy-driven development in practice
-
-Conforma CI check
-
-<div style="display: flex; gap: 40px; align-items: center; justify-content: center;">
-  <img src="img/conforma-its-violations-github.png" width="800" alt="Onboarding tekton pipeline">
-</div>
-
-<!--
-Julen: Konflux allows to check compliance with the policies on CI checks.
-Great feedback loop to iterate fast and get compliant to conforma policy builds.
--->
-
-<!---
-
-# Policy-driven development in practice
-
-Conforma CI check
-
-<div style="display: flex; gap: 40px; align-items: center; flex-direction: column;">
-  <img src="img/conforma-its-violations.png" width="1000" alt="Onboarding tekton pipeline">
-</div>
-
-<!--
-Julen: Deeper details of the violations can be found on Konflux UI, including instructions to fix
-or exclude them from your policy..
--->
-
-<!---
-
-# Policy-driven development in practice
-
-Iterating towards compliance
-
-<div style="display: flex; gap: 30px; align-items: center;">
-  <div style="flex: 1;">
-    <ul>
-      <li>Update the <code>.tekton/</code> directory</li>
-      <li>Test changes in PRs</li>
-      <li>Compliance feedback in PR checks</li>
-    </ul>
-    <code style="display: flex; flex-direction: column; align-tems: left; background: #343a40; color: #fff">
-    <span style="color: #6c757d;"># Enable source image build</span><br>
-    spec:<br>
-      &nbsp&nbspparams:<br>
-        &nbsp&nbsp&nbsp&nbsp- name: build-source-image<br>
-          &nbsp&nbsp&nbsp&nbsp&nbsp&nbspvalue: 'true'<br>
-    </code>
-  </div>
-  <div style="flex: 1;">
-    <img src="img/conforma-its-iterating-towards-compliance.png" width="400" alt="Iterating towards compliance conforma">
-    <img src="img/conforma-its-iterating-towards-compliance-github.png" width="400" alt="Iterating towards compliance conforma GitHub">
-  </div>
-</div>
-
-<!--
-Julen: Easy iteration to harden your builds modifying the parameters of the build pipelines
-the developer owns. Easily fix the compliance violations one at a time.
--->
-
 ---
-
-<!-- julen to merge content from prior removed slides into this one -->
 
 # Hermetic Builds + Prefetch
 
@@ -531,11 +440,6 @@ This is what it looks like when security and developer experience align
   <dd><em>Who Are You Building For: Pipelines Have a Purpose</em></dd>
 </dl>
 
-<!--
-Set expectations for the Community Day talk
-Make sure people understand these are complementary, not repetitive
--->
-
 ---
 
 # Thank you!
@@ -573,9 +477,3 @@ Make sure people understand these are complementary, not repetitive
      <div style="margin-top: 10px; font-size: 0.8em;">conforma.dev</div>
    </div>
 </div>
-
-<!--
-Questions and discussion
-Connect with us for more details about implementation
-Join us Thursday at OpenSSF Community Day for the architectural deep-dive!
--->
