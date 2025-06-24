@@ -366,10 +366,6 @@ This is proactive security maintenance
   </div>
 </div>
 
-<div style="margin-top: 20px; padding: 15px; background: #e8f5e8; border-left: 4px solid #4caf50;">
-  <strong>The payoff:</strong> Your artifact passes all dev/staging policies? It can automatically go to production.
-</div>
-
 <div style="margin-top: 20px; padding: 15px; background: #e6f3ff; justify-content: center">
   <img src="img/release-pipelines.png" width="1000" alt="Release promotion flow">
 </div>
