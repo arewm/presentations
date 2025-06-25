@@ -311,39 +311,9 @@ Policy-driven development guides the process
 
 ---
 
-# Demo: From Personal Task to Community Asset
+# Demo: Customizing the build pipeline
 
-### Dynamic Containerfile generation
-
-```bash
-# From specific implementation...
-COPY Containerfile /tmp/
-RUN buildah build -t $IMAGE /tmp/
-
-# To generalized trusted task...
-exec ${MY_SCRIPT}
-buildah build -t $IMAGE .
-```
-
-<div style="margin-top: 30px;">
-  <h4>Benefits of Generalization</h4>
-  <ul>
-    <li><strong>Reusability:</strong> Works for Ansible, and other projects</li>
-    <li><strong>Trust:</strong> No network access during script ensures compliance</li>
-    <li><strong>Community:</strong> Shared solution benefits everyone</li>
-  </ul>
-</div>
-
-<!--
-Shows how contributor thinking shifts from "solving my problem" to "solving everyone's problem"
-This is the key to successful community contribution
--->
-
----
-
-# Demo: From Personal Task to Community Asset
-
-### Sandbox custom task
+### Custom task to build execution environments
 
 <div style="display: flex; gap: 10px; align-items: center;">
   <div style="flex: 1;">
@@ -366,6 +336,57 @@ This is the key to successful community contribution
 Julen: Using a task on the same repo makes iterating easy for the developer.
 However the solution break the supply chain security.
 -->
+
+---
+
+# Demo: From Personal Task to Community Asset
+
+### Generic Dynamic Containerfile generation
+
+```bash
+# From specific implementation...
+ansible-builder create
+buildah build -t $IMAGE context/
+
+# To generalized implementation
+exec $MY_SCRIPT
+buildah build -t $IMAGE $CONTEXT_DIRECTORY
+```
+
+<div style="margin-top: 30px;">
+  <h4>Benefits of Generalization</h4>
+  <ul>
+    <li><strong>Reusability:</strong> Works for Ansible, and other projects</li>
+    <li><strong>Trust:</strong> No network access and accurate SBOMs during script ensures compliance</li>
+    <li><strong>Community:</strong> Shared solution benefits everyone</li>
+  </ul>
+</div>
+
+<!--
+Shows how contributor thinking shifts from "solving my problem" to "solving everyone's problem"
+This is the key to successful community contribution
+-->
+
+---
+
+# Generic task
+
+```yaml
+# My custom task
+- name: run-ansible-builder
+  params:
+    - name: SCRIPT_RUNNER_IMAGE
+      value: ghcr.io/ansible/community-ansible-dev-tools:latest
+    - name: SCRIPT
+      value: ansible-builder create
+    - name: HERMETIC
+      value: 'true'
+# Later on the pipeline the full reference of the script runner image
+# is injected to the SBOM
+- name: ADDITIONAL_BASE_IMAGES
+  value:
+    - $(tasks.run-ansible-builder.results.SCRIPT_RUNNER_IMAGE_REFERENCE)
+```
 
 ---
 
