@@ -17,27 +17,44 @@ OpenSSF Community Day North America 2025
       <li>Supply chain protection</li>
       <li>Establish organizational trust</li>
       <li>Policy compliance</li>
-      <li>Audit requirements</li>
     </ul>
   </div>
   <div style="flex: 1;">
     <h3>🛠️ Developer Flexibility</h3>
     <ul>
-      <li>Build once, release multiple times</li>
       <li>Customizable workflows</li>
-      <li>Community contribution</li>
       <li>Innovation enablement</li>
+      <li>Community contribution</li>
     </ul>
   </div>
 </div>
 
 ---
 
-# The Challenge: Balance Trust and Flexibility
+# Pipelines serve dual purposes
 
-<img src="../shared/diagrams/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats">
+<div style="display: flex; align-items: center; gap: 40px;">
+  <div style="flex: 1;">
+    <h3>🔒 Security Controls</h3>
+    <ul>
+      <li>Supply chain protection</li>
+      <li>Establish organizational trust</li>
+      <li>Policy compliance</li>
+    </ul>
+  </div>
+  <div style="flex: 1;">
+    <h3>🛠️ Developer Flexibility</h3>
+    <ul>
+      <li>Customizable workflows</li>
+      <li>Innovation enablement</li>
+      <li>Community contribution</li>
+    </ul>
+  </div>
+</div>
 
-<small>Source: https://slsa.dev/spec/v1.1/threats-overview</small>
+<div style="display: flex; flex-direction: column; align-items: center; margin: 0 auto; max-width: 100%;">
+  <img src="../shared/logos/konflux-banner.png" alt="Konflux Banner" style="max-width: 100%; height: auto;">
+</div>
 
 ---
 
