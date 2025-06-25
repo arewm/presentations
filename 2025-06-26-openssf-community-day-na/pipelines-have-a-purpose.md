@@ -14,10 +14,10 @@ OpenSSF Community Day North America 2025
   <div style="flex: 1;">
     <h3>🔒 Security Controls</h3>
     <ul>
+      <li>Supply chain protection</li>
       <li>Establish organizational trust</li>
       <li>Policy compliance</li>
       <li>Audit requirements</li>
-      <li>Supply chain protection</li>
     </ul>
   </div>
   <div style="flex: 1;">
@@ -31,12 +31,6 @@ OpenSSF Community Day North America 2025
   </div>
 </div>
 
-<!--
-Andrew: Focus on security controls perspective
-Julen: Focus on developer flexibility perspective
-Both purposes must be served simultaneously
--->
-
 ---
 
 # The Challenge: Balance Trust and Flexibility
@@ -44,11 +38,6 @@ Both purposes must be served simultaneously
 <img src="../shared/diagrams/slsa-supply-chain-threats.png" width="600" alt="SLSA supply chain threats">
 
 <small>Source: https://slsa.dev/spec/v1.1/threats-overview</small>
-
-<!--
-We need to protect against supply chain threats while enabling developer productivity
-Traditional approaches often sacrifice one for the other
--->
 
 ---
 
@@ -100,10 +89,10 @@ Traditional approaches often sacrifice one for the other
   </div>
   <div style="flex: 1;">
     <h3>Curated and Verified Tasks</h3>
-    <p>Community-contributed tasks that have been reviewed, tested, and approved for broader use.</p>
+    <p>Tasks that have been reviewed, tested, and approved for broader use.</p>
     <ul>
-      <li>Security scanning integration</li>
       <li>Build process standardization</li>
+      <li>Security scanning integration</li>
       <li>Policy compliance helpers</li>
     </ul>
   </div>
@@ -498,8 +487,8 @@ From reactive compliance to proactive guidance
     <h3>🎯 Pipeline Purpose</h3>
     <ul>
       <li>Security + Flexibility simultaneously</li>
-      <li>Community-driven improvements</li>
       <li>Policy driven development</li>
+      <li>Community-driven improvements</li>
     </ul>
   </div>
   <div style="flex: 1;">
@@ -553,8 +542,3 @@ From reactive compliance to proactive guidance
      <div style="margin-top: 10px; font-size: 0.8em;">conforma.dev</div>
    </div>
 </div>
-
-<!--
-Questions and discussion
-Connect with us for more details about implementation
--->
