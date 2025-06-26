@@ -473,7 +473,7 @@ Julen: Generalization is great. One task, many use cases.
 
 <div style="display: flex; gap: 40px; align-items: center;">
   <div style="flex: 1;">
-    <h3>Before Konflux/h3>
+    <h3>Before Konflux</h3>
     <ul>
       <li>Rigid pipeline</li>
       <li>Slow innovation</li>
