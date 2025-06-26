@@ -473,19 +473,17 @@ Julen: Generalization is great. One task, many use cases.
   <div style="flex: 1;">
     <h3>Before Konflux/h3>
     <ul>
-      <!--li>"I didn't know I had to do that!"</li>
-      <li>Pipeline changes by others</li>
-      <li>Compliance surprises</li>
-      <li>Manual security tasks</li-->
+      <li>Rigid pipeline</li>
+      <li>Slow innovation</li>
     </ul>
   </div>
   <div style="flex: 1;">
     <h3>After Konflux</h3>
     <ul>
-      <!--li>Policy guidance in PRs</li>
-      <li>Self-service customization</li>
+      <li>Customizable pipeline</li>
+      <li>Immediate feedback</li>
+      <li>Continuous innovation</li>
       <li>Community task library</li>
-      <li>Automatic compliance</li-->
     </ul>
   </div>
 </div>
