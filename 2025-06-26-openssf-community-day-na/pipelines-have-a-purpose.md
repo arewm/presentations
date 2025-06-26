@@ -64,21 +64,21 @@ OpenSSF Community Day North America 2025
   <div style="flex: 1;">
     <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
       <!-- Empty placeholders for future layers -->
-      <div style="height: 50px;"></div>
-      <div style="height: 50px;"></div>
-      <div style="height: 50px;"></div>
-      <div style="height: 50px;"></div>
-      <div style="height: 50px;"></div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
       <!-- Foundation layer -->
-      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         K8s + Tekton
       </div>
     </div>
   </div>
   <div style="flex: 1;">
-    <h3>Foundation Platform</h3>
-    <p>Kubernetes provides RBAC, containerization, and namespace isolation. Tekton provides the pipeline execution framework with observer attestations.</p>
-    <img src="../shared/logos/tekton.png" width="200" alt="Tekton" style="margin-top: 20px;">
+    <h3>Isolated builds</h3>
+    <p>Kubernetes provides RBAC, containerization, and namespace isolation. Tekton provides the pipeline execution framework.</p>
+    <img src="../shared/logos/tekton.png" width="150" alt="Tekton" style="margin-top: 20px;">
   </div>
 </div>
 
@@ -90,16 +90,16 @@ OpenSSF Community Day North America 2025
   <div style="flex: 1;">
     <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
       <!-- Empty placeholders for future layers -->
-      <div style="height: 50px;"></div>
-      <div style="height: 50px;"></div>
-      <div style="height: 50px;"></div>
-      <div style="height: 50px;"></div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
       <!-- Trusted Task Library layer -->
-      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Trusted Task Library
       </div>
       <!-- Foundation layer -->
-      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         K8s + Tekton
       </div>
     </div>
@@ -110,8 +110,8 @@ OpenSSF Community Day North America 2025
     <ul>
       <li>Build process standardization</li>
       <li>Security scanning integration</li>
-      <li>Policy compliance helpers</li>
     </ul>
+    <img src="../shared/logos/pipelines-as-code.png" width="150" alt="pipelines as code" style="margin-top: 20px;">
   </div>
 </div>
 
@@ -123,19 +123,19 @@ OpenSSF Community Day North America 2025
   <div style="flex: 1;">
     <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
       <!-- Empty placeholders for future layers -->
-      <div style="height: 50px;"></div>
-      <div style="height: 50px;"></div>
-      <div style="height: 50px;"></div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
       <!-- Trusted Artifacts layer -->
-      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Trusted Artifacts
       </div>
       <!-- Trusted Task Library layer -->
-      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Trusted Task Library
       </div>
       <!-- Foundation layer -->
-      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         K8s + Tekton
       </div>
     </div>
@@ -144,10 +144,10 @@ OpenSSF Community Day North America 2025
     <h3>Tamper-Proof Data Flow</h3>
     <p>Secure artifact sharing between tasks with integrity verification.</p>
     <ul>
-      <li>Cryptographic signatures</li>
       <li>Tamper detection</li>
       <li>Build reproducibility</li>
     </ul>
+    <img src="../shared/logos/oci.png" width="150" alt="open container initiative" style="margin-top: 20px;">
   </div>
 </div>
 
@@ -159,34 +159,35 @@ OpenSSF Community Day North America 2025
   <div style="flex: 1;">
     <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
       <!-- Empty placeholders for future layers -->
-      <div style="height: 50px;"></div>
-      <div style="height: 50px;"></div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
       <!-- Observer Generated Attestations layer -->
-      <div style="background: #ff6666; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ff6666; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Observer Generated Attestations
       </div>
       <!-- Trusted Artifacts layer -->
-      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Trusted Artifacts
       </div>
       <!-- Trusted Task Library layer -->
-      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Trusted Task Library
       </div>
       <!-- Foundation layer -->
-      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         K8s + Tekton
       </div>
     </div>
   </div>
   <div style="flex: 1;">
     <h3>Independent Verification</h3>
-    <p>Tekton Chains generates SLSA provenance independently from the pipeline, preventing manipulation.</p>
+    <p>Tekton Chains generates signed SLSA provenance separately from the build.</p>
     <ul>
+      <li>Unforgeable provenance</li>
+      <li>Complete record of build steps</li>
       <li>SLSA Build Level 3</li>
-      <li>Tamper-resistant provenance</li>
-      <li>Complete build record</li>
     </ul>
+    <img src="../shared/logos/tekton-chains.png" width="150" alt="tekton chains" style="margin-top: 20px;">
   </div>
 </div>
 
@@ -198,25 +199,25 @@ OpenSSF Community Day North America 2025
   <div style="flex: 1;">
     <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
       <!-- Empty placeholder for future layer -->
-      <div style="height: 50px;"></div>
+      <div style="background: #ffffff; border: 2px solid #ffffff; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center; color: #ffffff">placeholder</div>
       <!-- Policy Engine layer -->
-      <div style="background: #ff3333; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ff3333; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Policy Engine
       </div>
       <!-- Observer Generated Attestations layer -->
-      <div style="background: #ff6666; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ff6666; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Observer Generated Attestations
       </div>
       <!-- Trusted Artifacts layer -->
-      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Trusted Artifacts
       </div>
       <!-- Trusted Task Library layer -->
-      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Trusted Task Library
       </div>
       <!-- Foundation layer -->
-      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         K8s + Tekton
       </div>
     </div>
@@ -229,6 +230,7 @@ OpenSSF Community Day North America 2025
       <li>PR-based policy guidance</li>
       <li>Conforma policy engine</li>
     </ul>
+    <img src="../shared/logos/conforma.png" width="150" alt="conforma" style="margin-top: 20px;">
   </div>
 </div>
 
@@ -240,39 +242,39 @@ OpenSSF Community Day North America 2025
   <div style="flex: 1;">
     <div style="display: flex; flex-direction: column; justify-content: center; height: 400px; gap: 10px;">
       <!-- Release Service layer (complete model) -->
-      <div style="background: #cc0000; color: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #cc0000; color: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Release Service
       </div>
       <!-- Policy Engine layer -->
-      <div style="background: #ff3333; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ff3333; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Policy Engine
       </div>
       <!-- Observer Generated Attestations layer -->
-      <div style="background: #ff6666; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ff6666; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Observer Generated Attestations
       </div>
       <!-- Trusted Artifacts layer -->
-      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ff9999; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Trusted Artifacts
       </div>
       <!-- Trusted Task Library layer -->
-      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: #ffcccc; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         Trusted Task Library
       </div>
       <!-- Foundation layer -->
-      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center;">
+      <div style="background: white; border: 2px solid #333; padding: 15px; text-align: center; font-weight: bold; width: 95%; height: 50px; display: flex; align-items: center; justify-content: center;">
         K8s + Tekton
       </div>
     </div>
   </div>
   <div style="flex: 1;">
     <h3>Build Once, Release Everywhere</h3>
-    <p>Single build artifacts can be safely promoted to multiple environments based on policy compliance.</p>
+    <p>Policy compliance is a required gate before protected releases.</p>
     <ul>
       <li>Environment-specific policies</li>
       <li>Automated release gating</li>
-      <li>Audit trail preservation</li>
     </ul>
+    <img src="../shared/logos/konflux-k-square.png" width="150" alt="konflux" style="margin-top: 20px;">
   </div>
 </div>
 
@@ -487,11 +489,6 @@ Julen: Generalization is great. One task, many use cases.
     </ul>
   </div>
 </div>
-
-<!--
-This shows the transformation in developer experience
-From reactive compliance to proactive guidance
--->
 
 ---
 
