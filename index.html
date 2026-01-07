@@ -4,10 +4,6 @@ title: "Presentations"
 author_profile: true
 ---
 
-<p style="text-align: right; margin-bottom: 1em;">
-  <a href="{{ '/all-presentations/' | relative_url }}" class="btn btn--primary">View All Presentations</a>
-</p>
-
 {% assign sorted_presentations = site.presentations | sort: 'date' | reverse %}
 {% for presentation in sorted_presentations limit:5 %}
 <article class="archive__item">

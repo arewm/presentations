@@ -1,6 +1,6 @@
 # Site settings
-title: Presentations | Andrew McNamara
-email: contact@arewm.com
+title: Presentations
+email: contact[at]arewm.com
 description: >-
   Technical presentations on software supply chain security, CI/CD, and DevSecOps
   by Andrew McNamara.
@@ -14,7 +14,6 @@ remote_theme: mmistakes/minimal-mistakes
 minimal_mistakes_skin: "default"
 
 plugins:
-  - jekyll-feed
   - jekyll-seo-tag
   - jekyll-paginate
   - jekyll-sitemap
@@ -32,30 +31,27 @@ collections:
 author:
   name: "Andrew McNamara"
   avatar: "https://avatars.githubusercontent.com/u/16674323"
-  bio: "Software supply chain architect | SLSA maintainer | DevSecOps advocate"
-  email: "contact@arewm.com"
-  links:
-    - label: "Main Site"
-      icon: "fas fa-fw fa-home"
-      url: "https://arewm.com"
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/arewm"
-    - label: "Sessionize"
-      icon: "fas fa-fw fa-microphone"
-      url: "https://sessionize.com/arewm"
+  bio: "Usable supply chain security advocate and SLSA maintainer"
+  # email: "contact@arewm.com"
+  # links:
+  #   - label: "GitHub"
+  #     icon: "fab fa-fw fa-github"
+  #     url: "https://github.com/arewm"
+  #   - label: "Sessionize"
+  #     icon: "fas fa-fw fa-microphone"
+  #     url: "https://sessionize.com/arewm"
 
 footer:
   links:
-    - label: "Main Site"
-      icon: "fas fa-fw fa-home"
-      url: "https://arewm.com"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/arewm/presentations"
     - label: "Sessionize"
       icon: "fas fa-fw fa-microphone"
       url: "https://sessionize.com/arewm"
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope"
+      url: "mailto:contact[at]arewm.com"
 
 # Defaults
 defaults:
@@ -74,6 +70,9 @@ defaults:
     values:
       permalink: /:path
 
+atom_feed:
+  hide: true
+  path: false
 # Exclude from processing
 exclude:
   - Gemfile
