@@ -1,0 +1,237 @@
+      @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;700&family=Fira+Code:wght@300;400;500;700&display=swap');
+
+      /* Tilde-inspired minimalist hacker aesthetic */
+      body {
+        font-family: 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
+        background: #1a1a1a;
+        color: #c9c9c9;
+        overflow: hidden;
+        line-height: 1.4;
+      }
+      
+      .remark-slide-content {
+        background: #1a1a1a;
+        color: #c9c9c9;
+        font-size: 1.3em;
+        padding: 2em;
+        border: 1px solid #333;
+      }
+      
+      .remark-slide-content h1 { 
+        font-size: 2.5em; 
+        color: #ffffff;
+        text-transform: lowercase;
+        font-weight: 500;
+        border-bottom: 1px solid #555;
+        padding-bottom: 0.3em;
+        margin-bottom: 0.5em;
+      }
+      
+      .remark-slide-content h2 { 
+        font-size: 1.6em; 
+        color: #e6e6e6;
+        font-weight: 400;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+      }
+      
+      .remark-slide-content h3 { 
+        font-size: 1.3em; 
+        color: #cccccc;
+        font-weight: 400;
+        margin-bottom: 0.5em;
+      }
+      
+      /* Simple terminal-like code blocks */
+      code {
+        background: #2d2d2d;
+        border: 1px solid #444;
+        border-radius: 2px;
+        padding: 2px 6px;
+        color: #f0f0f0;
+        font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+        font-size: 0.9em;
+      }
+      
+      .remark-code, .remark-inline-code { 
+        font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+        background: #2d2d2d !important;
+        color: #f0f0f0 !important;
+      }
+      
+      pre {
+        background: #2d2d2d !important;
+        border: 1px solid #444;
+        border-radius: 3px;
+        padding: 15px;
+        overflow-x: auto;
+      }
+      
+      pre code {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        color: #f0f0f0 !important;
+      }
+      
+      /* Understated link styling */
+      a, a > code {
+        color: #7cb3d3;
+        text-decoration: underline;
+        transition: color 0.2s ease;
+      }
+      
+      a:hover {
+        color: #94c9e6;
+        text-decoration: underline;
+      }
+      
+      /* Simple list styling */
+      li {
+        margin: 0.4em 0;
+      }
+      
+      ul li {
+        list-style: none;
+        position: relative;
+      }
+      
+      ul li:before {
+        content: "*";
+        color: #888;
+        margin-right: 8px;
+        font-weight: bold;
+      }
+      
+      li p { 
+        line-height: 1.4em; 
+        margin: 0;
+      }
+      
+      /* Emphasis styling */
+      .large { 
+        font-size: 1.4em !important;
+        color: #ffffff;
+        font-weight: 500;
+      }
+      
+      strong {
+        color: #ffffff;
+        font-weight: 500;
+      }
+      
+      /* Clean footnotes */
+      .footnote {
+        position: absolute;
+        left: 50%;
+        bottom: 2em;
+        transform: translate(-50%, 0);
+        font-size: 0.8em;
+        color: #888;
+        border-top: 1px solid #333;
+        padding-top: 0.5em;
+        text-align: center;
+      }
+      
+      /* Title slides */
+      .inverse {
+        background: #0f0f0f;
+        color: #ffffff;
+        text-align: center;
+        border: 1px solid #333;
+      }
+      
+      .inverse h1, .inverse h2 {
+        color: #ffffff;
+        line-height: 1.2em;
+      }
+      
+      .inverse h1 {
+        text-transform: lowercase;
+        font-weight: 500;
+      }
+      
+      /* Two-column layout */
+      .left-column {
+        color: #888;
+        width: 22%;
+        height: 92%;
+        float: left;
+        font-size: 0.9em;
+        border-right: 1px solid #333;
+        padding-right: 1em;
+      }
+      
+      .left-column h2, .left-column h3 {
+        color: #999;
+        font-size: 0.9em;
+        margin: 0.5em 0;
+        text-transform: lowercase;
+        font-weight: 400;
+      }
+      
+      .left-column h2:last-of-type, .left-column h3:last-child {
+        color: #c9c9c9;
+        font-weight: 500;
+      }
+      
+      .right-column {
+        width: 73%;
+        float: right;
+        padding-top: 0;
+      }
+      
+      /* Minimal scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #1a1a1a;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #555;
+        border-radius: 3px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #666;
+      }
+      
+      /* Clean slide numbering */
+      .remark-slide-number {
+        color: #888 !important;
+        background: rgba(26, 26, 26, 0.8) !important;
+        border: none !important;
+        font-family: 'IBM Plex Mono', monospace !important;
+        font-size: 0.8em !important;
+      }
+      
+      /* Subtle emoji styling */
+      .remark-slide-content {
+        /* Remove any special emoji filters */
+      }
+      
+      /* Title page specific */
+      .title .footnote {
+        color: #7cb3d3;
+      }
+      
+      /* Table styling for nice padding and margins */
+      table {
+        border-collapse: collapse;
+        margin: 1.5em 0;
+        width: 100%;
+      }
+      th, td {
+        padding: 0.6em 1em;
+        border: 1px solid #444;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #232323;
+        color: #fff;
+        font-weight: 500;
+      }
