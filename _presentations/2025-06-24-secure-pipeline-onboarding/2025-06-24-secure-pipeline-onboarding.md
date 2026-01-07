@@ -1,8 +1,11 @@
 ---
-title: "Pipelines Have a Purpose"
+title: "Who Are You Building For: Pipelines Have a Purpose"
 event: "Open Source Summit NA"
 date: 2025-06-24
 slides_path: presentation.md
+session: "https://sched.co/1zfjl"
+recording: "https://www.youtube.com/watch?v=I61nJrEB4JU&list=PL-W3mvmFLwxEiSmmVSHNiRw06Ybk2Z_a9&index=1&pp=iAQB"
+excerpt: "Konflux enables developers to quickly onboard to secure build pipelines with zero-to-working setup in minutes, complete developer journey from onboarding through hermetic builds and policy-driven development."
 ---
 
 Software is built for a purpose. The same property applies to build platforms!

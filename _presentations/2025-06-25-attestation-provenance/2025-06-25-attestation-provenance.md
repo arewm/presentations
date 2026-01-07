@@ -1,11 +1,14 @@
 ---
-title: "Not just ticking a box: Establishing trust in artifacts with provenance"
+title: "Not Just Ticking a Box ☑️: Establishing Trust in Artifacts with Provenance 🔐🔗"
 event: "Open Source Summit NA"
-date: 2025-06-24
+date: 2025-06-25
 slides_path: presentation.md
 custom_css: custom.css
 co_presenter: "Ralph Bean"
 co_presenter_slides: "https://github.com/ralphbean/slides/tree/main/oss-na/2025"
+session: "https://sched.co/26HJr"
+recording: "https://www.youtube.com/watch?v=nyyBq6NmIVs&list=PL-W3mvmFLwxEiSmmVSHNiRw06Ybk2Z_a9&index=3&pp=iAQB"
+excerpt: "Moving beyond checkbox compliance to establish genuine trust in software artifacts through SLSA provenance, in-toto attestations, and verifiable supply chain security with Konflux."
 ---
 
 When you consume a software artifact in production, do you know its provenance? Just as physical products have stamps and certifications documenting their origin and quality, software artifacts need verifiable provenance to establish trust in the supply chain.

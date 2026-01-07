@@ -1,8 +1,11 @@
 ---
-title: "Pipelines Have a Purpose"
+title: "Who Are You Building For: Pipelines Have a Purpose"
 event: "OpenSSF Community Day NA"
 date: 2025-06-26
 slides_path: presentation.md
+session: "https://sched.co/1zhmp"
+recording: "https://www.youtube.com/watch?v=jqh_csIjRKM&list=PL-W3mvmFLwxEiSmmVSHNiRw06Ybk2Z_a9&index=5&pp=iAQB"
+excerpt: "The trust model in Konflux empowers developers to customize build pipelines for their specific needs while contributing improvements back to the community through verified, reusable Tekton tasks."
 ---
 
 Software is built for a purpose. The same property applies to build platforms!

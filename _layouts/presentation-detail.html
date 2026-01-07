@@ -21,22 +21,30 @@ layout: default
     </header>
 
     <section class="page__content" itemprop="text">
-      {% if page.recording or page.sessionize %}
+      {% if page.recording or page.session or page.slides_pdf %}
       <div class="notice--info">
         <h4 class="no_toc">Resources:</h4>
         <ul>
+          {% if page.slides_pdf %}
+          <li><a href="{{ page.slides_pdf }}">View Slides (PDF)</a></li>
+          {% elsif page.slides_path %}
           <li><a href="/presentations/slides.html?p={{ page.path | split: '/' | slice: 1 }}">View Full-Screen Presentation</a></li>
+          {% endif %}
           {% if page.recording %}
           <li><a href="{{ page.recording }}">Watch Recording</a></li>
           {% endif %}
-          {% if page.sessionize %}
-          <li><a href="{{ page.sessionize }}">Sessionize Profile</a></li>
+          {% if page.session %}
+          <li><a href="{{ page.session }}">Session Details</a></li>
           {% endif %}
         </ul>
       </div>
       {% else %}
       <div class="notice--primary">
+        {% if page.slides_pdf %}
+        <p><a href="{{ page.slides_pdf }}">View Slides (PDF)</a></p>
+        {% elsif page.slides_path %}
         <p><a href="/presentations/slides.html?p={{ page.path | split: '/' | slice: 1 }}">View Full-Screen Presentation</a></p>
+        {% endif %}
       </div>
       {% endif %}
 
