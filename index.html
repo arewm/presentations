@@ -1,8 +1,37 @@
-<a href="2025-04-16-nc-pace">2025-04-16-nc-pace</a><br/>
-<a href="2025-06-24-oss-na">2025-06-24-oss-na</a><br/>
-<a href="2025-06-26-openssf-community-day-na">2025-06-26-openssf-community-day-na</a><br/>
-<a href="examples">examples</a><br/>
-<a href="make-indexes.sh">make-indexes.sh</a><br/>
-<a href="README.md">README.md</a><br/>
-<a href="shared">shared</a><br/>
-<a href="templates">templates</a><br/>
+---
+layout: single
+title: "Presentations"
+author_profile: true
+---
+
+<p style="text-align: right; margin-bottom: 1em;">
+  <a href="{{ '/all-presentations/' | relative_url }}" class="btn btn--primary">View All Presentations</a>
+</p>
+
+{% assign sorted_presentations = site.presentations | sort: 'date' | reverse %}
+{% for presentation in sorted_presentations limit:5 %}
+<article class="archive__item">
+  <h2 class="archive__item-title" itemprop="headline">
+    <a href="{{ presentation.url | relative_url }}">{{ presentation.title }}</a>
+  </h2>
+  <p class="page__meta">
+    <i class="far fa-calendar-alt" aria-hidden="true"></i> {{ presentation.date | date: "%B %d, %Y" }}
+    {% if presentation.event %}
+    <span style="margin-left: 1em;">
+      <i class="fas fa-map-marker-alt" aria-hidden="true"></i> {{ presentation.event }}
+    </span>
+    {% endif %}
+  </p>
+  <p class="archive__item-excerpt" itemprop="description">
+    {{ presentation.excerpt | strip_html | truncatewords: 50 }}
+  </p>
+  <p>
+    <a href="{{ presentation.url | relative_url }}" class="btn btn--inverse">Read more</a>
+  </p>
+</article>
+<hr style="margin: 2em 0; border: none; border-top: 1px solid #e1e4e8;">
+{% endfor %}
+
+<p style="text-align: center; margin-top: 2em;">
+  <a href="{{ '/all-presentations/' | relative_url }}" class="btn btn--primary">View All Presentations</a>
+</p>

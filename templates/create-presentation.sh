@@ -1,186 +1,85 @@
 #!/bin/bash
 
-# Create new presentation with paired HTML and Markdown files in a dedicated directory
-# Usage: ./templates/create-presentation.sh presentation-name "Presentation Title"
-
-if [ $# -lt 1 ]; then
-    echo "Usage: $0 <presentation-name> [presentation-title]"
-    echo "Example: $0 my-awesome-talk \"My Awesome Talk\""
-    echo "Note: Run this script from the presentations repository root"
+if [ "$#" -lt 3 ]; then
+    echo "Usage: $0 <date-slug> <title> <event-name>"
+    echo "Example: $0 2025-12-01-my-talk \"My Awesome Talk\" \"Conference 2025\""
     exit 1
 fi
 
-PRESENTATION_NAME="$1"
-PRESENTATION_TITLE="${2:-$(echo $1 | sed 's/-/ /g' | sed 's/\b\w/\U&/g')}"
+DATE_SLUG=$1
+TITLE=$2
+EVENT=$3
+PRESENTATION_DIR="_presentations/$DATE_SLUG"
 
-# Ensure we're running from repository root
-if [ ! -d ".git" ] || [ ! -d "templates" ]; then
-    echo "Error: Please run this script from the presentations repository root"
-    echo "Usage: ./templates/create-presentation.sh presentation-name"
+# Extract date from slug (assumes YYYY-MM-DD format at start)
+DATE=$(echo $DATE_SLUG | grep -oE '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
+
+if [ -z "$DATE" ]; then
+    echo "Error: Date slug must start with YYYY-MM-DD format"
     exit 1
 fi
 
-# Create directory for the presentation
-echo "Creating presentation directory: ${PRESENTATION_NAME}/"
-mkdir -p "$PRESENTATION_NAME"
-mkdir -p "${PRESENTATION_NAME}/img"
+# Create presentation directory
+mkdir -p "$PRESENTATION_DIR/img"
 
-# Create markdown file
-cat > "${PRESENTATION_NAME}/${PRESENTATION_NAME}.md" << EOF
+# Create presentation.md
+cat > "$PRESENTATION_DIR/presentation.md" << 'EOF'
 class: center, middle, title-slide
 
-# ${PRESENTATION_TITLE}
-
+# TITLE_PLACEHOLDER
 ## Subtitle
-
-### Your Name
-### Date
-
----
-
-## Overview
-
-- Topic 1
-- Topic 2  
-- Topic 3
-
----
-
-## Slide 1
-
-Content goes here...
-
-.footnote[Add footnotes with .footnote[text]]
+### Author • DATE_PLACEHOLDER
 
 ---
 
 ## Slide 2
 
-More content with formatting:
-
-- .highlight[Highlighted text]
-- .red[Red text for emphasis]
-- **Bold** and *italic* text
+Your content here...
 
 ---
 
-## Two Column Layout
+## Slide 3
 
-.left-column[
-### Left Side
-- Point 1
-- Point 2
-]
-
-.right-column[
-### Right Side
-- Point A
-- Point B
-]
-
----
-
-## Code Example
-
-\`\`\`python
-def hello_world():
-    print("Hello, World!")
-    
-hello_world()
-\`\`\`
-
----
-
-class: center, middle
-
-# Questions?
-
-### Thank you!
+More content...
 
 ???
-Speaker notes go here. Press 'P' for presenter mode.
+Speaker notes here (visible in presenter mode with 'P')
 EOF
 
-# Create HTML file using the generic template structure
-cp templates/template.html "${PRESENTATION_NAME}/${PRESENTATION_NAME}.html"
+# Replace placeholders
+sed -i.bak "s/TITLE_PLACEHOLDER/$TITLE/g" "$PRESENTATION_DIR/presentation.md"
+sed -i.bak "s/DATE_PLACEHOLDER/$DATE/g" "$PRESENTATION_DIR/presentation.md"
+rm "$PRESENTATION_DIR/presentation.md.bak"
 
-# Replace placeholders in HTML file
-sed -i '' "s/PRESENTATION_TITLE/${PRESENTATION_TITLE}/g" "${PRESENTATION_NAME}/${PRESENTATION_NAME}.html"
-sed -i '' "s/MARKDOWN_FILE/${PRESENTATION_NAME}/g" "${PRESENTATION_NAME}/${PRESENTATION_NAME}.html"
-
-# Create README for the presentation
-cat > "${PRESENTATION_NAME}/README.md" << EOF
-# ${PRESENTATION_TITLE}
-
-**[Event/Conference Name]**
-
-- **Title**: ${PRESENTATION_TITLE}
-- **Speaker(s)**: [Your Name]
-- **Date**: [Presentation Date]
-- **Duration**: [Duration]
-- **Event**: [Event/Conference Name]
+# Create index.md with front matter
+cat > "$PRESENTATION_DIR/index.md" << EOF
+---
+title: "$TITLE"
+event: "$EVENT"
+date: $DATE
+slides_path: presentation.md
+---
 
 ## Abstract
 
-[Brief description of what this presentation covers]
+[Add your presentation abstract here]
 
-## Structure
+## Key Topics
 
-1. **Introduction** - Overview and agenda
-2. **Main Content** - [Key topics covered]
-3. **Conclusion** - Summary and next steps
-
-## Files
-
-- **\`${PRESENTATION_NAME}.html\`** - Main presentation file (open this to view)
-- **\`${PRESENTATION_NAME}.md\`** - Markdown source content
-- **\`img/\`** - Presentation-specific images and screenshots
-- **\`README.md\`** - This documentation file
-
-## Viewing the Presentation
-
-### Option 1: Direct HTML Access
-\`\`\`bash
-cd ${PRESENTATION_NAME}
-open ${PRESENTATION_NAME}.html
-\`\`\`
-
-### Option 2: Local Server (Recommended for development)
-From the repository root:
-\`\`\`bash
-python3 -m http.server 8000
-# Then visit: http://localhost:8000/${PRESENTATION_NAME}/${PRESENTATION_NAME}.html
-\`\`\`
-
-## Presenting
-
-- **Navigate**: Arrow keys, Page Up/Down, or click
-- **Fullscreen**: Press \`F\`
-- **Presenter Mode**: Press \`P\` (shows current + next slide, timer, notes)
-- **Clone View**: Press \`C\` (for dual monitor setup)
-
-## Development Notes
-
-[Add any specific notes about content, styling, or technical requirements]
-
-## Resources
-
-- [Link to event page]
-- [Reference materials]
-- [Related presentations]
+- Topic 1
+- Topic 2
+- Topic 3
 EOF
 
+echo "✅ Created presentation: $PRESENTATION_DIR"
 echo ""
-echo "✅ Created presentation: ${PRESENTATION_NAME}/"
-echo "   📄 ${PRESENTATION_NAME}/${PRESENTATION_NAME}.md"
-echo "   🌐 ${PRESENTATION_NAME}/${PRESENTATION_NAME}.html"
-echo "   📁 ${PRESENTATION_NAME}/img/"
-echo "   📋 ${PRESENTATION_NAME}/README.md"
+echo "Next steps:"
+echo "1. Edit $PRESENTATION_DIR/presentation.md for your slides"
+echo "2. Edit $PRESENTATION_DIR/index.md for abstract and metadata"
+echo "3. Add images to $PRESENTATION_DIR/img/"
+echo "4. (Optional) Add $PRESENTATION_DIR/custom.css for custom styling"
 echo ""
-echo "🚀 To get started:"
-echo "   cd ${PRESENTATION_NAME}"
-echo "   open ${PRESENTATION_NAME}.html"
-echo ""
-echo "💡 For development with live reload:"
-echo "   python3 -m http.server 8000"
-echo "   # Visit: http://localhost:8000/${PRESENTATION_NAME}/${PRESENTATION_NAME}.html" 
+echo "Preview:"
+echo "  - Run: bundle exec jekyll serve"
+echo "  - Visit: http://localhost:4000/presentations/$(basename $DATE_SLUG)/"
+echo "  - Slides: http://localhost:4000/presentations/$(basename $DATE_SLUG)/slides.html"

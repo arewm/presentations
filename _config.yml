@@ -1,0 +1,88 @@
+# Site settings
+title: Presentations | Andrew McNamara
+email: contact@arewm.com
+description: >-
+  Technical presentations on software supply chain security, CI/CD, and DevSecOps
+  by Andrew McNamara.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://slides.arewm.com" # the base hostname & protocol for your site
+github_username: arewm
+
+# Build settings
+markdown: kramdown
+remote_theme: mmistakes/minimal-mistakes
+minimal_mistakes_skin: "default"
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-include-cache
+  - jekyll-remote-theme
+
+# Collections
+collections:
+  presentations:
+    output: true
+    permalink: /presentations/:name/
+
+# Minimal Mistakes settings
+author:
+  name: "Andrew McNamara"
+  avatar: "https://avatars.githubusercontent.com/u/16674323"
+  bio: "Software supply chain architect | SLSA maintainer | DevSecOps advocate"
+  email: "contact@arewm.com"
+  links:
+    - label: "Main Site"
+      icon: "fas fa-fw fa-home"
+      url: "https://arewm.com"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/arewm"
+    - label: "Sessionize"
+      icon: "fas fa-fw fa-microphone"
+      url: "https://sessionize.com/arewm"
+
+footer:
+  links:
+    - label: "Main Site"
+      icon: "fas fa-fw fa-home"
+      url: "https://arewm.com"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/arewm/presentations"
+    - label: "Sessionize"
+      icon: "fas fa-fw fa-microphone"
+      url: "https://sessionize.com/arewm"
+
+# Defaults
+defaults:
+  # _presentations
+  - scope:
+      path: ""
+      type: presentations
+    values:
+      layout: presentation-detail
+      author_profile: true
+      sidebar:
+        nav: "main"
+  # Static files in presentations keep their path
+  - scope:
+      path: "_presentations"
+    values:
+      permalink: /:path
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - .reference-files/
+  - _presentations/*/presentation.md
+  - _presentations/*/slides.html

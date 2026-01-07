@@ -1,0 +1,136 @@
+---
+layout: single
+title: "All Presentations"
+permalink: /all-presentations/
+author_profile: true
+---
+
+<p style="margin-bottom: 1em;">Click column headers to sort.</p>
+
+<table id="presentations-table">
+  <thead>
+    <tr>
+      <th data-sort="date">Date <span class="sort-icon">⇅</span></th>
+      <th data-sort="event">Event <span class="sort-icon">⇅</span></th>
+      <th data-sort="title">Title <span class="sort-icon">⇅</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% assign sorted_presentations = site.presentations | sort: 'date' | reverse %}
+    {% for presentation in sorted_presentations %}
+    <tr>
+      <td data-value="{{ presentation.date | date: '%Y%m%d' }}">{{ presentation.date | date: "%Y-%m-%d" }}</td>
+      <td>{{ presentation.event }}</td>
+      <td><a href="{{ presentation.url | relative_url }}">{{ presentation.title }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<style>
+#presentations-table {
+  width: 100%;
+  margin: 2em 0;
+  border-collapse: collapse;
+}
+
+#presentations-table th,
+#presentations-table td {
+  padding: 0.75em 1em;
+  text-align: left;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+#presentations-table th {
+  background-color: #f6f8fa;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+#presentations-table th:hover {
+  background-color: #e1e4e8;
+}
+
+#presentations-table tr:hover {
+  background-color: #f6f8fa;
+}
+
+.sort-icon {
+  font-size: 0.8em;
+  color: #999;
+  margin-left: 0.25em;
+}
+
+#presentations-table th.sort-asc .sort-icon::before {
+  content: '↑';
+  color: #333;
+}
+
+#presentations-table th.sort-desc .sort-icon::before {
+  content: '↓';
+  color: #333;
+}
+
+#presentations-table th.sort-asc .sort-icon,
+#presentations-table th.sort-desc .sort-icon {
+  display: none;
+}
+
+#presentations-table th.sort-asc .sort-icon::before,
+#presentations-table th.sort-desc .sort-icon::before {
+  display: inline;
+}
+</style>
+
+<script>
+(function() {
+  const table = document.getElementById('presentations-table');
+  const headers = table.querySelectorAll('th[data-sort]');
+  let currentSort = { column: null, direction: 'desc' };
+
+  headers.forEach(header => {
+    header.addEventListener('click', () => {
+      const column = header.dataset.sort;
+      const columnIndex = Array.from(header.parentElement.children).indexOf(header);
+
+      // Toggle direction if clicking same column
+      if (currentSort.column === column) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSort.direction = 'asc';
+      }
+      currentSort.column = column;
+
+      // Remove sort classes from all headers
+      headers.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+
+      // Add sort class to current header
+      header.classList.add(`sort-${currentSort.direction}`);
+
+      // Sort rows
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+
+      rows.sort((a, b) => {
+        const aCell = a.children[columnIndex];
+        const bCell = b.children[columnIndex];
+
+        // Use data-value if available (for dates), otherwise use text content
+        const aVal = aCell.dataset.value || aCell.textContent.trim();
+        const bVal = bCell.dataset.value || bCell.textContent.trim();
+
+        let comparison = 0;
+        if (aVal < bVal) comparison = -1;
+        if (aVal > bVal) comparison = 1;
+
+        return currentSort.direction === 'asc' ? comparison : -comparison;
+      });
+
+      // Re-append rows in sorted order
+      rows.forEach(row => tbody.appendChild(row));
+    });
+  });
+})();
+</script>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title id="page-title">Presentation</title>
+    <meta charset="utf-8">
+    <base id="base-url" href="">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body {
+        font-family: 'Droid Serif';
+        color: #333;
+      }
+
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+        color: #2c3e50;
+      }
+
+      .remark-code, .remark-inline-code {
+        font-family: 'Ubuntu Mono';
+        background: #f8f8f8;
+        border-radius: 3px;
+        padding: 2px 4px;
+      }
+
+      .remark-code {
+        padding: 10px;
+        background: #272822;
+        color: #f8f8f2;
+      }
+
+      .remark-slide-content {
+        background: #fff;
+        background-size: cover;
+        padding: 2em 4em;
+      }
+
+      .title-slide {
+        background: linear-gradient(45deg, #3498db, #2c3e50);
+        color: white;
+      }
+
+      .title-slide h1, .title-slide h2, .title-slide h3 {
+        color: white;
+      }
+
+      .center {
+        text-align: center;
+      }
+
+      .middle {
+        vertical-align: middle;
+      }
+
+      .large {
+        font-size: 2em;
+      }
+
+      .medium {
+        font-size: 1.5em;
+      }
+
+      .small {
+        font-size: 0.8em;
+      }
+
+      .footnote {
+        position: absolute;
+        bottom: 3em;
+        font-size: 0.8em;
+        color: #666;
+      }
+
+      .red {
+        color: #e74c3c;
+      }
+
+      .blue {
+        color: #3498db;
+      }
+
+      .green {
+        color: #27ae60;
+      }
+
+      .highlight {
+        background-color: #f39c12;
+        color: white;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+
+      .remark-slide-number {
+        font-size: 0.8em;
+        color: #666;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      .two-columns {
+        display: flex;
+        gap: 2em;
+      }
+
+      .column {
+        flex: 1;
+      }
+    </style>
+    <link id="custom-css-link" rel="stylesheet" href="">
+  </head>
+  <body>
+      <textarea id="source"></textarea>
+      <script src="/shared/js/remark.min.js"></script>
+      <script>
+        // Parse the URL to extract the presentation name
+        // Supports both query parameter (?p=name) and path-based (/presentations/name/slides.html)
+        function getPresentationName() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const queryParam = urlParams.get('p');
+
+          if (queryParam) {
+            return queryParam;
+          }
+
+          // Extract from path: /presentations/PRESENTATION_NAME/slides.html
+          const pathMatch = window.location.pathname.match(/\/presentations\/([^\/]+)\/slides\.html/);
+          if (pathMatch) {
+            return pathMatch[1];
+          }
+
+          return null;
+        }
+
+        const presentationName = getPresentationName();
+
+        if (!presentationName) {
+          document.getElementById('source').value = '# Error\n\nNo presentation specified.\n\nPlease access this page via `/presentations/PRESENTATION_NAME/slides.html`';
+          remark.create();
+        } else {
+          // Construct the base path for the presentation
+          const presentationBase = `/presentations/${presentationName}`;
+          const presentationMdPath = `${presentationBase}/presentation.md`;
+          const customCssPath = `${presentationBase}/custom.css`;
+
+          // Set base URL for resolving relative paths in the presentation
+          document.getElementById('base-url').href = `${presentationBase}/`;
+
+          // Try to load custom CSS if it exists
+          fetch(customCssPath, { method: 'HEAD' })
+            .then(response => {
+              if (response.ok) {
+                document.getElementById('custom-css-link').href = customCssPath;
+              }
+            })
+            .catch(() => {
+              // Ignore errors, custom CSS is optional
+            });
+
+          // Load and create the slideshow
+          var slideshow = remark.create({
+            sourceUrl: presentationMdPath,
+            highlightStyle: 'monokai',
+            highlightLanguage: 'remark',
+            highlightLines: true,
+            slideNumberFormat: '%current% / %total%',
+            ratio: '16:9'
+          });
+        }
+      </script>
+    </body>
+</html>

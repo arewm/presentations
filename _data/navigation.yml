@@ -1,0 +1,6 @@
+# Main navigation links
+main:
+  - title: "All Presentations"
+    url: "/all-presentations/"
+  - title: "Main Site"
+    url: "https://arewm.com"
