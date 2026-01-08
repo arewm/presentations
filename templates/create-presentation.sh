@@ -51,13 +51,16 @@ sed -i.bak "s/TITLE_PLACEHOLDER/$TITLE/g" "$PRESENTATION_DIR/presentation.md"
 sed -i.bak "s/DATE_PLACEHOLDER/$DATE/g" "$PRESENTATION_DIR/presentation.md"
 rm "$PRESENTATION_DIR/presentation.md.bak"
 
-# Create index.md with front matter
-cat > "$PRESENTATION_DIR/index.md" << EOF
+# Create metadata file with front matter
+cat > "$PRESENTATION_DIR/$DATE_SLUG.md" << EOF
 ---
 title: "$TITLE"
 event: "$EVENT"
 date: $DATE
 slides_path: presentation.md
+excerpt: "Add a concise summary of your presentation here (1-2 sentences)"
+# session: "https://example.com/session-link"
+# recording: "https://example.com/video-link"
 ---
 
 ## Abstract
@@ -75,7 +78,7 @@ echo "✅ Created presentation: $PRESENTATION_DIR"
 echo ""
 echo "Next steps:"
 echo "1. Edit $PRESENTATION_DIR/presentation.md for your slides"
-echo "2. Edit $PRESENTATION_DIR/index.md for abstract and metadata"
+echo "2. Edit $PRESENTATION_DIR/$DATE_SLUG.md for abstract and metadata"
 echo "3. Add images to $PRESENTATION_DIR/img/"
 echo "4. (Optional) Add $PRESENTATION_DIR/custom.css for custom styling"
 echo ""
