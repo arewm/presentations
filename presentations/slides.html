@@ -145,7 +145,8 @@
           remark.create();
         } else {
           // Construct the base path for the presentation
-          const presentationBase = `/presentations/${presentationName}`;
+          // Files are served from /_presentations/ as static files
+          const presentationBase = `/_presentations/${presentationName}`;
           const presentationMdPath = `${presentationBase}/presentation.md`;
           const customCssPath = `${presentationBase}/custom.css`;
 

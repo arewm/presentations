@@ -64,15 +64,17 @@ defaults:
       author_profile: true
       sidebar:
         nav: "main"
-  # Static files in presentations keep their path
-  - scope:
-      path: "_presentations"
-    values:
-      permalink: /:path
 
 atom_feed:
   hide: true
   path: false
+
+future: true
+
+# Include _presentations directory so static files (presentation.md, img/, etc.) are accessible
+include:
+  - _presentations
+
 # Exclude from processing
 exclude:
   - Gemfile
@@ -83,5 +85,3 @@ exclude:
   - vendor/gems/
   - vendor/ruby/
   - .reference-files/
-  - _presentations/*/presentation.md
-  - _presentations/*/slides.html
