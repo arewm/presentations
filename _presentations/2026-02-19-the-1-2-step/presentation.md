@@ -1,5 +1,3 @@
-<!-- markdownlint-disable-file single-h1 no-inline-html line-length no-duplicate-heading no-trailing-punctuation heading-increment -->
-
 name: inverse
 layout: true
 class: center, middle, inverse
@@ -12,9 +10,15 @@ class: center, middle, title-slide
 
 ## How do you SLSA?
 
-### Andrew McNamara - 2026-02-19
+Andrew McNamara; Red Hat, SLSA maintainer
 
-<img src="/shared/logos/slsa.png" width="300" alt="SLSA logo">
+
+
+<img src="/shared/logos/slsa-dancing-goose-logo.svg" width="300" alt="SLSA logo">
+
+.footnote[
+  NC Cybersecurity Symposium 2026
+]
 
 ???
 
@@ -49,7 +53,9 @@ layout: false
 
 ## Supply Chain Threats
 
-<img src="/shared/diagrams/slsa-supply-chain-threats.png" width="100%" alt="SLSA supply chain threats diagram">
+<div style="text-align: center;">
+<img src="/shared/diagrams/slsa-supply-chain-threats.png" height="90%" alt="SLSA supply chain threats diagram">
+</div>
 
 .footnote[slsa.dev/spec/v1.2/threats-overview]
 
@@ -172,7 +178,7 @@ The Source track focuses on the integrity of your source control management. L1 
 
 ## Source Tool
 
-`slsa-framework/source-tool` — official SLSA tool for generating source track attestations.
+`slsa-framework/source-tool` — proof-of-concept SLSA tool for generating source track attestations.
 
 - Generates source provenance attestations recording revision creation context
 - Works with `source-actions` (GitHub Actions integration)
@@ -181,19 +187,16 @@ The Source track focuses on the integrity of your source control management. L1 
 
 ???
 
-The source-tool is the official implementation from the SLSA framework team for generating source provenance attestations. It runs during your CI workflow and records evidence about how a particular commit was created — was it pushed directly, or did it go through a pull request? Were branch protection rules active? Who approved the change? This evidence is what allows you to prove Source track compliance. We'll see how this integrates into a build pipeline shortly.
+The source-tool is the a proof-of-concept implementation from the SLSA framework team for generating source provenance attestations. It runs during your CI workflow and records evidence about how a particular commit was created — was it pushed directly, or did it go through a pull request? Were branch protection rules active? Who approved the change? This evidence is what allows you to prove Source track compliance. We'll see how this integrates into a build pipeline shortly.
 
 ---
 
 ## Threats Revisited
 
-<img src="/shared/diagrams/slsa-supply-chain-threats.png" width="100%" alt="SLSA supply chain threats diagram">
+<div style="text-align: center;">
+<img src="/shared/diagrams/slsa-supply-chain-threats.png" height="80%" alt="SLSA supply chain threats diagram">
+</div>
 
-**Track coverage**:
-- **Source track**: A (source integrity), B (source integrity), C (source management)
-- **Build track**: D (build parameters), E (build process), F (artifact publication)
-- **Distribution**: G (consumer verification with VSAs)
-- **Not addressed by SLSA**: H (deployment), I (runtime)
 
 ???
 
@@ -289,7 +292,10 @@ Here's the end-to-end architecture we'll be implementing. A developer commits co
 
 ## Tekton Chains: The Observer
 
-<img src="/shared/diagrams/tekton-chains-how-it-works.png" width="100%" alt="Tekton Chains diagram">
+
+<div style="text-align: center;">
+<img src="/shared/diagrams/tekton-chains-how-it-works.png" height="80%" width="80%" alt="Tekton Chains diagram">
+</div>
 
 - Chains watches completed PipelineRuns
 - Generates SLSA provenance automatically
@@ -333,7 +339,7 @@ Here's a critical limitation of the observer pattern. Chains faithfully records 
   <div style="flex: 1; border: 2px solid #7CB342; padding: 1em; border-radius: 8px;">
     <h3 style="margin-top: 0;">Trusted Artifacts</h3>
     <ul style="font-size: 0.9em;">
-      <li>Replace shared mutable PVCs with immutable OCI artifacts</li>
+      <li>Shared immutable OCI artifacts</li>
       <li>Content-addressable</li>
       <li>Explicit chaining between tasks</li>
     </ul>
@@ -351,10 +357,7 @@ Trusted tasks are tasks that are pinned by digest to specific approved implement
 ## Source Verification in the Build Pipeline
 
 - Source verification runs as a task in the build pipeline using source-tool
-- Listed in `required_tasks.yml` as a required task
 - Because it's a trusted task, its results in the provenance are trustworthy
-
-**Note**: We can only trust this because the task is in the trusted task list.
 
 ???
 
@@ -365,29 +368,27 @@ Source verification isn't a separate pre-build step — it runs as a task within
 ## Trust Boundaries
 
 <div style="display: flex; gap: 2em; margin-top: 2em;">
-  <div style="flex: 1; border: 3px solid #E57373; padding: 1.5em; border-radius: 8px; background-color: #FFEBEE;">
-    <h3 style="margin-top: 0; color: #C62828;">Tenant Context</h3>
+  <div style="flex: 1; border: 2px solid #E57373; padding: 1em; border-radius: 8px;">
+    <h3 style="margin-top: 0;">Tenant Context</h3>
     <ul style="font-size: 0.9em;">
       <li>Developer-controlled</li>
       <li>Unprivileged</li>
       <li>Builds run here</li>
-      <li><strong>No signing keys</strong></li>
     </ul>
   </div>
-  <div style="flex: 1; border: 3px solid #81C784; padding: 1.5em; border-radius: 8px; background-color: #E8F5E9;">
-    <h3 style="margin-top: 0; color: #2E7D32;">Managed Context</h3>
+  <div style="flex: 1; border: 2px solid #81C784; padding: 1em; border-radius: 8px;">
+    <h3 style="margin-top: 0;">Managed Context</h3>
     <ul style="font-size: 0.9em;">
       <li>Platform-controlled</li>
       <li>Privileged</li>
       <li>Release pipelines</li>
-      <li><strong>Has signing keys</strong></li>
       <li>Policy evaluation + VSA generation</li>
     </ul>
   </div>
 </div>
 
 <div style="text-align: center; margin-top: 2em; font-size: 1.2em;">
-  <strong>Build (tenant)</strong> → Snapshot → <strong>Release pipeline (managed)</strong> → Published artifact
+  <strong>Build (tenant)</strong> → <strong>Release pipeline (managed)</strong> → <strong>Published artifact</strong>
 </div>
 
 ???
@@ -405,8 +406,8 @@ Trust boundaries are critical to our architecture. The tenant context is where d
 - Checks: trusted tasks, required tasks, hermetic build, allowed registries, etc.
 - Runs in the managed context (privileged namespace)
 - Produces structured pass/fail — **this is Step 2: Enforce**
+- **Must** pass for the release to progress
 
-**Tease**: Deeper dive at "From Mild to Wild" at Open Source SecurityCon (March 2026)
 
 ???
 

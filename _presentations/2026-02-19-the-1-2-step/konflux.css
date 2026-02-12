@@ -1,0 +1,253 @@
+      /* Konflux brand: https://github.com/konflux-ci/brand-assets */
+      /* Fonts: Poppins (titles), Cambay (body) */
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Cambay:wght@400;700&display=swap');
+
+      /* Konflux palette: dark blue, light blue, orange */
+      :root {
+        --konflux-dark-blue: #1e3a5f;
+        --konflux-light-blue: #4da6ff;
+        --konflux-orange: #ed7b2d;
+        --konflux-bg: #0d1929;
+        --konflux-text: #e8eef4;
+        --konflux-muted: #8ba3b8;
+      }
+
+      body {
+        font-family: 'Cambay', 'Droid Serif', serif;
+        background: var(--konflux-bg);
+        color: var(--konflux-text);
+        overflow: hidden;
+        line-height: 1.5;
+      }
+      
+      .remark-slide-content {
+        background: var(--konflux-bg);
+        color: var(--konflux-text);
+        font-size: 1.2em;
+        padding: 2em;
+        border: 1px solid rgba(77, 166, 255, 0.2);
+      }
+      
+      .remark-slide-content h1 { 
+        font-family: 'Poppins', sans-serif;
+        font-size: 2.4em; 
+        color: #ffffff;
+        font-weight: 600;
+        margin-bottom: 0.5em;
+      }
+      
+      .remark-slide-content h2 { 
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.6em; 
+        color: var(--konflux-light-blue);
+        font-weight: 500;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+      }
+      
+      .remark-slide-content h3 { 
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.25em; 
+        color: var(--konflux-text);
+        font-weight: 500;
+        margin-bottom: 0.5em;
+      }
+      
+      /* Code: keep readable, subtle Konflux border */
+      code {
+        background: rgba(30, 58, 95, 0.6);
+        border: 1px solid rgba(77, 166, 255, 0.3);
+        border-radius: 4px;
+        padding: 2px 6px;
+        color: #e8eef4;
+        font-family: 'Cambay', monospace;
+        font-size: 0.9em;
+      }
+      
+      .remark-code, .remark-inline-code { 
+        font-family: 'Cambay', monospace;
+        background: rgba(30, 58, 95, 0.7) !important;
+        color: #e8eef4 !important;
+        border: 1px solid rgba(77, 166, 255, 0.25);
+      }
+      
+      pre {
+        background: rgba(30, 58, 95, 0.6) !important;
+        border: 1px solid rgba(77, 166, 255, 0.3);
+        border-radius: 6px;
+        padding: 15px;
+        overflow-x: auto;
+      }
+      
+      pre code {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        color: #e8eef4 !important;
+      }
+      
+      /* Links: Konflux light blue */
+      a, a > code {
+        color: var(--konflux-light-blue);
+        text-decoration: underline;
+        transition: color 0.2s ease;
+      }
+      
+      a:hover {
+        color: var(--konflux-orange);
+        text-decoration: underline;
+      }
+      
+      /* Simple list styling */
+      li {
+        margin: 0.4em 0;
+      }
+      
+      ul li {
+        list-style: none;
+        position: relative;
+      }
+      
+      ul li:before {
+        content: "•";
+        color: var(--konflux-orange);
+        margin-right: 8px;
+        font-weight: bold;
+      }
+      
+      li p { 
+        line-height: 1.5em; 
+        margin: 0;
+      }
+      
+      /* Emphasis: Konflux orange accent */
+      .large { 
+        font-size: 1.4em !important;
+        color: #ffffff;
+        font-weight: 600;
+      }
+      
+      strong {
+        color: #ffffff;
+        font-weight: 600;
+      }
+      
+      /* Footnotes: muted Konflux blue */
+      .footnote {
+        position: absolute;
+        left: 2em;
+        bottom: 2em;
+        font-size: 0.8em;
+        color: var(--konflux-muted);
+        text-align: left;
+      }
+      
+      /* Section / inverse slides: Konflux dark blue */
+      .inverse {
+        background: var(--konflux-dark-blue);
+        color: #ffffff;
+        text-align: center;
+        border: none;
+      }
+      
+      .inverse h1, .inverse h2 {
+        font-family: 'Poppins', sans-serif;
+        color: #ffffff;
+        line-height: 1.2em;
+      }
+      
+      .inverse h1 {
+        font-weight: 600;
+      }
+      
+      /* Two-column layout */
+      .left-column {
+        color: var(--konflux-muted);
+        width: 22%;
+        height: 92%;
+        float: left;
+        font-size: 0.9em;
+        border-right: 1px solid rgba(77, 166, 255, 0.3);
+        padding-right: 1em;
+      }
+      
+      .left-column h2, .left-column h3 {
+        font-family: 'Poppins', sans-serif;
+        color: var(--konflux-muted);
+        font-size: 0.9em;
+        margin: 0.5em 0;
+        font-weight: 500;
+      }
+      
+      .left-column h2:last-of-type, .left-column h3:last-child {
+        color: var(--konflux-light-blue);
+        font-weight: 600;
+      }
+      
+      .right-column {
+        width: 73%;
+        float: right;
+        padding-top: 0;
+      }
+      
+      /* Scrollbar: Konflux dark blue */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: var(--konflux-bg);
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: var(--konflux-dark-blue);
+        border-radius: 3px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--konflux-light-blue);
+      }
+      
+      /* Slide number */
+      .remark-slide-number {
+        color: var(--konflux-muted) !important;
+        background: rgba(13, 25, 41, 0.9) !important;
+        border: none !important;
+        font-family: 'Cambay', serif !important;
+        font-size: 0.8em !important;
+      }
+      
+      /* Title slide: Konflux dark blue, inverted logo guideline */
+      .title-slide {
+        background: var(--konflux-dark-blue) !important;
+        color: #ffffff;
+        border: none;
+      }
+      
+      .title-slide h1, .title-slide h2, .title-slide h3 {
+        font-family: 'Poppins', sans-serif;
+        color: #ffffff;
+      }
+      
+      .title-slide .footnote {
+        color: var(--konflux-light-blue);
+      }
+      
+      /* Tables: Konflux palette */
+      table {
+        border-collapse: collapse;
+        margin: 1.5em 0;
+        width: 100%;
+      }
+      th, td {
+        padding: 0.6em 1em;
+        border: 1px solid rgba(77, 166, 255, 0.3);
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: rgba(30, 58, 95, 0.8);
+        color: var(--konflux-light-blue);
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+      }
