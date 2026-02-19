@@ -215,6 +215,11 @@
         color: #7cb3d3;
       }
       
+      /* Constrain images to fit within slides */
+      .remark-slide-content img {
+        max-width: 100%;
+      }
+
       /* Table styling for nice padding and margins */
       table {
         border-collapse: collapse;

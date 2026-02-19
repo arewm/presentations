@@ -39,7 +39,7 @@ your pipeline is flying blind.
 
 ???
 
-Most organizations invest heavily in vulnerability scanning, but that only tells you *what* vulnerabilities exist. It doesn't tell you *who* built your artifact, *how* it was built, or *what source* it actually came from. Without provenance, you're trusting blind faith that the artifact in front of you is what you think it is.
+Most organizations invest heavily in vulnerability scanning, but scanners are not a panacea. Zero-day vulnerabilities go undetected by definition, and scanners can only find what they know about. More fundamentally, scanning doesn't tell you *who* built your artifact, *how* it was built, or *what source* it actually came from. Without provenance, you have no proof that a build hasn't been tampered with. A compromised build system could inject malicious code that no scanner would flag because it's not a known vulnerability. Without a verified chain of custody, you're trusting blind faith that the artifact in front of you is what you think it is.
 
 ---
 
@@ -74,7 +74,7 @@ The SLSA framework identifies nine categories of supply chain threats, labeled A
 - Focuses on **evidence gathering** about observed behaviors
 - Does NOT reason about what's good or bad — that's for policy
 
-<img src="/shared/logos/slsa.png" width="200" alt="SLSA logo">
+<img src="/shared/logos/slsa.svg" width="200" alt="SLSA logo">
 
 ???
 
@@ -110,7 +110,7 @@ Tracks are **independent** — adopt incrementally.
 
 ???
 
-The Build track has been stable since SLSA 1.0 and focuses on the integrity of the build process itself. The Source track is brand new in SLSA 1.2 and addresses a different set of concerns: proving that your source code comes from a properly controlled repository with appropriate change management practices. Because tracks are independent, you can achieve Build L3 without implementing any Source track requirements, or vice versa. This modularity makes SLSA practical to adopt incrementally.
+The Build track has been stable since SLSA 1.0 and focuses on the integrity of the build process itself. The Source track is brand new in SLSA 1.2 and addresses a different set of concerns: proving that your source code comes from a properly controlled repository with appropriate change management practices. Because tracks are independent, you can achieve Build L3 without implementing any Source track requirements, or vice versa. This modularity makes SLSA practical to adopt incrementally. However, there's an open question the spec doesn't fully address: how do you link the tracks together? The Build track proves *how* something was built, and the Source track proves *where* the code came from, but connecting those two statements for a given artifact is left to the implementation. We'll see how our implementation handles that connection later.
 
 ---
 
@@ -176,18 +176,22 @@ The Source track focuses on the integrity of your source control management. L1 
 
 ---
 
-## Source Tool
+## Source Provenance Tools
 
-`slsa-framework/source-tool` — proof-of-concept SLSA tool for generating source track attestations.
+`slsa-framework/source-tool` — generates source track attestations.
 
-- Generates source provenance attestations recording revision creation context
-- Works with `source-actions` (GitHub Actions integration)
-- Works with `source-policies` (repository policy definitions)
+- Records revision creation context (branch protection, reviews, identities)
+- Works with `source-actions` (GitHub Actions) and `source-policies`
 - Produces the Source track evidence we'll verify later
+
+`gittuf/gittuf` — embeds trust policies directly in the repository.
+
+- Uses TUF (The Update Framework) for delegated trust
+- Policy-as-code within the repo itself
 
 ???
 
-The source-tool is the a proof-of-concept implementation from the SLSA framework team for generating source provenance attestations. It runs during your CI workflow and records evidence about how a particular commit was created — was it pushed directly, or did it go through a pull request? Were branch protection rules active? Who approved the change? This evidence is what allows you to prove Source track compliance. We'll see how this integrates into a build pipeline shortly.
+Two active projects address source provenance. The source-tool is a proof-of-concept from the SLSA framework team. It runs during your CI workflow and records evidence about how a commit was created: was it pushed directly, or did it go through a pull request? Were branch protection rules active? gittuf takes a different approach by embedding trust policies directly into the Git repository using TUF, so the trust model travels with the code. We'll use source-tool in our demo, but both are active projects worth watching in this space.
 
 ---
 
@@ -200,7 +204,7 @@ The source-tool is the a proof-of-concept implementation from the SLSA framework
 
 ???
 
-Now that we understand both tracks, let's revisit the threat model. The Source track addresses threats A, B, and C — ensuring source code integrity and proper source control management. The Build track covers D, E, and F — ensuring build parameters weren't tampered with, the build process is trustworthy, and publication happened correctly. Distribution threats are addressed by consumer verification using VSAs, which we'll discuss later. SLSA explicitly does not address deployment and runtime threats — those require different tools and techniques.
+Now that we understand both tracks, let's revisit the threat model. The Source track addresses threats A, B, and C — ensuring source code integrity and proper source control management. The Build track covers D, E, and F — ensuring build parameters weren't tampered with, the build process is trustworthy, and publication happened correctly. Distribution threats are addressed by consumer verification, which we'll discuss later. SLSA explicitly does not address deployment and runtime threats — those require different tools and techniques.
 
 ---
 
@@ -219,6 +223,8 @@ They do NOT answer: **"Was that good enough?"**
 ???
 
 This is the conceptual core of SLSA. The tracks produce attestations — cryptographically signed statements about what happened. But attestations alone don't make decisions. You need a policy engine to evaluate the evidence and decide whether it meets your requirements. This separation of concerns is what makes SLSA practical: you can change your policy without changing your build infrastructure, and you can upgrade your build infrastructure without rewriting policy.
+
+One thing the spec does not yet address: how to combine tracks. The Build track proves how an artifact was built; the Source track proves where the code came from — but there is no guidance on how to link those two statements together for a given artifact. That gap is exactly what our implementation addresses, and it sets up the 1-2-Step.
 
 ---
 
@@ -254,7 +260,7 @@ layout: false
     </div>
     <div style="font-size: 2em;">→</div>
     <div style="text-align: center;">
-      <img src="/shared/logos/slsa.png" width="80" alt="SLSA logo"><br>
+      <img src="/shared/logos/slsa.svg" width="80" alt="SLSA logo"><br>
       <small>Source verification</small><br>
       <small>(source-tool)</small>
     </div>
@@ -286,7 +292,7 @@ layout: false
 
 ???
 
-Here's the end-to-end architecture we'll be implementing. A developer commits code to GitHub. The source-tool verifies the commit meets Source track requirements and produces an attestation. A Tekton pipeline builds the artifact. Tekton Chains watches the completed build and automatically generates SLSA provenance. That provenance, along with the source attestation, flows to Conforma, our policy engine, which evaluates everything against policy rules. Based on that evaluation, the artifact is either released to the OCI registry or blocked.
+Here's the end-to-end architecture we'll be implementing. A developer commits code to GitHub. The source-tool verifies the commit meets Source track requirements and produces an attestation. A Tekton pipeline builds the artifact. Tekton Chains watches the completed build and automatically generates SLSA provenance. Conforma, our policy engine, consumes that provenance along with the source attestation to evaluate everything against policy rules. Based on that evaluation, the artifact is either released to the OCI registry or blocked.
 
 ---
 
@@ -332,7 +338,6 @@ Here's a critical limitation of the observer pattern. Chains faithfully records 
     <h3 style="margin-top: 0;">Trusted Tasks</h3>
     <ul style="font-size: 0.9em;">
       <li>Digest-pinned task bundles from approved list</li>
-      <li>Required tasks must be trusted</li>
       <li>Policy verifies the chain</li>
     </ul>
   </div>
@@ -380,7 +385,7 @@ Source verification isn't a separate pre-build step — it runs as a task within
     <h3 style="margin-top: 0;">Managed Context</h3>
     <ul style="font-size: 0.9em;">
       <li>Platform-controlled</li>
-      <li>Privileged</li>
+      <li>Privileged credentials</li>
       <li>Release pipelines</li>
       <li>Policy evaluation + VSA generation</li>
     </ul>
@@ -403,7 +408,7 @@ Trust boundaries are critical to our architecture. The tenant context is where d
 
 - Policy-as-code engine (Rego-based)
 - Evaluates attestations against defined policy rules
-- Checks: trusted tasks, required tasks, hermetic build, allowed registries, etc.
+- Checks: trusted tasks, required tasks, hermetic builds, allowed registries, etc.
 - Runs in the managed context (privileged namespace)
 - Produces structured pass/fail — **this is Step 2: Enforce**
 - **Must** pass for the release to progress
@@ -411,7 +416,7 @@ Trust boundaries are critical to our architecture. The tenant context is where d
 
 ???
 
-Conforma is our policy engine — it takes attestations as input and evaluates them against Rego policy rules. It checks things like: were all required tasks present? Were they from trusted bundles? Was the build hermetic? Did the image get pushed to an allowed registry? Because Conforma runs in the managed context, developers can't bypass it. This is Step 2 of our 1-2-Step framework: enforcement. We'll be doing a deep dive on Conforma at Open Source SecurityCon in March if you want more details.
+Conforma is our policy engine — it takes attestations as input and evaluates them against Rego policy rules. It checks things like: were all required tasks present? Were they from trusted bundles? Was the build hermetic — meaning dependencies were prefetched before the build task ran with network access removed? Did the image get pushed to an allowed registry? This is where the required tasks concept connects back to trusted tasks: policy enforces that specific tasks must appear in every pipeline, and those tasks must come from the approved trusted bundle list. Because Conforma runs in the managed context, developers can't bypass it. This is Step 2 of our 1-2-Step framework: enforcement.
 
 ---
 
@@ -424,16 +429,9 @@ Conforma is our policy engine — it takes attestations as input and evaluates t
 - Published alongside the artifact in OCI registry
 - Consumers verify the VSA instead of re-running verification
 
-<!-- FALLBACK START
-If VSA tooling isn't complete at presentation time, note that:
-- VSA generation is a roadmap item
-- Current implementation focuses on policy evaluation and blocking
-- Consumers currently re-verify attestations directly
-FALLBACK END -->
-
 ???
 
-The Verification Summary Attestation is the final piece. After Conforma evaluates all the attestations and determines that an artifact passes policy, it generates a VSA. The VSA is a signed statement saying "I verified these attestations against policy, and this artifact achieves SLSA Build L3 and Source L2." The VSA is signed with a different key than the build attestations — this separation proves that an independent verifier checked everything. Consumers can then just verify the VSA signature instead of re-running the entire verification process themselves. Questions before we see it in action?
+The Verification Summary Attestation is the final piece. After Conforma evaluates all the attestations and determines that an artifact passes policy, it generates a VSA. The VSA is a signed statement saying "I verified these attestations against policy, and this artifact achieves SLSA Build L3 and Source L3." The VSA is signed with a different key than the build attestations — this separation proves that an independent verifier checked everything. Consumers can then just verify the VSA signature instead of re-running the entire verification process themselves. Questions before we see it in action?
 
 ---
 
@@ -451,130 +449,186 @@ layout: false
 
 ## Build Provenance Output
 
-![Build provenance output](img/build-provenance-output.png)
+```json
+{
+  "predicateType": "https://slsa.dev/provenance/v0.2",
+  "builder": { "id": "https://tekton.dev/chains/v2" },
+  "buildType": "tekton.dev/v1/PipelineRun",
+  "materials": [
+    { "uri": "git+https://github.com/spork-madness/source-test-repo.git",
+      "digest": { "sha1": "b5349554b33b..." } },
+    ...
+  ]
+}
+```
 
 Key fields:
-- `predicateType`: `https://slsa.dev/provenance/v1`
-- `buildType`: `https://tekton.dev/chains/v2`
-- `builder.id`: The Tekton Chains instance
-- `materials`: Source commit information
+- `builder.id`: Identifies the build system type (Tekton Chains v2)
+- `buildType`: This is a Tekton PipelineRun
+- `materials`: Source commits and task bundle references used in the build
 
 ???
 
-Here's the SLSA provenance that Tekton Chains generates. The predicateType tells us this is SLSA provenance v1. The buildType indicates it came from Tekton. The builder.id identifies the specific Chains instance that observed and signed this build. And the materials section shows exactly which source commits were used. This is the unforgeable evidence we talked about earlier — cryptographically signed by the build platform's observer.
+Here's the SLSA provenance that Tekton Chains generates. The builder.id identifies the build system type. The buildType tells us this came from a Tekton PipelineRun. And the materials section shows exactly which source commits and task bundles were used. This is the unforgeable evidence we talked about earlier, cryptographically signed by the build platform's observer.
 
 ---
 
 ## Provenance Details: Tasks
 
-![Provenance tasks section](img/provenance-tasks.png)
+```json
+"buildConfig": {
+  "tasks": [
+    "init", "clone-repository", "prefetch-dependencies",
+    "build-container", "verify-source", "build-image-index",
+    "apply-tags", "push-dockerfile",
+    "sast-shell-check", "trivy-sbom-scan"
+  ]
+}
+```
 
-The `buildConfig.tasks` section shows:
-- Each task that ran
+Each task entry includes:
 - Its bundle reference (pinned by digest)
-- Task results
+- Parameters and results
+- Invocation timestamps
 
 **This is what Conforma uses to verify the right tasks ran from the right bundles.**
 
 ???
 
-Drilling into the buildConfig section, we see every task that ran in this pipeline. Each task has its bundle reference pinned by digest — this is crucial for trusted task verification. We also see the results that each task produced. When Conforma evaluates this provenance, it checks that required tasks are present and that they came from approved trusted bundles. This task-level detail is what gives us confidence that the build was trustworthy.
+Drilling into the buildConfig section, we see every task that ran in this pipeline. Each task has its bundle reference pinned by digest, which is crucial for trusted task verification. We also see the results that each task produced. When Conforma evaluates this provenance, it checks that required tasks are present and that they came from approved trusted bundles. This task-level detail is what gives us confidence that the build was trustworthy.
 
 ---
 
 ## Source Verification Evidence
 
-![Source verification task results](img/source-verification-results.png)
+The `verify-source` task result in the provenance:
 
-<!-- FALLBACK START
-Source verification implementation is in progress. The policy already requires it:
-
-```yaml
-# required_tasks.yml
-required_tasks:
-  - name: verify-source
-    bundle: quay.io/konflux-ci/tekton-catalog/task-verify-source@sha256:...
+```json
+{
+  "name": "verify-source",
+  "results": [
+    { "name": "SLSA_SOURCE_LEVEL_ACHIEVED",
+      "value": "SLSA_SOURCE_LEVEL_3" },
+    { "name": "TEST_OUTPUT",
+      "value": { "result": "PASSED", "successes": 2,
+                 "failures": 0, "warnings": 0 } }
+  ]
+}
 ```
 
-The source-tool task will produce attestations showing:
-- Commit SHA and repository
-- Branch protection status
-- Review requirements met
-- Identity of committer/approver
-
-FALLBACK END -->
+Because `verify-source` is a **trusted task**, its results in the provenance are trustworthy.
 
 ???
 
-This shows the output from the source verification task. The source-tool runs within the pipeline and produces attestations about the source commit. It records whether branch protection was active, whether review requirements were met, and the identities involved. Because this task is in our trusted task list, we can trust these results when they appear in the provenance. This is how we achieve Source track compliance within the build pipeline itself.
+This shows the output from the source verification task as recorded in the provenance. The source-tool runs within the pipeline and records evidence about the source commit: whether branch protection was active, whether review requirements were met, and the identities involved. The key result is SLSA_SOURCE_LEVEL_ACHIEVED, which tells us the actual source level this commit achieves. Because this task is in our trusted task list, we can trust these results when they appear in the provenance.
+
+---
+
+class: center, middle
+
+![Source verification logs](img/source-verification-results.png)
+
+???
+
+Here's the actual output from the verify-source task. It fetches the source VSA from git notes, extracts the SLSA level, and reports the result. PASSED, Source Level 3.
 
 ---
 
 ## Policy Evaluation: Pass
 
-![Conforma evaluation showing all rules passed](img/policy-pass.png)
+All policy rules passed — 50 checks across two image components:
 
-All policy rules passed:
-- Trusted tasks verified
-- Required tasks present
-- Build provenance validated
-- Image pushed to allowed registry
+```
+✓ Trusted tasks verified against allowlist
+✓ Required tasks present (verify-source, build-container, ...)
+✓ Build provenance signature validated
+✓ Source level meets minimum requirement
+```
+
+**Result: PASSED** — artifact eligible for release.
 
 ???
 
-Here's what success looks like in Conforma. We see a structured evaluation showing every policy rule that was checked. Trusted tasks were verified against the allowlist. Required tasks were present. The build provenance signature validated. The image was pushed to an allowed registry. Because all rules passed, this artifact is eligible for release. This is Step 2 — Enforce — in action.
+Here's what success looks like in Conforma. We see a structured evaluation showing every policy rule that was checked. Trusted tasks were verified against the allowlist. Required tasks were present. The build provenance signature validated. And our custom source verification rule confirmed the commit meets the minimum required source level. Because all rules passed, this artifact is eligible for release. This is Step 2 in action.
 
 ---
 
-## Policy Evaluation: Fail
+class: center, middle
 
-![Conforma evaluation showing policy failure](img/policy-fail.png)
-
-Policy violation detected:
-- Specific rule that failed
-- Clear message explaining why
-- Artifact blocked from publication
-
-**This is Step 2 in action: Enforce**
+![Release pipeline passed](img/release-pipeline-pass.png)
 
 ???
 
-And here's what failure looks like. Conforma detected that a required task was missing from the provenance. It provides a clear message explaining which rule failed and why. Based on this failure, the release pipeline blocks publication of this artifact. This is the enforcement step preventing non-compliant artifacts from reaching production. The developer gets immediate feedback about what they need to fix.
+The release pipeline with all tasks green. verify-conforma passed, push-snapshot published the image, and attach-vsa signed and attached the VSAs.
 
 ---
 
 ## VSA Output
 
-![Generated VSA attestation](img/vsa-output.png)
-
-<!-- FALLBACK START
-Representative VSA structure:
-
 ```json
 {
-  "_type": "https://in-toto.io/Statement/v1",
   "predicateType": "https://slsa.dev/verification_summary/v1",
-  "subject": [{
-    "uri": "quay.io/example/image",
-    "digest": {"sha256": "abc123..."}
-  }],
+  "subject": [{"name": "registry/released-source-test-repo",
+    "digest": {"sha256": "a133ec6c12fa..."}}],
   "predicate": {
-    "verifier": {"id": "https://conforma.example.com/verifier"},
-    "timeVerified": "2026-02-19T10:00:00Z",
-    "resourceUri": "git+https://github.com/example/repo",
-    "policy": {"uri": "https://example.com/release-policy"},
+    "verifier": {"id": "https://conforma.dev/cli"},
     "verificationResult": "PASSED",
-    "verifiedLevels": ["SLSA_BUILD_LEVEL_3", "SLSA_SOURCE_LEVEL_2"]
+    "verifiedLevels": [
+      "SLSA_BUILD_LEVEL_3", "SLSA_SOURCE_LEVEL_3"
+    ],
+    "policy": {"uri": "oci::quay.io/conforma/..."},
+    "resourceUri": "registry/konflux-festoji@sha256:..."
   }
 }
 ```
 
-The verifier signs this with its own key, separate from build keys.
-FALLBACK END -->
+Signed with a **separate key** in the managed context, attached to the **released** image.
 
 ???
 
-The VSA is the final output from our managed context. It's a signed attestation that summarizes the verification results. The predicate type identifies this as a SLSA verification summary. The verifier field identifies the Conforma instance that performed verification. The policy field references the specific policy that was evaluated. And the verificationResult tells consumers: this artifact passed. The verifiedLevels array shows both Build L3 and Source L2 were achieved. This VSA is signed with a key that only exists in the managed context, proving that an independent verifier checked everything.
+The VSA is the final output from our managed context. The subject identifies the released image by digest. The verifier identifies Conforma. The verifiedLevels array shows both Build L3 and Source L3 were achieved. The resourceUri points back to the original build image that was verified. This VSA is signed with a key that only exists in the managed context, proving an independent verifier checked everything. Consumers can verify just this VSA instead of re-running the entire verification process.
+
+---
+
+## Policy Evaluation: Fail
+
+```
+FAILURE: slsa_source_verification.required_level_achieved
+
+  verify-source task achieved level 3,
+  but minimum required level is 4
+```
+
+Policy violation detected:
+- Specific rule and code identified
+- Clear message explaining what was expected vs. achieved
+- Release pipeline blocked — artifact cannot be published
+
+**This is Step 2 in action: Enforce**
+
+???
+
+And here's what failure looks like. We changed the policy to require Source Level 4, but the commit only achieves Level 3. Conforma identifies the exact rule that failed and provides a clear message. The release pipeline blocks publication. The developer gets immediate, actionable feedback about what needs to change. Notice that the policy change required no code changes to the pipeline itself, only a configuration update.
+
+---
+
+class: center, middle
+
+![Policy fail pipeline](img/policy-fail-pipeline.png)
+
+???
+
+The release pipeline with verify-conforma in red. push-snapshot is grayed out because it depends on verify-conforma succeeding. The artifact is blocked from publication.
+
+---
+
+class: center, middle
+
+![Policy fail detail](img/policy-fail-detail.png)
+
+???
+
+The specific violation: verify-source achieved level 3, but we set the minimum to 4. Clear, actionable feedback.
 
 ---
 
@@ -599,7 +653,7 @@ cosign verify-attestation \
 
 ???
 
-From a consumer's perspective, verification becomes straightforward. They pull the artifact, discover the attached attestations, and verify the VSA signature. The VSA tells them what SLSA levels were achieved without requiring them to understand your internal pipeline structure, your task definitions, or your policy rules. This abstraction is powerful — you can change your internal implementation while maintaining the same verification interface for consumers.
+From a consumer's perspective, verification becomes straightforward. They pull the artifact, discover the attached attestations, and verify the VSA signature. The VSA tells them what SLSA levels were achieved without requiring them to understand your internal pipeline structure, your task definitions, or your policy rules. This abstraction is powerful: you can change your internal implementation while maintaining the same verification interface for consumers. Note: the example shows Sigstore keyless verification (certificate-based), which is what production deployments would typically use. Our demo uses key-based signing for simplicity on a local cluster.
 
 ---
 
@@ -617,20 +671,14 @@ layout: false
 
 ## Key Takeaways
 
-- **SLSA 1.2 adds the Source track** — implement tracks independently
-- **Tracks produce evidence**, policy engines make decisions
-- **Observer pattern** (Tekton Chains) gives Build L3 without changing dev workflows
-- **Trust boundaries** (tenant vs. managed) isolate concerns
-- **VSAs** let consumers verify without re-evaluating
-- **Trusted tasks + trusted artifacts** = customizable pipelines with trust guarantees
-
-**Tease**: "From Mild to Wild: Policy Enforcement in the Software Supply Chain"
-- Open Source SecurityCon, March 2026
-- Deep dive on Conforma and advanced policy patterns
+- **Build track** — how was it built? (provenance, signing, isolation)
+- **Source track** — where did the code come from? (continuity, review, provenance)
+- **SLSA does not specify** how to combine tracks — that gap is real
+- **A policy engine** is what connects them: evaluate both sets of evidence, make one decision
 
 ???
 
-Let's recap. SLSA 1.2 gives us both Build and Source tracks, and you can implement them independently. The key insight is separating evidence gathering from decision making. Tekton Chains gives us Build L3 using an observer pattern that doesn't require developers to change how they work. Trust boundaries between tenant and managed contexts let us isolate concerns. VSAs abstract verification for consumers. And the combination of trusted tasks and trusted artifacts gives us flexibility without sacrificing trust. If you want to go deeper on policy enforcement, join us at Open Source SecurityCon in March.
+Let's recap. SLSA 1.2 gives us two independent tracks: Build, which proves how an artifact was produced, and Source, which proves where the code came from. We've given you an overview of both. But the spec leaves open how to combine them — there's no standard for linking a source attestation to a build provenance for the same artifact. A policy engine is the practical answer: it consumes attestations from both tracks and makes a single pass/fail decision. That's the 1-2-Step.
 
 ---
 
@@ -672,6 +720,10 @@ class: center, middle, inverse
 
 **arewm@redhat.com**
 
+.footnote[
+  slides.arewm.com/presentations/2026-02-19-the-1-2-step/
+]
+
 ???
 
 Thank you for your time. I'm happy to take any remaining questions now, or feel free to reach out afterward on GitHub or email. The slides will be available at the URL on the resources slide.
@@ -680,65 +732,36 @@ Thank you for your time. I'm happy to take any remaining questions now, or feel 
 
 layout: false
 
-## Appendix A1: AMPEL for Source Provenance
+## Appendix A1: Build Pipeline
 
-**Alternative if Conforma doesn't yet support source attestation evaluation**
+![Build pipeline](img/build-pipeline.png)
 
-AMPEL (Attestation Metadata Policy Engine Language):
-- Specialized policy engine for source track attestations
-- Evaluates source-tool output against repository policy definitions
-- Produces verification results that feed into VSA generation
-
-More detail coming at Open Source SecurityCon.
-
-???
-
-If Conforma doesn't yet support evaluating source track attestations by the time we implement this, AMPEL is an alternative. It's a specialized policy engine designed specifically for source attestations. It consumes the output from source-tool and evaluates it against repository policy definitions to determine Source track level compliance. The results can then feed into the overall VSA generation process.
+The build pipeline runs in the tenant context. Key tasks: `clone-repository`, `verify-source`, `build-container`, `build-image-index`. Tekton Chains observes the completed run and generates signed SLSA provenance.
 
 ---
 
-## Appendix A2: Hermetic Builds
+## Appendix A2: Policy Configuration
 
-**What are hermetic builds?**
-
-- All dependencies fetched at known versions
-- No network access during build (only from local cache)
-- Reproducible builds from the same inputs
-- Critical for SBOM accuracy
-
-**Hermeto**: Tool for enforcing hermetic build practices in containerized builds.
-
-???
-
-Hermetic builds are builds where all dependencies are pinned to specific versions and fetched before the build starts. During the actual compilation, there's no network access — everything comes from a local cache. This ensures that builds are reproducible and that your SBOM accurately reflects what was actually used. Hermeto is a tool we've developed for enforcing hermetic build practices in containerized build environments.
-
----
-
-## Appendix A3: Policy Configuration Details
-
-**required_tasks.yml**:
+**EnterpriseContractPolicy** (on-cluster):
 
 ```yaml
-required_tasks:
-  - name: verify-source
-    bundle: quay.io/konflux-ci/tekton-catalog/task-verify-source@sha256:abc123...
-  - name: build-container
-    bundle: quay.io/konflux-ci/tekton-catalog/task-buildah@sha256:def456...
-```
-
-**rule_data.yml**:
-
-```yaml
-trusted_tasks:
-  - ref: quay.io/konflux-ci/tekton-catalog/task-verify-source@sha256:abc123...
-  - ref: quay.io/konflux-ci/tekton-catalog/task-buildah@sha256:def456...
-  - ref: quay.io/konflux-ci/tekton-catalog/task-scan-image@sha256:789abc...
-
-allowed_registries:
-  - quay.io/myorg/
-  - ghcr.io/myorg/
+spec:
+  publicKey: k8s://tekton-pipelines/public-key
+  sources:
+  - name: Release Policies
+    config:
+      include: ['@slsa3', '@slsa_source']
+    policy:
+    - oci::quay.io/conforma/release-policy:konflux
+    - github.com/arewm/slsa-konflux-example//...
+        .../policy/custom/slsa_source_verification
+    data:
+    - github.com/arewm/slsa-konflux-example//...
+        .../ec-policy-data/data
+    - oci::quay.io/konflux-ci/tekton-catalog/
+        data-acceptable-bundles:latest
 ```
 
 ???
 
-Here's what the policy configuration looks like in practice. The required_tasks.yml file lists tasks that must be present in the provenance, pinned to specific digest-based bundle references. The rule_data.yml file contains the trusted task allowlist — the complete set of task bundles that are approved for use. It also defines other policy data like allowed destination registries. Conforma loads these configurations and uses them to evaluate attestations.
+Here's the actual policy configuration from the demo. The EnterpriseContractPolicy resource on the cluster defines which policy collections to include (slsa3 for build, slsa_source for our custom source verification), where to fetch policy rules from (the conforma release policy plus our custom rego rules), and where to get policy data like the trusted task allowlist and the minimum source level requirement. The public key is used to verify build provenance signatures.
