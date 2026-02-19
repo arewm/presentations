@@ -3,7 +3,6 @@
   <head>
     <title id="page-title">Presentation</title>
     <meta charset="utf-8">
-    <base id="base-url" href="">
     <style>
       @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
       @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
@@ -99,6 +98,10 @@
         color: #666;
       }
 
+      textarea#source {
+        display: none;
+      }
+
       img {
         max-width: 100%;
         height: auto;
@@ -150,8 +153,11 @@
           const presentationMdPath = `${presentationBase}/presentation.md`;
           const customCssPath = `${presentationBase}/custom.css`;
 
-          // Set base URL for resolving relative paths in the presentation
-          document.getElementById('base-url').href = `${presentationBase}/`;
+          // NOTE: We intentionally do NOT set a <base> element here. Remark.js uses
+          // history.replaceState with relative hash URLs (e.g. '#1') for slide navigation,
+          // and a <base> tag would cause those to resolve against the wrong origin path,
+          // breaking the clone window (C key). Instead, relative paths in the presentation
+          // markdown are rewritten to absolute paths after fetching.
 
           // Try to load custom CSS if it exists
           fetch(customCssPath, { method: 'HEAD' })
@@ -164,15 +170,36 @@
               // Ignore errors, custom CSS is optional
             });
 
-          // Load and create the slideshow
-          var slideshow = remark.create({
-            sourceUrl: presentationMdPath,
-            highlightStyle: 'monokai',
-            highlightLanguage: 'remark',
-            highlightLines: true,
-            slideNumberFormat: '%current% / %total%',
-            ratio: '16:9'
-          });
+          // Fetch markdown and rewrite relative asset paths to absolute paths before
+          // passing to Remark.js, since we cannot rely on a <base> tag for resolution.
+          fetch(presentationMdPath)
+            .then(response => {
+              if (!response.ok) throw new Error(`HTTP ${response.status}`);
+              return response.text();
+            })
+            .then(content => {
+              // Rewrite relative URLs in markdown image syntax and HTML img tags.
+              // Absolute URLs (http://, https://, /) and data: URIs are left unchanged.
+              const rebase = (_, prefix, path, suffix) =>
+                `${prefix}${presentationBase}/${path}${suffix || ''}`;
+              const processed = content
+                .replace(/(!\[[^\]]*\]\()(?!https?:\/\/|\/)([^)]+)(\))/g, rebase)
+                .replace(/(<img[^>]+src=["'])(?!https?:\/\/|\/)([^"']+)(["'])/g, rebase);
+
+              var slideshow = remark.create({
+                source: processed,
+                highlightStyle: 'monokai',
+                highlightLanguage: 'remark',
+                highlightLines: true,
+                slideNumberFormat: '%current% / %total%',
+                ratio: '16:9'
+              });
+            })
+            .catch(error => {
+              document.getElementById('source').value =
+                `# Error\n\nFailed to load presentation.\n\n${error.message}`;
+              remark.create();
+            });
         }
       </script>
     </body>
