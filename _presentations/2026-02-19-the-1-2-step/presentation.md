@@ -74,7 +74,9 @@ The SLSA framework identifies nine categories of supply chain threats, labeled A
 - Focuses on **evidence gathering** about observed behaviors
 - Does NOT reason about what's good or bad — that's for policy
 
+<div style="text-align: center; margin-top: 3.5em;">
 <img src="/shared/logos/slsa.svg" width="200" alt="SLSA logo">
+</div>
 
 ???
 
