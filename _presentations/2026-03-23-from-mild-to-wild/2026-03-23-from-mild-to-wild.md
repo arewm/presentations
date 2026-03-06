@@ -1,7 +1,7 @@
 ---
 title: "From Mild To Wild: How Hot Can Your SLSA Be?"
 event: "Open Source SecurityCon"
-date: 2026-03-26
+date: 2026-03-23
 slides_path: presentation.md
 excerpt: "Policy engines can consume attestations at three heat levels - from verifying builder identity (mild), to automated enforcement with admission controllers (medium), to building trust chains through provenance (wild)."
 session: https://sched.co/2DY1G
@@ -22,6 +22,7 @@ We demonstrate implementations at each level using policy engines, including AMP
 
 ## Key Topics
 
-- Topic 1
-- Topic 2
-- Topic 3
+- Attestation policy enforcement at three maturity levels (mild/medium/wild)
+- Comparing Conforma and AMPEL policy engines on identical use cases
+- Using VSAs and SVRs to decouple verification from enforcement
+- Qualifying build trust through Tekton provenance and trusted task bundles
