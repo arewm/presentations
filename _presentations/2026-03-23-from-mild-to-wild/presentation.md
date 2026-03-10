@@ -12,6 +12,7 @@ class: center, middle, title-slide
 Andrew McNamara (Conforma) • Adolfo "puerco" Garcia (AMPEL)
 
 <div style="margin-top: 2em;">
+  <span style="font-size: 2.5em; vertical-align: middle; margin-right: 2em;">🔴🟡🟢</span>
   <img src="/shared/logos/conforma.png" width="100" alt="Conforma logo" style="margin-right: 2em; vertical-align: middle;">
   <img src="/shared/logos/slsa.svg" width="100" alt="SLSA logo" style="vertical-align: middle;">
 </div>
@@ -22,7 +23,7 @@ Andrew McNamara (Conforma) • Adolfo "puerco" Garcia (AMPEL)
 
 ???
 
-Andrew and puerco briefly introduce themselves. "I'm Andrew, I work on Conforma, a Rego-based policy engine built around Tekton and Konflux." / "And I'm puerco, I work on AMPEL." One sentence each — get right to the talk.
+Andrew and puerco briefly introduce themselves. "I'm Andrew, I work on Konflux, a CI system built on Tekton. We also built Conforma, a Rego-based policy engine." / "And I'm puerco, I work on AMPEL." One sentence each — get right to the talk.
 
 ---
 
@@ -57,7 +58,7 @@ Andrew sets up the problem space. We're not talking about *generating* attestati
     <small>Rego-based policy engine<br>built around Tekton / Konflux</small>
   </div>
   <div style="flex: 1; text-align: center;">
-    <div style="font-size: 3em; margin-bottom: 0.2em;">⚙</div>
+    <div style="font-size: 3em; margin-bottom: 0.2em;">🔴🟡🟢</div>
     <strong>AMPEL</strong><br>
     <small>Policy engine for in-toto attestation evaluation<br>produces VSAs and SVRs</small>
   </div>
@@ -94,18 +95,18 @@ layout: false
 
 ## Mild: Verify the Signature, Builder, and SLSA Level
 
-**Scenario**: OCI artifact in a registry, built on GitHub Actions.
+**Scenario**: OCI artifact in a registry, built on **GitHub Actions**.
 
 Three checks:
 
 1. Is there a **valid signature**? (Cosign / Sigstore)
 2. Does the provenance say it was built by the **expected builder**?
-3. Does a **VSA** declare SLSA L1 or higher?
+3. Does a **VSA** declare at least SLSA L1? (reject level 0.)
 
 ```rego
-# Conforma policy — presence + signature + SLSA level
+# Conforma policy — presence + signature + SLSA level (builder-agnostic: attestation is the interface)
 deny contains result if {
-    count(lib.results_named("slsa-provenance-available")) == 0
+    count([a | a := input.attestations[_]; a.statement.predicateType == "https://slsa.dev/provenance/v0.2"]) == 0
     result := lib.result_helper(rego.metadata.chain(), [])
 }
 
@@ -116,8 +117,18 @@ deny contains result if {
 
 deny contains result if {
     vsa := input.attestations[_]
-    vsa.predicate.verifiedLevels[_] < "SLSA_BUILD_LEVEL_1"
+    vsa.statement.predicateType == "https://slsa.dev/verification_summary/v1"
+    not "SLSA_BUILD_LEVEL_1" in vsa.statement.predicate.verifiedLevels
     result := lib.result_helper(rego.metadata.chain(), [])
+}
+
+# Explicit: reject VSA that declares only level 0
+deny contains result if {
+    vsa := input.attestations[_]
+    vsa.statement.predicateType == "https://slsa.dev/verification_summary/v1"
+    "SLSA_BUILD_LEVEL_0" in vsa.statement.predicate.verifiedLevels
+    not "SLSA_BUILD_LEVEL_1" in vsa.statement.predicate.verifiedLevels
+    result := lib.result_helper(rego.metadata.chain(), ["VSA_SLSA_LEVEL_0_ONLY"])
 }
 ```
 
@@ -129,7 +140,7 @@ deny contains result if {
 
 ???
 
-Andrew walks through a Conforma policy doing these three presence/validity checks. The VSA here is already produced upstream — by GitHub Actions' SLSA generator, for example — we're just *verifying* it. Keep it concrete: one policy invocation, one clear result. Briefly explain what a VSA is for newcomers: "a signed summary saying 'this artifact passed our checks at level X'."
+Andrew walks through a Conforma policy doing these three presence/validity checks. Scenario is GitHub Actions to show that the *attestation* is the interface — the build system doesn't matter for these common checks. We only look at input.attestations (no Tekton-specific pipelinerun_attestations). The VSA may be produced upstream (e.g. by GHA's SLSA generator); we're *verifying* it. Signature is verified by the CLI before policy runs. For GHA you need a builder-agnostic policy like this; the default Conforma release policy is Tekton-only. Briefly explain what a VSA is: "a signed summary saying 'this artifact passed our checks at level X'."
 
 ---
 
@@ -137,22 +148,32 @@ Andrew walks through a Conforma policy doing these three presence/validity check
 
 Same three checks, different engine:
 
-```python
-# AMPEL policy — presence, signature, SLSA level
-policy = Policy()
+```hjson
+// AMPEL policy — presence, identity, SLSA level
+{
+    identities: [{
+        type: exact
+        issuer: https://token.actions.githubusercontent.com
+        identity: https://github.com/my-org/my-repo/...@refs/heads/main
+    }]
 
-@policy.rule
-def provenance_present(ctx):
-    return ctx.has_attestation("slsa-provenance")
-
-@policy.rule
-def signature_valid(ctx):
-    return ctx.attestation("slsa-provenance").signature.valid
-
-@policy.rule
-def meets_slsa_level(ctx):
-    vsa = ctx.attestation("slsa-vsa")
-    return vsa.predicate.verifiedLevels >= ["SLSA_BUILD_LEVEL_1"]
+    tenets: [
+        {
+            id: provenance-present
+            code: "size(predicates) > 0"
+            predicates: { types: [https://slsa.dev/provenance/v1] }
+        }
+        {
+            id: vsa-meets-slsa-level
+            code: '''
+                predicates.exists(p,
+                    p.data.verifiedLevels.exists(l, l == "SLSA_BUILD_LEVEL_1")
+                )
+            '''
+            predicates: { types: [https://slsa.dev/verification_summary/v1] }
+        }
+    ]
+}
 ```
 
 **Same result. Different engine.**
@@ -205,20 +226,30 @@ Puerco takes the lead. Medium means going beyond presence checks into *content*:
 - What were the **build parameters**?
 - Combine provenance **+ SBOM attestation** for richer checks
 
-```python
-# AMPEL — evaluate content across attestations, produce VSA/SVR
-@policy.rule
-def trusted_source_branch(ctx):
-    prov = ctx.attestation("slsa-provenance")
-    return prov.predicate.buildDefinition.externalParameters.ref \
-        == "refs/heads/main"
+```hjson
+// AMPEL — evaluate content across attestations, produce VSA
+{
+    tenets: [
+        {
+            id: trusted-source-branch
+            code: '''
+                predicates.exists(p,
+                    p.data.buildDefinition.externalParameters.source.ref
+                        == "refs/heads/main"
+                )
+            '''
+            predicates: { types: [https://slsa.dev/provenance/v1] }
+        }
+        {
+            id: sbom-present
+            code: "size(predicates) > 0"
+            predicates: { types: [https://cyclonedx.org/bom] }
+        }
+    ]
+}
 
-@policy.rule
-def sbom_present(ctx):
-    return ctx.has_attestation("cyclonedx-sbom")
-
-# Produce a VSA (SLSA) or SVR (in-toto) summarising evaluation
-result = policy.evaluate(artifact, produce="vsa")
+// Produce a VSA summarising evaluation
+// ampel verify <artifact> --policy policy.hjson --attest-results --attest-format=vsa
 ```
 
 <div style="text-align: center; margin-top: 1em;">
@@ -237,7 +268,7 @@ Puerco explains the difference between a presence check and a content check. The
 # Conforma — inspect provenance content
 deny contains result if {
     prov := lib.pipelinerun_attestations[_]
-    ref := prov.predicate.buildDefinition.externalParameters.git.ref
+    ref := prov.statement.predicate.buildDefinition.externalParameters.git.ref
     not startswith(ref, "refs/heads/main")
     result := lib.result_helper(rego.metadata.chain(), [ref])
 }
@@ -247,11 +278,11 @@ deny contains result if {
 
 Same interchangeability point: standardized provenance format, substitutable engines.
 
-Both engines can inspect content **and** produce summary attestations.
+Both engines can inspect content **and** produce summary attestations. Conforma’s output can be used to produce standard SLSA VSAs for all verified artifacts ([attach-vsa](https://github.com/arewm/slsa-konflux-example/blob/main/managed-context/tasks/attach-vsa/0.1/attach-vsa.yaml)). Conforma is conservative in what it attests; policy authors and evaluators use its output to derive VSA/SVR (examples repo planned).
 
 ???
 
-Andrew's "me too." Brief — one policy snippet showing Conforma checking a content property. Reinforce the standards story: the provenance schema is the same, so either engine can read it. Also: Conforma can produce a VSA after evaluation, just like AMPEL. About 45 seconds.
+Andrew's "me too." Brief — one policy snippet showing Conforma checking a content property. Reinforce the standards story: the provenance schema is the same, so either engine can read it. Conforma produces its own verification summary after evaluation (policy outcomes, attestation/signature status, timestamps). As a common tool it is conservative: it attests what can be reliably extrapolated from the policies, not everything a policy author might infer. Policy authors and Conforma evaluators can use that output to derive further attestations — e.g. standard SLSA VSA or SVR — as in the [attach-vsa task](https://github.com/arewm/slsa-konflux-example/blob/main/managed-context/tasks/attach-vsa/0.1/attach-vsa.yaml). A future examples repo (Conforma + AMPEL) will show how to produce VSA and SVR from the same evaluation data. About 45 seconds.
 
 ---
 
@@ -312,9 +343,9 @@ Tekton provenance records which TaskRun steps executed — including **bundle re
 **The solution**: Policy verifies every task is a **known, pinned trusted bundle digest**.
 
 ```rego
-# Conforma — verify task bundles against approved allowlist
+# Conforma — verify task bundles against approved allowlist (data.trusted_tasks)
 deny contains result if {
-    task := lib.pipelinerun_attestations[_].predicate.buildConfig.tasks[_]
+    task := lib.pipelinerun_attestations[_].statement.predicate.buildConfig.tasks[_]
     bundle_ref := task.ref.bundle
     not trusted_bundles[bundle_ref]
     result := lib.result_helper(rego.metadata.chain(), [bundle_ref])
@@ -333,18 +364,31 @@ Andrew explains the Conforma approach. Tekton Chains records task bundle referen
 
 ## Wild: "AMPEL Can Verify That Too"
 
-```python
-# AMPEL — evaluate task bundle digests against approved list
-APPROVED_BUNDLES = load_allowlist("trusted-bundles.json")
+```hjson
+// AMPEL — evaluate task bundle digests against approved prefix
+{
+    context: {
+        values: {
+            allowed_prefix: {
+                type: string
+                default: "quay.io/konflux-ci/tekton-catalog/"
+            }
+        }
+    }
 
-@policy.rule
-def all_tasks_trusted(ctx):
-    prov = ctx.attestation("slsa-provenance")
-    tasks = prov.predicate.buildConfig.tasks
-    return all(
-        task["ref"]["bundle"] in APPROVED_BUNDLES
-        for task in tasks
-    )
+    tenets: [{
+        id: all-tasks-trusted
+        code: '''
+            predicates.exists(p,
+                p.data.buildConfig.tasks.all(task,
+                    has(task.ref) && has(task.ref.bundle) &&
+                    task.ref.bundle.startsWith(context.allowed_prefix)
+                )
+            )
+        '''
+        predicates: { types: [https://slsa.dev/provenance/v0.2] }
+    }]
+}
 ```
 
 Same interchangeability point: standardized Tekton provenance format, substitutable engines.
@@ -408,20 +452,26 @@ Both speakers together. Quick summary. The three key messages:
     <strong>conforma.dev</strong>
   </div>
   <div style="text-align: center;">
-    <div style="width: 140px; height: 140px; border: 2px dashed #999; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 0.75em; color: #666;">
-      AMPEL QR<br>(coming soon)
+    <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
+      🔴🟡🟢
     </div><br>
-    <strong>AMPEL project</strong>
+    <strong>github.com/carabiner-dev/ampel</strong>
   </div>
   <div style="text-align: center;">
     <img src="/shared/qr-codes/slsa.png" width="140" alt="SLSA QR code"><br>
     <strong>slsa.dev</strong>
   </div>
   <div style="text-align: center;">
-    <div style="width: 140px; height: 140px; border: 2px dashed #999; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 0.75em; color: #666;">
-      Slides QR<br>(coming soon)
+    <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
+      📊
     </div><br>
-    <strong>These slides</strong>
+    <strong>slides.arewm.com</strong>
+  </div>
+  <div style="text-align: center;">
+    <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
+      💻
+    </div><br>
+    <strong>Sample policies</strong>
   </div>
 </div>
 
