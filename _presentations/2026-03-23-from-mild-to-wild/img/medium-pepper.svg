@@ -1,13 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160" width="120" height="160">
-  <!-- Stem -->
-  <path d="M60 20 Q65 10 70 5" stroke="#e65100" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <!-- Leaf -->
-  <ellipse cx="70" cy="12" rx="10" ry="5" fill="#66bb6a" transform="rotate(-30 70 12)"/>
-  <!-- Pepper body -->
-  <path d="M52 25 Q35 35 32 70 Q30 100 45 125 Q55 140 60 140 Q65 140 75 125 Q90 100 88 70 Q85 35 68 25 Z"
-        fill="#ffa726" stroke="#e65100" stroke-width="2"/>
-  <!-- Highlight -->
-  <ellipse cx="48" cy="65" rx="6" ry="15" fill="#ffe082" opacity="0.6"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 320" width="120" height="192">
+  <defs>
+    <linearGradient id="jMain" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FF9800"/>
+      <stop offset="40%" stop-color="#FFA726"/>
+      <stop offset="60%" stop-color="#FF9800"/>
+      <stop offset="100%" stop-color="#E65100"/>
+    </linearGradient>
+  </defs>
+  <!-- Stem — like the references, a distinct curved shape -->
+  <path d="M108,28 C110,16 116,8 122,4 C126,2 128,6 126,10
+           C122,18 118,28 114,42 L102,42 C104,34 106,30 108,28Z"
+        fill="#5FD2DB"/>
+  <!-- Leaves -->
+  <path d="M106,34 C96,26 82,24 76,30 C84,34 96,34 106,34Z" fill="#9AD14B"/>
+  <path d="M114,30 C122,22 134,20 138,26 C130,30 120,30 114,30Z" fill="#66BB6A"/>
+  <!-- Calyx -->
+  <ellipse cx="108" cy="48" rx="28" ry="10" fill="#558B2F"/>
+  <!-- Jalapeno body — built from overlapping shapes like the references
+       Two fat overlapping ellipses create the characteristic bulging shape -->
+  <!-- Left half — fuller, bulges out more -->
+  <path d="M20,148 C24,230 52,278 88,274
+           S130,210 126,128 C122,62 102,38 74,42
+           C46,46 16,66 20,148Z"
+        fill="#FF9800"/>
+  <!-- Right half — slightly smaller -->
+  <path d="M180,140 C176,222 150,270 116,266
+           S78,200 82,120 C86,56 108,38 132,42
+           C156,46 184,58 180,140Z"
+        fill="#E65100" opacity="0.7"/>
+  <!-- Center body to blend the halves -->
+  <path d="M140,50 C154,70 162,110 160,156
+           C158,202 146,248 124,272
+           C112,284 100,286 92,278
+           C76,260 62,222 54,180
+           C46,138 46,96 56,66
+           C64,44 80,38 100,42
+           C120,46 134,46 140,50Z"
+        fill="url(#jMain)"/>
+  <!-- Tapered tip is formed by the body shapes converging -->
+  <!-- Vertical corking lines — the signature jalapeno stretch marks, running lengthwise -->
+  <path d="M72,60 C66,100 62,160 68,220 C72,250 80,272 88,284" stroke="#BF360C" stroke-width="1.2" fill="none" opacity="0.15"/>
+  <path d="M90,46 C86,90 84,150 86,210 C88,246 92,270 96,286" stroke="#BF360C" stroke-width="1" fill="none" opacity="0.12"/>
+  <path d="M116,46 C120,86 122,146 118,206 C114,242 108,268 102,282" stroke="#BF360C" stroke-width="1" fill="none" opacity="0.12"/>
+  <path d="M138,56 C144,96 148,152 142,212 C136,248 124,272 112,284" stroke="#BF360C" stroke-width="1.2" fill="none" opacity="0.1"/>
+  <!-- Broad highlight — glossy jalapeno surface -->
+  <path d="M68,72 C58,112 54,168 60,228 C64,254 72,270 80,278"
+        stroke="white" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.15"/>
+  <!-- Sharp specular -->
+  <path d="M72,86 C68,116 66,156 70,200"
+        stroke="white" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.2"/>
   <!-- Label -->
-  <text x="60" y="158" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#e65100" font-weight="bold">MEDIUM</text>
+  <text x="100" y="316" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#E65100" font-weight="bold">MEDIUM</text>
 </svg>

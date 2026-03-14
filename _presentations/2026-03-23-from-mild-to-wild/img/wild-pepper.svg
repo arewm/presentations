@@ -1,13 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160" width="120" height="160">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 340" width="120" height="227">
+  <!-- Wild Chili Pepper - Original Design
+       Single crescent body with inner shadow overlay.
+       The whole pepper curves left as it tapers down. -->
+
   <!-- Stem -->
-  <path d="M60 20 Q65 10 70 5" stroke="#b71c1c" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <!-- Leaf -->
-  <ellipse cx="70" cy="12" rx="10" ry="5" fill="#66bb6a" transform="rotate(-30 70 12)"/>
-  <!-- Pepper body — thinner/sharper for a chili -->
-  <path d="M54 25 Q38 40 36 80 Q34 110 48 135 Q55 148 60 148 Q65 148 72 135 Q86 110 84 80 Q82 40 66 25 Z"
-        fill="#ef5350" stroke="#b71c1c" stroke-width="2"/>
-  <!-- Highlight -->
-  <ellipse cx="47" cy="70" rx="5" ry="16" fill="#ef9a9a" opacity="0.6"/>
+  <rect x="84" y="2" width="7" height="16" rx="3" fill="#5D4037"/>
+
+  <!-- Calyx — wraps around the top of the pepper -->
+  <path d="M68 28 C70 18, 80 14, 88 16 C92 12, 98 12, 102 16
+           C110 14, 118 18, 120 28 C116 36, 100 40, 92 40
+           C84 40, 72 36, 68 28Z"
+        fill="#558B2F"/>
+
+  <!-- Main pepper body — ONE continuous closed crescent
+       Outer edge: curves from calyx down-left to the tip
+       Inner edge: returns up on the concave side
+       The pepper bows out to the right at the top and curves left at the bottom -->
+  <path d="M120 32
+           C134 52, 140 86, 136 124
+           C132 162, 122 200, 106 234
+           C90 268, 72 294, 56 310
+           C48 318, 42 314, 44 308
+           C48 300, 58 286, 68 268
+           C78 248, 86 224, 92 196
+           C98 168, 100 136, 96 106
+           C92 76, 84 52, 72 36
+           C68 30, 74 28, 82 32
+           C94 36, 110 34, 120 32Z"
+        fill="#F44336"/>
+
+  <!-- Shadow overlay — darker red on the inner (right) half
+       Shares the outer edge, uses an inner line closer to center -->
+  <path d="M120 32
+           C134 52, 140 86, 136 124
+           C132 162, 122 200, 106 234
+           C90 268, 72 294, 56 310
+           C50 314, 48 308, 52 302
+           C62 286, 76 262, 88 234
+           C100 204, 110 168, 114 132
+           C118 96, 118 62, 120 32Z"
+        fill="#C62828"/>
+
+  <!-- Highlight — broad glow along the left (outer convex) curve -->
+  <path d="M80 54 C76 82, 78 118, 84 158 C88 186, 82 218, 72 252"
+        fill="none" stroke="white" stroke-width="10" stroke-linecap="round" opacity="0.15"/>
+
+  <!-- Sharp specular near top -->
+  <ellipse cx="80" cy="66" rx="5" ry="14" fill="white" opacity="0.18"
+           transform="rotate(-15 80 66)"/>
+
   <!-- Label -->
-  <text x="60" y="160" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#b71c1c" font-weight="bold">WILD</text>
+  <text x="90" y="336" font-family="sans-serif" font-size="20" font-weight="bold"
+        fill="#B71C1C" text-anchor="middle">WILD</text>
 </svg>
