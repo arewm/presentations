@@ -81,8 +81,6 @@ class: center, middle, inverse
 
 **Verify provenance properties**
 
-<div style="margin-top: 1em; font-size: 3em;">🌶</div>
-
 ???
 
 Puerco introduces this level. Brief context for the audience: an attestation is a signed statement about your software — produced by your build system, your CI pipeline, or a verification tool. At mild, we verify fundamental provenance properties: is provenance present, is the build type recognized, does it come from a trusted builder, were materials properly tracked? This is where everyone should start.
@@ -93,26 +91,18 @@ layout: false
 
 ## Mild: Verify Provenance Properties
 
-**Scenario**: OCI artifact built with **GitHub Actions**.
+**Scenario**: Any OCI artifact with SLSA provenance — regardless of build system.
 
 Checks:
 1. **Provenance attestation** is present
 2. **Build type** is in the accepted list
-3. **Builder identity** matches expected workflow
+3. **Builder identity** matches expected builder
 4. **Source materials** are version-controlled git repos with SHAs
 5. **External parameters** are restricted
 
 ```hjson
-// AMPEL policy — presence, identity, build properties
+// AMPEL policy — verify SLSA provenance properties
 {
-    identities: [{
-        sigstore: {
-            mode: "exact"
-            issuer: "https://token.actions.githubusercontent.com"
-            identity: "https://github.com/puerco/mild-to-wild-samples/.github/workflows/build-push.yaml@refs/heads/main"
-        }
-    }]
-
     tenets: [
         {
             id: provenance-present
@@ -121,24 +111,24 @@ Checks:
             predicates: { types: ["https://slsa.dev/provenance/v1"] }
         }
         {
-            id: build-type-accepted
+            id: vsa-meets-slsa-level
             runtime: "cel@v0"
             code: '''
                 predicates.exists(p,
-                    p.data.buildDefinition.buildType == "https://actions.github.io/buildtypes/workflow/v1"
+                    p.data.verifiedLevels.exists(l, l == "SLSA_BUILD_LEVEL_1")
                 )
             '''
-            predicates: { types: ["https://slsa.dev/provenance/v1"] }
+            predicates: { types: ["https://slsa.dev/verification_summary/v1"] }
         }
     ]
 }
 ```
 
-**Result**: pass / fail per rule. Signature verification uses Sigstore keyless (OIDC identity).
+**Result**: pass / fail per rule. Works with any build system that produces SLSA provenance.
 
 ???
 
-Puerco walks through the AMPEL policy for mild. The identity block verifies the GitHub Actions OIDC identity — keyless signing via Sigstore. Two tenets: provenance must exist, and the build type must match GitHub Actions workflow format. These are builder-agnostic checks that work with any SLSA v1.0 provenance.
+Puerco walks through the AMPEL policy for mild. This is entirely build-system-agnostic — it checks for SLSA provenance presence and verifies the VSA declares at least Build Level 1. No hardcoded builder identity or build type. These checks work with provenance from GitHub Actions, Tekton, or any other system that produces SLSA-formatted attestations.
 
 ---
 
@@ -170,7 +160,7 @@ Attestation formats follow open standards (in-toto / SLSA), so engines are subst
 
 ???
 
-Andrew's "me too." The Conforma policy does the same checks in Rego. Two custom rules: provenance must exist, build type must be in the allowed list. Upstream rules handle builder identity, source materials, and external parameters. The ec CLI handles signature verification (both key-based and keyless) before policy evaluation. About 30 seconds.
+Andrew's "me too." The Conforma policy does the same checks in Rego. Two custom rules: provenance must exist, build type must be in the allowed list. The allowed list is configurable — not hardcoded to any build system. Upstream rules handle builder identity, source materials, and external parameters. About 30 seconds.
 
 ---
 
@@ -196,19 +186,15 @@ class: center, middle, inverse
 
 **Same checks + produce a VSA**
 
-<div style="margin-top: 1em; font-size: 3em;">🌶🌶</div>
-
 ???
 
-Puerco takes the lead. Medium means taking the same verification from mild and producing a portable summary — a VSA (Verification Summary Attestation). The policy checks are identical to mild; the difference is that medium produces a signed VSA declaring SLSA Build Level 2.
+Puerco takes the lead. Medium takes an image built with GitHub Actions, verifies its SLSA properties (the same checks from mild), verifies the base image too, and produces a VSA that captures both results. Downstream consumers check the VSA instead of re-running verification.
 
 ---
 
 ## Medium: Verification Results as a Portable VSA
 
-**Scenario**: Image built with **GitHub Actions**, signed with **Sigstore keyless**.
-
-The policy checks are identical to mild. The difference: we verify both the built image and its base image, then produce a signed **VSA at SLSA Build Level 2**.
+**Scenario**: Image built with **GitHub Actions**, signed with **Sigstore keyless**. We verify both the built image and its base image, then produce a signed **VSA at SLSA Build Level 2** — including the base image's properties so they don't need to be recomputed.
 
 ```bash
 $ generate-vsa.sh \
@@ -292,11 +278,9 @@ class: center, middle, inverse
 
 **Upgrade from L2 to L3 with trusted task verification**
 
-<div style="margin-top: 1em; font-size: 3em;">🌶🌶🌶</div>
-
 ???
 
-Andrew introduces the wild level. The question is: given that we're already producing VSAs at L2, can we verify trusted tasks and upgrade to L3? The key insight is that Tekton Chains records task references in the provenance. Wild policy checks that every task is a known, pinned bundle or git reference. If all tasks are trusted, the VSA declares L3. If any are untrusted, warnings are produced and the VSA stays at L2.
+Andrew introduces the wild level. Wild does the same thing as medium but for Tekton, where we have trusted tasks and isolation guarantees that let us upgrade to L3. Tekton Chains records task references in the provenance. Wild policy verifies every task is a known, pinned bundle or git reference. If all tasks are trusted, the build environment's isolation guarantees are established, and the VSA declares L3. If any are untrusted, warnings are produced and the VSA stays at L2.
 
 ---
 
