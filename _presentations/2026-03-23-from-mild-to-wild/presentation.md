@@ -60,7 +60,7 @@ Andrew sets up the problem space. We're not talking about *generating* attestati
   <div style="flex: 1; text-align: center;">
     <div style="font-size: 3em; margin-bottom: 0.2em;">🔴🟡🟢</div>
     <strong>AMPEL</strong><br>
-    <small>Policy engine for in-toto attestation evaluation<br>produces VSAs and SVRs</small>
+    <small>Policy engine for in-toto attestation evaluation<br>produces VSAs</small>
   </div>
 </div>
 
@@ -81,10 +81,6 @@ class: center, middle, inverse
 
 **Verify provenance properties**
 
-<div style="margin-top: 1em;">
-  <img src="img/mild-pepper.svg" width="120" alt="Mild green pepper">
-</div>
-
 ???
 
 Puerco introduces this level. Brief context for the audience: an attestation is a signed statement about your software — produced by your build system, your CI pipeline, or a verification tool. At mild, we verify fundamental provenance properties: is provenance present, is the build type recognized, does it come from a trusted builder, were materials properly tracked? This is where everyone should start.
@@ -95,14 +91,50 @@ layout: false
 
 ## Mild: Verify Provenance Properties
 
-**Scenario**: OCI artifact built on **Tekton**.
+**Scenario**: Any OCI artifact with SLSA provenance — regardless of build system.
 
 Checks:
 1. **Provenance attestation** is present
 2. **Build type** is in the accepted list
 3. **Builder identity** matches expected builder
 4. **Source materials** are version-controlled git repos with SHAs
-5. **External parameters** are restricted (no shared volumes)
+5. **External parameters** are restricted
+
+```hjson
+// AMPEL policy — verify SLSA provenance properties
+{
+    tenets: [
+        {
+            id: provenance-present
+            runtime: "cel@v0"
+            code: "size(predicates) > 0"
+            predicates: { types: ["https://slsa.dev/provenance/v1"] }
+        }
+        {
+            id: vsa-meets-slsa-level
+            runtime: "cel@v0"
+            code: '''
+                predicates.exists(p,
+                    p.data.verifiedLevels.exists(l, l == "SLSA_BUILD_LEVEL_1")
+                )
+            '''
+            predicates: { types: ["https://slsa.dev/verification_summary/v1"] }
+        }
+    ]
+}
+```
+
+**Result**: pass / fail per rule. Works with any build system that produces SLSA provenance.
+
+???
+
+Puerco walks through the AMPEL policy for mild. This is entirely build-system-agnostic — it checks for SLSA provenance presence and verifies the VSA declares at least Build Level 1. No hardcoded builder identity or build type. These checks work with provenance from GitHub Actions, Tekton, or any other system that produces SLSA-formatted attestations.
+
+---
+
+## Mild: "Conforma Does That Too"
+
+Same checks, different engine:
 
 ```rego
 # Conforma policy — verify foundational provenance properties
@@ -122,55 +154,13 @@ deny contains result if {
 # Plus upstream rules for: builder identity, source materials, external params
 ```
 
-**Result**: pass / fail per rule.
-
-Signature verification is handled by the CLI before policy evaluation.
-
-???
-
-Puerco walks through the Conforma policy for mild. Two custom checks: provenance must exist, and the build type must be in the allowed list. This supports both SLSA v0.2 and v1.0 formats. Then upstream rules from the Conforma release-policy handle builder identity verification, source material checks (git URI and SHA present), and external parameter restrictions. Signature is verified by the ec CLI using cosign before policy runs — not a policy rule. These are builder-agnostic checks that work with any SLSA provenance.
-
----
-
-## Mild: "Conforma Does That Too"
-
-Same checks, different engine:
-
-```hjson
-// AMPEL policy — presence, identity, build properties
-{
-    identities: [{
-        type: exact
-        issuer: https://tekton.dev/chains
-        identity: https://tekton.dev/chains/v2
-    }]
-
-    tenets: [
-        {
-            id: provenance-present
-            code: "size(predicates) > 0"
-            predicates: { types: [https://slsa.dev/provenance/v1] }
-        }
-        {
-            id: build-type-accepted
-            code: '''
-                predicates.exists(p,
-                    p.data.buildDefinition.buildType == "https://tekton.dev/chains/v2/slsa"
-                )
-            '''
-            predicates: { types: [https://slsa.dev/provenance/v1] }
-        }
-    ]
-}
-```
-
 **Same checks. Different engine.**
 
 Attestation formats follow open standards (in-toto / SLSA), so engines are substitutable.
 
 ???
 
-Andrew's "me too." Brief and playful — one policy snippet showing the same checks in AMPEL. The point: because the attestation format is standardized, you're not locked in to any engine. This should be quick — about 30 seconds.
+Andrew's "me too." The Conforma policy does the same checks in Rego. Two custom rules: provenance must exist, build type must be in the allowed list. The allowed list is configurable — not hardcoded to any build system. Upstream rules handle builder identity, source materials, and external parameters. About 30 seconds.
 
 ---
 
@@ -196,78 +186,71 @@ class: center, middle, inverse
 
 **Same checks + produce a VSA**
 
-<div style="margin-top: 1em;">
-  <img src="img/medium-pepper.svg" width="120" alt="Medium yellow pepper">
-</div>
-
 ???
 
-Puerco takes the lead. Medium means taking the same verification from mild and producing a portable summary — a VSA (Verification Summary Attestation). The policy checks are identical to mild; the difference is that medium produces a signed VSA declaring SLSA Build Level 2.
+Puerco takes the lead. Medium takes an image built with GitHub Actions, verifies its SLSA properties (the same checks from mild), verifies the base image too, and produces a VSA that captures both results. Downstream consumers check the VSA instead of re-running verification.
 
 ---
 
 ## Medium: Verification Results as a Portable VSA
 
-**Scenario**: Same artifact, same checks — now **produce a VSA** summarizing the result.
+**Scenario**: Image built with **GitHub Actions**, signed with **Sigstore keyless**. We verify both the built image and its base image, then produce a signed **VSA at SLSA Build Level 2** — including the base image's properties so they don't need to be recomputed.
 
-The policy is identical to mild (same SLSA checks). The difference: we run verification and produce a signed VSA at **SLSA Build Level 2**.
+```bash
+$ generate-vsa.sh \
+    --image ghcr.io/puerco/mild-to-wild-samples@sha256:7add... \
+    --policy 2-medium/conforma/policy.yaml \
+    --certificate-identity '...build-push.yaml@refs/heads/main' \
+    --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+    --base-image-policy 1-mild/conforma/policy.yaml \
+    --base-image-key cosign-provenance.pub \
+    --base-image-release-key cosign-release.pub \
+    --vsa-signing-key vsa.key
 
-```yaml
-# Tekton verify-and-attest task
-- name: verify-image
-  run: |
-    ec validate image \
-      --image $(params.IMAGE) \
-      --policy policy.yaml \
-      --public-key $(params.PUBLIC_KEY) \
-      --output result.json
+=== Verifying ghcr.io/puerco/mild-to-wild-samples@sha256:7add... ===
+--- Pass 1: Verifying base image ubi-minimal@sha256:3d6e...
+  Release signature: OK
+  Provenance: OK
+--- Pass 2: Verifying built image
+  Policy evaluation: PASSED
+  Built image level: SLSA_BUILD_LEVEL_2
+  Base image: ubi-minimal@sha256:3d6e... -> SLSA_BUILD_LEVEL_2
 
-- name: create-vsa
-  run: |
-    # Extract verification result, format as VSA
-    # VSA declares SLSA_BUILD_LEVEL_2
-    echo '{ "verifiedLevels": ["SLSA_BUILD_LEVEL_2"], ... }' > vsa.json
+=== VSA predicate ===
+{ "verifiedLevels": ["SLSA_BUILD_LEVEL_2"],
+  "dependencyLevels": {"SLSA_BUILD_LEVEL_2": 1}, ... }
 
-- name: sign-vsa
-  run: |
-    cosign attest --type https://slsa.dev/verification_summary/v1 \
-      --predicate vsa.json \
-      --key $(params.VSA_KEY) \
-      --new-bundle-format \
-      $(params.IMAGE)
+VSA attached to ghcr.io/puerco/mild-to-wild-samples@sha256:7add...
 ```
-
-<div style="text-align: center; margin-top: 1em;">
-  <img src="img/medium-flow.svg" width="580" alt="provenance → verification → VSA at L2 → downstream consumers">
-</div>
 
 ???
 
-Puerco explains the medium workflow. The policy checks are the same as mild — provenance present, build type, builder identity, source materials, external parameters. The new concept is the VSA as *output*. The verify-and-attest Tekton task runs ec validate, creates a VSA declaring SLSA Build Level 2, and signs it with cosign. This decouples "who evaluates" from "who enforces." Downstream consumers (like admission controllers) can check the VSA without re-running verification.
+Puerco demos the medium workflow live. The script extracts the base image from the OCI manifest annotations, verifies the base image release signature and provenance (pass 1), then verifies the built image's provenance using keyless Sigstore verification against the GitHub Actions OIDC identity (pass 2). It generates a SLSA VSA at Build Level 2 with the base image as a dependency. The VSA decouples "who evaluates" from "who enforces" — downstream consumers check the VSA instead of re-verifying provenance. The same script works with Tekton Chains (key-based) by swapping `--certificate-*` flags for `--public-key`.
 
 ---
 
 ## Medium: "Conforma Does That Too"
 
-Same verification flow, same VSA output:
+The policy doesn't care whether the image was built by GitHub Actions or Tekton:
 
-```rego
-# Conforma — same mild checks
-deny contains result if {
-    count(lib.slsa_provenance_attestations) == 0
-    result := lib.result_helper(rego.metadata.chain(), [])
-}
-
-# ... builder identity, source materials, external params ...
+```yaml
+# policy.yaml accepts both build systems
+ruleData:
+  allowed_builder_ids:
+    - "https://github.com/arewm/.../tekton-build"
+    - "https://github.com/puerco/...build-push.yaml@refs/heads/main"
+  allowed_build_types:
+    - "https://tekton.dev/chains/v2/slsa"
+    - "https://actions.github.io/buildtypes/workflow/v1"
 ```
 
-After policy passes, Conforma's output can be used to produce a standard SLSA VSA at level 2.
+The `generate-vsa.sh` script works with either build system — swap `--certificate-*` for `--public-key` when using Tekton Chains. Same VSA output either way.
 
-Both engines verify the same properties and can produce VSAs for downstream enforcement. The verification summary format is standardized (in-toto VSA), so the output is portable across policy engines.
+Both engines verify the same properties and can produce VSAs for downstream enforcement. The VSA format is standardized (in-toto), so the output is portable across policy engines.
 
 ???
 
-Andrew's "me too." The Conforma policy is identical to mild — we're checking the same properties. After verification passes, the results can be formatted as a VSA and signed. The task flow is the same: run ec validate, extract the result, format as a VSA at L2, sign and attach. Reinforce that the VSA format is standardized, so either engine can produce VSAs that any consumer can verify. About 45 seconds.
+Andrew's "me too." The key insight: the same Conforma policy accepts provenance from either build system because the SLSA format is standardized. The ruleData lists both builder IDs and build types. The generate-vsa.sh script handles key-based or keyless verification — just different CLI flags. The VSA format is standardized, so either engine can produce VSAs that any consumer can verify. About 45 seconds.
 
 ---
 
@@ -295,13 +278,9 @@ class: center, middle, inverse
 
 **Upgrade from L2 to L3 with trusted task verification**
 
-<div style="margin-top: 1em;">
-  <img src="img/wild-pepper.svg" width="120" alt="Wild red pepper">
-</div>
-
 ???
 
-Andrew introduces the wild level. The question is: given that we're already producing VSAs at L2, can we verify trusted tasks and upgrade to L3? The key insight is that Tekton Chains records task references in the provenance. Wild policy checks that every task is a known, pinned bundle or git reference. If all tasks are trusted, the VSA declares L3. If any are untrusted, warnings are produced and the VSA stays at L2.
+Andrew introduces the wild level. Wild does the same thing as medium but for Tekton, where we have trusted tasks and isolation guarantees that let us upgrade to L3. Tekton Chains records task references in the provenance. Wild policy verifies every task is a known, pinned bundle or git reference. If all tasks are trusted, the build environment's isolation guarantees are established, and the VSA declares L3. If any are untrusted, warnings are produced and the VSA stays at L2.
 
 ---
 
@@ -333,7 +312,9 @@ Tekton provenance records task references — **bundle digests** (PipelineRun) o
 warn contains result if {
     some att in lib.pipelinerun_attestations
     tasks := tekton.tasks(att)
-    untrusted := tekton.untrusted_task_refs(tasks)
+    bundle_refs := {ref | some t in tasks; ref := tekton.task_ref(t).bundle; ref != ""}
+    manifests := ec.oci.image_manifests(bundle_refs)
+    untrusted := tekton.untrusted_task_refs(tasks, manifests)
     count(untrusted) > 0
     some task in untrusted
     ref := tekton.task_ref(task)
@@ -344,7 +325,7 @@ warn contains result if {
 
 ???
 
-Andrew explains the wild approach. Tekton Chains records task bundle references (for PipelineRun) or git resolver references (for TaskRun) in the provenance. Wild policy verifies these against a trusted task allowlist. Crucially, this is a `warn` rule, not `deny` — the policy always passes. Untrusted tasks produce warnings, which means the VSA stays at L2. If all tasks are trusted (no warnings), the VSA upgrades to L3. This is the "trusted task" model that Konflux uses: pinned tasks with known digests behave deterministically.
+Andrew explains the wild approach. Tekton Chains records task bundle references (for PipelineRun) or git resolver references (for TaskRun) in the provenance. Wild policy collects the bundle refs, fetches their OCI manifests (for version constraint checking), and verifies each task against a trusted task allowlist. Crucially, this is a `warn` rule, not `deny` — the policy always passes. Untrusted tasks produce warnings, which means the VSA stays at L2. If all tasks are trusted (no warnings), the VSA upgrades to L3. This is the "trusted task" model that Konflux uses: pinned tasks with known digests behave deterministically.
 
 ---
 
@@ -381,26 +362,25 @@ Show the trusted task data format. For PipelineRun provenance, the trusted task 
 // AMPEL — evaluate task bundle digests
 {
     context: {
-        values: {
-            allowed_prefix: {
-                type: string
-                default: "quay.io/konflux-ci/tekton-catalog/"
-            }
+        allowed_bundle_prefix: {
+            type: "string"
+            required: true
+            default: "quay.io/konflux-ci/tekton-catalog/"
         }
     }
 
     tenets: [{
         id: all-tasks-trusted
-        level: warn
+        runtime: "cel@v0"
         code: '''
             predicates.exists(p,
                 p.data.buildConfig.tasks.all(task,
                     has(task.ref) && has(task.ref.bundle) &&
-                    task.ref.bundle.startsWith(context.allowed_prefix)
+                    task.ref.bundle.startsWith(context.allowed_bundle_prefix)
                 )
             )
         '''
-        predicates: { types: [https://slsa.dev/provenance/v0.2] }
+        predicates: { types: ["https://slsa.dev/provenance/v0.2"] }
     }]
 }
 ```
