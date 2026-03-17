@@ -13,7 +13,7 @@ Andrew McNamara (Conforma) • Adolfo "puerco" Garcia (AMPEL)
 
 <div style="margin-top: 2em;">
   <span style="font-size: 2.5em; vertical-align: middle; margin-right: 2em;">🔴🟡🟢</span>
-  <img src="/shared/logos/conforma.png" width="100" alt="Conforma logo" style="margin-right: 2em; vertical-align: middle;">
+  <img src="/shared/logos/conforma.png" width="100" alt="Conforma logo" style="margin-right: 6em; vertical-align: middle;">
   <img src="/shared/logos/slsa.svg" width="100" alt="SLSA logo" style="vertical-align: middle;">
 </div>
 
@@ -23,11 +23,45 @@ Andrew McNamara (Conforma) • Adolfo "puerco" Garcia (AMPEL)
 
 ???
 
-Andrew and puerco briefly introduce themselves. "I'm Andrew, I work on Konflux, a CI system built on Tekton. We also built Conforma, a Rego-based policy engine." / "And I'm puerco, I work on AMPEL." One sentence each — get right to the talk.
+Andrew and puerco briefly introduce themselves. "I'm Andrew, I am a SLSA maintainer and I work on Konflux, a CI system built on Tekton. We also built Conforma, a Rego-based policy engine." / "And I'm puerco, I work on AMPEL." One sentence each — get right to the talk.
 
 ---
 
 layout: false
+
+## Attestations in One Slide
+
+<div style="display: flex; align-items: center; justify-content: center; gap: 0.6em; margin: 1.2em 0; flex-wrap: wrap;">
+  <span style="display: inline-block; padding: 0.4em 0.8em; background: #e3f2fd; border-radius: 8px; font-size: 0.9em;">artifact</span>
+  <span style="color: #666;">→</span>
+  <span style="display: inline-block; padding: 0.4em 0.8em; background: #fff3e0; border-radius: 8px; font-size: 0.9em;">predicate</span>
+  <span style="color: #666;">+</span>
+  <span style="display: inline-block; padding: 0.4em 0.8em; background: #e8f5e9; border-radius: 8px; font-size: 0.9em;">signature</span>
+  <span style="color: #666;">→</span>
+  <span style="display: inline-block; padding: 0.4em 0.8em; background: #f3e5f5; border-radius: 8px; font-size: 0.9em; font-weight: bold;">attestation</span>
+</div>
+
+<div style="background: #f5f5f5; border-left: 4px solid #1976d2; padding: 0.8em 1em; border-radius: 0 8px 8px 0; margin-bottom: 1em;">
+  <strong>Attestations</strong> = signed statements about an artifact (who built it, from what, how).  
+  Often <strong>in-toto</strong>: predicate (e.g. SLSA provenance) + signature.
+</div>
+
+<div style="text-align: center; font-size: 1.05em; color: #c62828;">
+  You get provenance and other predicates — the hard part is <em>using</em> them.
+</div>
+
+<div style="display: flex; align-items: center; justify-content: center; gap: 2em; margin-top: 1.5em; flex-wrap: wrap;">
+  <img src="/shared/logos/intoto-icon.svg" width="56" height="56" alt="in-toto" style="object-fit: contain;">
+  <img src="/shared/logos/slsa.svg" width="70" alt="SLSA" style="opacity: 0.9;">
+  <img src="/shared/logos/spdx-logo.svg" width="100" alt="SPDX" style="object-fit: contain;">
+  <img src="/shared/logos/cyclonedx-logo.svg" width="100" alt="CycloneDX" style="object-fit: contain;">
+</div>
+
+???
+
+One-line setup: we're talking about signed metadata (provenance, etc.). Don't dwell — next slide is "you have these, now what?"
+
+---
 
 ## You Have Attestations. Now What?
 
@@ -49,29 +83,31 @@ Andrew sets up the problem space. We're not talking about *generating* attestati
 
 ---
 
-## Two Policy Engines Walk Into a Bar...
+## Two Policy Engines Walk Into an Attestation...
 
 <div style="display: flex; gap: 3em; margin-top: 2em; align-items: flex-start;">
-  <div style="flex: 1; text-align: center;">
-    <img src="/shared/logos/conforma.png" width="120" alt="Conforma logo"><br>
-    <strong>Conforma</strong><br>
-    <small>Rego-based policy engine<br>built around Tekton / Konflux</small>
-  </div>
   <div style="flex: 1; text-align: center;">
     <div style="font-size: 3em; margin-bottom: 0.2em;">🔴🟡🟢</div>
     <strong>AMPEL</strong><br>
     <small>Policy engine for in-toto attestation evaluation<br>produces VSAs</small>
   </div>
+  <div style="flex: 1; text-align: center;">
+    <img src="/shared/logos/conforma.png" width="120" alt="Conforma logo"><br>
+    <strong>Conforma</strong><br>
+    <small>Rego-based policy engine<br>built around Tekton / Konflux</small>
+  </div>
 </div>
 
-<div style="margin-top: 2.5em; border-top: 1px solid #ccc; padding-top: 1.5em;">
-  We show each level with <strong>both engines</strong>.<br>
-  The engines are interchangeable. <em>Your policies are not your lock-in.</em>
+<div style="margin-top: 2.5em; border-top: 1px solid #ccc; padding-top: 1.5em; font-size: 0.9em;">
+  <strong>Coming up:</strong><br>
+  <span style="color: #2e7d32;">🌶 Mild</span> — simple verification &nbsp;·&nbsp;
+  <span style="color: #e65100;">🌶🌶 Medium</span> — combining attestations &nbsp;·&nbsp;
+  <span style="color: #b71c1c;">🌶🌶🌶 Wild</span> — digging into attestations
 </div>
 
 ???
 
-Playful framing — introduce the "game." Puerco will demo a feature with AMPEL, Andrew will say "Conforma does that too." Then the challenger ups the ante to the next level. At mild, puerco leads and Andrew challenges. At medium, puerco leads and Andrew challenges. At wild, Andrew leads again, puerco closes. This slide explains the structure so the audience can follow along.
+Playful framing — introduce the "game." Puerco will demo a feature with AMPEL, Andrew will show that "Conforma does that too." Then the challenger ups the ante to the next level. At mild, puerco leads and Andrew challenges. At medium, puerco leads and Andrew challenges. At wild, Andrew leads again, puerco closes. Tell the audience: at each level we'll show both engines so you see they're interchangeable; same attestations, same policies.
 
 ---
 
@@ -83,7 +119,7 @@ class: center, middle, inverse
 
 ???
 
-Puerco introduces this level. Brief context for the audience: an attestation is a signed statement about your software — produced by your build system, your CI pipeline, or a verification tool. At mild, we verify fundamental provenance properties: is provenance present, is the build type recognized, does it come from a trusted builder, were materials properly tracked? This is where everyone should start.
+Puerco introduces this level. As mentioned before, an attestation is a signed statement about your software — produced by your build system, your CI pipeline, or a verification tool. At mild, we verify fundamental provenance properties: is provenance present, is the build type recognized, does it come from a trusted builder, were materials properly tracked? This is where everyone should start.
 
 ---
 
@@ -91,7 +127,9 @@ layout: false
 
 ## Mild: Verify Provenance Properties
 
-**Scenario**: Any OCI artifact with SLSA provenance — regardless of build system.
+class: small
+
+**Scenario**: Consuming any OCI artifact with SLSA provenance — regardless of build system.
 
 Checks:
 1. **Provenance attestation** is present
@@ -102,26 +140,13 @@ Checks:
 
 ```hjson
 // AMPEL policy — verify SLSA provenance properties
-{
-    tenets: [
-        {
-            id: provenance-present
-            runtime: "cel@v0"
-            code: "size(predicates) > 0"
-            predicates: { types: ["https://slsa.dev/provenance/v1"] }
-        }
-        {
-            id: vsa-meets-slsa-level
-            runtime: "cel@v0"
-            code: '''
-                predicates.exists(p,
-                    p.data.verifiedLevels.exists(l, l == "SLSA_BUILD_LEVEL_1")
-                )
-            '''
-            predicates: { types: ["https://slsa.dev/verification_summary/v1"] }
-        }
-    ]
-}
+{ tenets: [
+  { id: provenance-present, runtime: "cel@v0", code: "size(predicates) > 0",
+    predicates: { types: ["https://slsa.dev/provenance/v1"] } },
+  { id: vsa-meets-slsa-level, runtime: "cel@v0",
+    code: "predicates.exists(p, p.data.verifiedLevels.exists(l, l == \"SLSA_BUILD_LEVEL_1\"))",
+    predicates: { types: ["https://slsa.dev/verification_summary/v1"] } }
+]}
 ```
 
 **Result**: pass / fail per rule. Works with any build system that produces SLSA provenance.
@@ -164,19 +189,19 @@ Andrew's "me too." The Conforma policy does the same checks in Rego. Two custom 
 
 ---
 
-## "But What About Producing a Portable Summary?"
+## "But What About Multiple Attestations — and a Portable Summary?"
 
-*Andrew raises the bar*
+*Raising the bar*
 
-> "So you verified the provenance locally."
+> "So you verified one artifact's provenance."
 
-> "What if downstream consumers need to know it passed verification?"
+> "What about its dependencies? Base image, other attestations — can you combine and verify them together?"
 
-> "Can you produce a signed summary they can check without re-running all the policy checks?"
+> "And produce a signed summary so downstream doesn't have to re-verify all of them?"
 
 ???
 
-Andrew raises the bar. The natural next question after local verification is portability: how do you communicate verification results to downstream systems? VSAs solve this: they're signed summaries that say "I verified this artifact at SLSA level X." An admission controller can check the VSA instead of re-verifying the provenance. This is the transition to medium.
+Puerco raises the bar. Medium does two things: combine multiple attestations (e.g. built image + base image) and verify them together, and produce a VSA so downstream consumers don't have to re-fetch and re-verify every attestation — they check the one summary. This is the transition to medium — Puerco leads with AMPEL.
 
 ---
 
@@ -184,17 +209,41 @@ class: center, middle, inverse
 
 # 🌶🌶 Medium
 
-**Same checks + produce a VSA**
+**Combine multiple attestations · produce a VSA**
 
 ???
 
-Puerco takes the lead. Medium takes an image built with GitHub Actions, verifies its SLSA properties (the same checks from mild), verifies the base image too, and produces a VSA that captures both results. Downstream consumers check the VSA instead of re-running verification.
+Puerco takes the lead. Medium combines and verifies multiple attestations (e.g. built image + base image), same mild-style checks, and produces a VSA that captures the combined result so downstream doesn't re-verify each attestation.
 
 ---
 
-## Medium: Verification Results as a Portable VSA
+## Medium: AMPEL — Producing a VSA
 
-**Scenario**: Image built with **GitHub Actions**, signed with **Sigstore keyless**. We verify both the built image and its base image, then produce a signed **VSA at SLSA Build Level 2** — including the base image's properties so they don't need to be recomputed.
+**Scenario**: Image built with **GitHub Actions**, signed with **Sigstore keyless**. Verify the **built image** and its **base image** (multiple attestations), then produce a signed **VSA at SLSA Build Level 2**.
+
+**Combine & verify**: Same mild-style tenets across both attestations; AMPEL produces a single VSA with verified level and dependency levels. **Portable summary**: Downstream checks the VSA instead of re-verifying each attestation.
+
+**Result**: One VSA at L2 attached — one check for downstream.
+
+???
+
+Puerco leads. AMPEL policy at medium extends mild: same provenance checks, plus the engine produces a signed VSA (verifiedLevels, dependencyLevels for the base image) and attaches it. Demo: run AMPEL against the GitHub Actions–built image and base image, show the resulting VSA.
+
+---
+
+## Medium: AMPEL — [Placeholder]
+
+*Policy snippet and/or demo output to be added.*
+
+???
+
+Placeholder: add AMPEL medium policy (hjson) and/or CLI output when ready.
+
+---
+
+## Medium: Verification Results as a Portable VSA (Conforma)
+
+**Scenario**: Same — **two attestations** (built image + base). Conforma policy + `generate-vsa.sh` verify both and produce one VSA.
 
 ```bash
 $ generate-vsa.sh \
@@ -225,7 +274,7 @@ VSA attached to ghcr.io/puerco/mild-to-wild-samples@sha256:7add...
 
 ???
 
-Puerco demos the medium workflow live. The script extracts the base image from the OCI manifest annotations, verifies the base image release signature and provenance (pass 1), then verifies the built image's provenance using keyless Sigstore verification against the GitHub Actions OIDC identity (pass 2). It generates a SLSA VSA at Build Level 2 with the base image as a dependency. The VSA decouples "who evaluates" from "who enforces" — downstream consumers check the VSA instead of re-verifying provenance. The same script works with Tekton Chains (key-based) by swapping `--certificate-*` flags for `--public-key`.
+Andrew: "Conforma does that too." The script extracts the base image from the OCI manifest annotations, verifies the base image release signature and provenance (pass 1), then verifies the built image's provenance using keyless Sigstore verification against the GitHub Actions OIDC identity (pass 2). It generates a SLSA VSA at Build Level 2 with the base image as a dependency. The VSA decouples "who evaluates" from "who enforces" — downstream consumers check the VSA instead of re-verifying provenance. The same script works with Tekton Chains (key-based) by swapping `--certificate-*` flags for `--public-key`.
 
 ---
 
@@ -256,7 +305,7 @@ Andrew's "me too." The key insight: the same Conforma policy accepts provenance 
 
 ## "But Here's What Keeps Me Up at Night"
 
-*Andrew raises the bar*
+*Raising the bar*
 
 > "We can verify what the provenance says and produce a VSA at L2."
 
@@ -286,15 +335,9 @@ Andrew introduces the wild level. Wild does the same thing as medium but for Tek
 
 ## Wild: Trusted Task Verification for L3
 
-Tekton provenance records task references — **bundle digests** (PipelineRun) or **git SHAs** (TaskRun):
+Tekton provenance records remote task references including bundle digests or git SHAs.
 
 ```json
-// PipelineRun provenance (SLSA v0.2)
-{ "buildConfig": { "tasks": [{
-    "name": "buildah",
-    "ref": { "bundle": "quay.io/konflux-ci/tekton-catalog/task-buildah@sha256:..." }
-}]}}
-
 // TaskRun provenance (SLSA v1.0)
 { "buildDefinition": { "resolvedDependencies": [{
     "name": "task",
@@ -303,22 +346,15 @@ Tekton provenance records task references — **bundle digests** (PipelineRun) o
 }]}}
 ```
 
-**Wild policy**: verify every task against a **trusted task allowlist**. This is a `warn` rule, not `deny`:
-- Untrusted tasks → warnings → VSA declares **L2**
-- All tasks trusted (no warnings) → VSA declares **L3**
+**Policy**: verify every task against a **trusted allowlist**. `warn` rule, not `deny` → untrusted → **L2**; all trusted → **L3**.
 
 ```rego
-# Conforma — verify task references (warn, not deny)
+# Conforma — warn on untrusted task refs
 warn contains result if {
     some att in lib.pipelinerun_attestations
     tasks := tekton.tasks(att)
-    bundle_refs := {ref | some t in tasks; ref := tekton.task_ref(t).bundle; ref != ""}
-    manifests := ec.oci.image_manifests(bundle_refs)
-    untrusted := tekton.untrusted_task_refs(tasks, manifests)
+    untrusted := tekton.untrusted_task_refs(tasks, manifests)  # allowlist check
     count(untrusted) > 0
-    some task in untrusted
-    ref := tekton.task_ref(task)
-    bundle_ref := object.get(ref, "bundle", ref.key)
     result := lib.result_helper(rego.metadata.chain(), [bundle_ref])
 }
 ```
@@ -359,35 +395,17 @@ Show the trusted task data format. For PipelineRun provenance, the trusted task 
 ## Wild: "AMPEL Can Verify That Too"
 
 ```hjson
-// AMPEL — evaluate task bundle digests
-{
-    context: {
-        allowed_bundle_prefix: {
-            type: "string"
-            required: true
-            default: "quay.io/konflux-ci/tekton-catalog/"
-        }
-    }
-
-    tenets: [{
-        id: all-tasks-trusted
-        runtime: "cel@v0"
-        code: '''
-            predicates.exists(p,
-                p.data.buildConfig.tasks.all(task,
-                    has(task.ref) && has(task.ref.bundle) &&
-                    task.ref.bundle.startsWith(context.allowed_bundle_prefix)
-                )
-            )
-        '''
-        predicates: { types: ["https://slsa.dev/provenance/v0.2"] }
-    }]
+// AMPEL — all tasks from allowed bundle prefix
+{ context: { allowed_bundle_prefix: { type: "string", default: "quay.io/konflux-ci/tekton-catalog/" } }
+  tenets: [{
+    id: all-tasks-trusted, runtime: "cel@v0",
+    code: "predicates.exists(p, p.data.buildConfig.tasks.all(task, has(task.ref.bundle) && task.ref.bundle.startsWith(context.allowed_bundle_prefix)))",
+    predicates: { types: ["https://slsa.dev/provenance/v0.2"] }
+  }]
 }
 ```
 
-Same interchangeability point: standardized Tekton provenance format, substitutable engines.
-
-Warnings from untrusted tasks → L2 in VSA. All tasks trusted → L3.
+Same idea: trusted allowlist, substitutable engines. Untrusted → L2; all trusted → L3.
 
 ???
 
@@ -465,7 +483,7 @@ Both speakers together. Quick summary. The three key messages:
     <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
       💻
     </div><br>
-    <strong>Sample policies</strong>
+    <strong>github.com/arewm/mild-to-wild-samples</strong>
   </div>
 </div>
 
@@ -482,7 +500,7 @@ class: center, middle, inverse
 Questions?
 
 <div style="margin-top: 2em;">
-  Andrew McNamara · <strong>conforma.dev</strong><br>
+  Andrew McNamara · <strong>arewm@redhat.com</strong><br>
   Adolfo "puerco" Garcia · <strong>AMPEL</strong>
 </div>
 
