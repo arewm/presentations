@@ -3,6 +3,7 @@ title: "From Mild To Wild: How Hot Can Your SLSA Be?"
 event: "Open Source SecurityCon"
 date: 2026-03-23
 slides_path: presentation.md
+custom_css: custom.css
 excerpt: "You have attestations—now what? Three levels of policy enforcement: mild (simple verification), medium (combining multiple attestations and producing a VSA), wild (leveraging attestation specifics for trusted-task L3). Demonstrated with AMPEL and Conforma on the same use cases."
 session: https://sched.co/2DY1G
 # recording: "https://example.com/video-link"

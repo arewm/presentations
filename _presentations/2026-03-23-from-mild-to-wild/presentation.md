@@ -6,20 +6,21 @@ class: center, middle, inverse
 
 class: center, middle, title-slide
 
-# From Mild To Wild
-## How Hot Can Your SLSA Be?
-
-Andrew McNamara (Conforma) • Adolfo "puerco" Garcia (AMPEL)
+<div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; margin: -2em -4em; padding: 2em 4em; background: linear-gradient(135deg, #2e7d32 0%, #388e3c 25%, #f57c00 50%, #e65100 75%, #b71c1c 100%); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+<h1 style="color: white; margin: 0;">From Mild To Wild</h1>
+<h2 style="color: white; margin: 0.5em 0;">How Hot Can Your SLSA Be?</h2>
+<p style="margin: 0.5em 0;">Andrew McNamara (Conforma) • Adolfo "puerco" Garcia (AMPEL)</p>
 
 <div style="margin-top: 2em;">
-  <span style="font-size: 2.5em; vertical-align: middle; margin-right: 2em;">🔴🟡🟢</span>
   <img src="/shared/logos/conforma.png" width="100" alt="Conforma logo" style="margin-right: 6em; vertical-align: middle;">
-  <img src="/shared/logos/slsa.svg" width="100" alt="SLSA logo" style="vertical-align: middle;">
+  <span style="font-size: 2.5em; vertical-align: middle; margin-right: 2em;">🔴🟡🟢</span>
+  <!--img src="/shared/logos/slsa.svg" width="100" alt="SLSA logo" style="vertical-align: middle;"-->
 </div>
 
-.footnote[
+<div style="position: absolute; bottom: 3em; font-size: 0.8em; color: rgba(255,255,255,0.9);">
   Open Source SecurityCon · March 23, 2026
-]
+</div>
+</div>
 
 ???
 
@@ -113,7 +114,7 @@ Playful framing — introduce the "game." Puerco will demo a feature with AMPEL,
 
 class: center, middle, inverse
 
-# 🌶 Mild
+# <span style="color: #2e7d32;">🌶 Mild</span>
 
 **Verify provenance properties**
 
@@ -207,7 +208,7 @@ Puerco raises the bar. Medium does two things: combine multiple attestations (e.
 
 class: center, middle, inverse
 
-# 🌶🌶 Medium
+# <span style="color: #e65100;">🌶🌶 Medium</span>
 
 **Combine multiple attestations · produce a VSA**
 
@@ -323,7 +324,7 @@ Andrew raises the deeper trust question. This is the distinction between recordi
 
 class: center, middle, inverse
 
-# 🌶🌶🌶 Wild
+# <span style="color: #b71c1c;">🌶🌶🌶 Wild</span>
 
 **Upgrade from L2 to L3 with trusted task verification**
 
@@ -444,7 +445,7 @@ Puerco's final "me too." The payoff of the running gag: even for the most nuance
 
 <div style="margin-top: 2em; border-top: 1px solid #ccc; padding-top: 1.5em;">
   Policy engines are <strong>interchangeable</strong>. Pick the one that fits your stack.<br>
-  <em>Attestation standards are open. Your policies travel with you.</em>
+  <em>Attestation standards are open.</em>
 </div>
 
 ???
@@ -458,32 +459,36 @@ Both speakers together. Quick summary. The three key messages:
 
 ## Resources
 
-<div style="display: flex; justify-content: space-around; margin-top: 2em; flex-wrap: wrap; gap: 2em;">
-  <div style="text-align: center;">
-    <img src="/shared/qr-codes/conforma.png" width="140" alt="Conforma QR code"><br>
-    <strong>conforma.dev</strong>
+<div style="display: flex; flex-direction: column; gap: 2.5em; margin-top: 2em;">
+  <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2em;">
+    <div style="text-align: center;">
+      <img src="/shared/qr-codes/conforma.png" width="140" alt="Conforma QR code"><br>
+      <strong><a href="https://conforma.dev">conforma.dev</a></strong>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
+        🔴🟡🟢
+      </div><br>
+      <strong><a href="https://github.com/carabiner-dev/ampel">github.com/carabiner-dev/ampel</a></strong>
+    </div>
+    <div style="text-align: center;">
+      <img src="/shared/qr-codes/slsa.png" width="140" alt="SLSA QR code"><br>
+      <strong><a href="https://slsa.dev">slsa.dev</a></strong>
+    </div>
   </div>
-  <div style="text-align: center;">
-    <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
-      🔴🟡🟢
-    </div><br>
-    <strong>github.com/carabiner-dev/ampel</strong>
-  </div>
-  <div style="text-align: center;">
-    <img src="/shared/qr-codes/slsa.png" width="140" alt="SLSA QR code"><br>
-    <strong>slsa.dev</strong>
-  </div>
-  <div style="text-align: center;">
-    <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
-      📊
-    </div><br>
-    <strong>slides.arewm.com</strong>
-  </div>
-  <div style="text-align: center;">
-    <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
-      💻
-    </div><br>
-    <strong>github.com/arewm/mild-to-wild-samples</strong>
+  <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2em;">
+    <div style="text-align: center;">
+      <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
+        📊
+      </div><br>
+      <strong><a href="https://slides.arewm.com">slides.arewm.com</a></strong>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
+        💻
+      </div><br>
+      <strong><a href="https://github.com/arewm/mild-to-wild-samples">github.com/arewm/mild-to-wild-samples</a></strong>
+    </div>
   </div>
 </div>
 
@@ -503,6 +508,10 @@ Questions?
   Andrew McNamara · <strong>arewm@redhat.com</strong><br>
   Adolfo "puerco" Garcia · <strong>AMPEL</strong>
 </div>
+
+.footnote[
+  <a href="https://slides.arewm.com/presentations/2026-03-23-from-mild-to-wild">slides.arewm.com/presentations/2026-03-23-from-mild-to-wild</a>
+]
 
 ???
 
