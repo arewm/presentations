@@ -95,7 +95,7 @@ Andrew sets up the problem space. We're not talking about *generating* attestati
   <div style="flex: 1; text-align: center;">
     <img src="/shared/logos/conforma.png" width="120" alt="Conforma logo"><br>
     <strong>Conforma</strong><br>
-    <small>Rego-based policy engine<br>built around Tekton / Konflux</small>
+    <small>Rego-based policy engine<br>incubated with Konflux</small>
   </div>
 </div>
 
