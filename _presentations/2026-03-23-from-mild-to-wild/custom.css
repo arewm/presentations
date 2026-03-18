@@ -1,0 +1,70 @@
+/* Mild-to-wild: heat-scale color scheme (green → orange → red) */
+
+/* Content slides: warm off-white instead of stark white */
+.remark-slide-content {
+  background: #faf8f5;
+}
+
+.remark-slide-content h1,
+.remark-slide-content h2,
+.remark-slide-content h3 {
+  color: #2c2415;
+}
+
+/* Title slide: gradient along the heat scale (mild → wild) */
+.remark-slide.title-slide,
+.remark-slide.title-slide .remark-slide-content,
+.title-slide {
+  background: linear-gradient(135deg, #2e7d32 0%, #388e3c 25%, #f57c00 50%, #e65100 75%, #b71c1c 100%) !important;
+  color: white;
+}
+
+.title-slide h1,
+.title-slide h2,
+.title-slide h3 {
+  color: white;
+}
+
+.title-slide .footnote {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Section slides (Mild / Medium / Wild): fainter green for legibility */
+.remark-slide.inverse,
+.remark-slide.inverse .remark-slide-content,
+.inverse {
+  background: #6b9b6b !important;
+  color: #fff;
+}
+
+.inverse h1,
+.inverse h2,
+.inverse h3,
+.inverse h1 span,
+.inverse h2 span,
+.inverse h3 span {
+  color: #fff !important;
+}
+
+.inverse .footnote {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Keep code blocks readable on warm background */
+.remark-code {
+  background: #272822;
+  color: #f8f8f2;
+}
+
+.remark-inline-code {
+  background: #ebe8e3;
+  color: #333;
+}
+
+/* Links: grey like footnotes, same when clicked */
+.remark-slide-content a,
+.remark-slide-content a:visited,
+.remark-slide-content a:hover {
+  color: #666;
+  text-decoration: none;
+}
