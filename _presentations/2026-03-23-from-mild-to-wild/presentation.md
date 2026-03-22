@@ -74,7 +74,7 @@ One-line setup: we're talking about signed metadata (provenance, etc.). Don't dw
 
 ---
 
-## You Have Attestations. Now What?
+## You Have SLSA Attestations. Now What?
 
 <div style="display: flex; gap: 2em; margin-top: 1.5em; align-items: center;">
   <div style="flex: 1; ">
@@ -111,24 +111,25 @@ Andrew sets up the problem space. We're not talking about *generating* attestati
 
 ## Two Policy Engines Walk Into an Attestation...
 
-<div style="display: flex; gap: 3em; margin-top: 2em; align-items: center; justify-content: center;">
-  <div style="flex: 1; text-align: center;">
-    <img src="img/ampel.svg" width="350" alt="AMPEL logo">
-  </div>
+<div style="display: flex; gap: 3em; margin-top: 2em; align-items: center; justify-content: center;"> 
   <div style="flex: 1; text-align: center;">
     <div style="display: inline-flex; flex-direction: row; align-items: center; gap: 0.3em;">
       <img src="/shared/logos/conforma.png" width="80" alt="Conforma logo">
       <span style="font-family: sans-serif; font-weight: 700; font-size: 2em; color: #6b5b95;">conforma</span>
     </div>
   </div>
+   <div style="flex: 1; text-align: center;">
+    <img src="img/ampel.svg" width="350" alt="AMPEL logo">
+  </div>
 </div>
 <div style="display: flex; gap: 3em; margin-top: 1em; align-items: flex-start; justify-content: center;">
   <div style="flex: 1; text-align: center;">
-    <small>Policy engine for in-toto attestation evaluation<br>produces VSAs</small>
-  </div>
-  <div style="flex: 1; text-align: center;">
     <small>Rego-based policy engine<br>incubated with Konflux</small>
   </div>
+  <div style="flex: 1; text-align: center;">
+    <small>Policy engine for in-toto attestation evaluation<br>produces VSAs</small>
+  </div>
+  
 </div>
 
 <div style="position: relative; margin-top: 2.5em; border-top: 1px solid #ccc; text-align: center;">
