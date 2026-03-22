@@ -478,15 +478,11 @@ Both speakers together. Quick summary. The three key messages:
   </div>
   <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2em;">
     <div style="text-align: center;">
-      <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
-        📊
-      </div><br>
+      <img src="img/slides-mild-to-wild.png" width="140" alt="This talk — slides QR code"><br>
       <strong><a href="https://slides.arewm.com">slides.arewm.com</a></strong>
     </div>
     <div style="text-align: center;">
-      <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
-        💻
-      </div><br>
+      <img src="img/samples-mild-to-wild.png" width="140" alt="mild-to-wild-samples repo QR code"><br>
       <strong><a href="https://github.com/arewm/mild-to-wild-samples">github.com/arewm/mild-to-wild-samples</a></strong>
     </div>
   </div>
@@ -494,7 +490,7 @@ Both speakers together. Quick summary. The three key messages:
 
 ???
 
-Quick close. "Scan, follow along, try it yourself." The AMPEL QR and slides QR will be added once the project link and slides URL are confirmed.
+Quick close. "Scan, follow along, try it yourself."
 
 ---
 
