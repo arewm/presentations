@@ -354,6 +354,44 @@ Andrew's "me too." The Conforma policy does the same checks in Rego. Two custom 
 
 ---
 
+## 🌶 Mild: Run Conforma
+
+```shell
+./1-mild/conforma/verify.sh
+```
+
+```shell
+=== Mild: Verifying base image ===
+Image: registry.access.redhat.com/ubi10/ubi-minimal:latest
+
+--- Step 1: Verify release signature
+    Key: 1-mild/conforma/cosign-release.pub
+Success: true
+Result: SUCCESS
+Violations: 0, Warnings: 0, Successes: 15
+
+[...]
+
+--- Step 2: Verify provenance
+    Policy: 1-mild/conforma/policy.yaml
+    Key: 1-mild/conforma/cosign-provenance.pub
+Success: true
+Result: SUCCESS
+Violations: 0, Warnings: 0, Successes: 50
+
+[...]
+
+=== Output files ===
+  output/mild/conforma/signature-report.json  — image signature verification result
+  output/mild/conforma/provenance-report.json — SLSA provenance policy evaluation
+```
+
+???
+
+Walk through the transcript: two `ec validate` passes (release key, then policy + provenance key), multi-arch index components, JSON reports under `output/mild/conforma/`. This is literal sample output from `mild-to-wild-samples` on a recent run.
+
+---
+
 ## "But What About Multiple Attestations — and a Portable Summary?"
 <div class="subheading">Raising the bar</div>
 
@@ -446,7 +484,7 @@ Puerco leads. AMPEL policy at medium extends mild: same provenance checks, plus 
 ```
 ???
 
-Placeholder: add AMPEL medium policy (hjson) and/or CLI output when ready.
+This slide is the **source-level** check on a **VSA**: it reads `verification_summary/v1` and requires `SLSA_SOURCE_LEVEL_2` (or higher) in `verifiedLevels`. That mirrors how you gate on a dependency’s summary before trusting the built image’s story.
 
 ---
 
@@ -479,44 +517,55 @@ Placeholder: add AMPEL medium policy (hjson) and/or CLI output when ready.
 
 ???
 
-Placeholder: add AMPEL medium policy (hjson) and/or CLI output when ready.
+This is the **base-image chain** from the built image’s SLSA provenance: resolve the base digest, then load that image’s VSA and assert build level 2. Conforma’s `generate-vsa.sh` does the same story in two passes (base then built).
 
 ---
 
-## 🌶🌶 Medium: Verification Results as a Portable VSA (Conforma)
+## 🌶🌶 Medium: Conforma — two-pass verification
 
-<span style="font-size: 0.95em">**Scenario**: Same — **two attestations** (built image + base). Conforma policy + `generate-vsa.sh` verify both and produce one VSA.</style>
+<span style="font-size: 0.95em">**Scenario**: Same — **built image + base**. Run <code>./2-medium/conforma/verify.sh</code> (wraps <code>scripts/generate-vsa.sh</code>).</span>
 
-```bash
-$ generate-vsa.sh \
-    --image ghcr.io/puerco/mild-to-wild-samples@sha256:7add... \
-    --policy 2-medium/conforma/policy.yaml \
-    --certificate-identity '...build-push.yaml@refs/heads/main' \
-    --certificate-oidc-issuer https://token.actions.githubusercontent.com \
-    --base-image-policy 1-mild/conforma/policy.yaml \
-    --base-image-key cosign-provenance.pub \
-    --base-image-release-key cosign-release.pub \
-    --vsa-signing-key vsa.key
-
-=== Verifying ghcr.io/puerco/mild-to-wild-samples@sha256:7add... ===
---- Pass 1: Verifying base image ubi-minimal@sha256:3d6e...
-  Release signature: OK
-  Provenance: OK
---- Pass 2: Verifying built image
-  Policy evaluation: PASSED
-  Built image level: SLSA_BUILD_LEVEL_2
-  Base image: ubi-minimal@sha256:3d6e... -> SLSA_BUILD_LEVEL_2
-
-=== VSA predicate ===
-{ "verifiedLevels": ["SLSA_BUILD_LEVEL_2"],
-  "dependencyLevels": {"SLSA_BUILD_LEVEL_2": 1}, ... }
-
-VSA attached to ghcr.io/puerco/mild-to-wild-samples@sha256:7add...
+```shell
+./2-medium/conforma/verify.sh
+# optional: BUILT_IMAGE=ghcr.io/arewm/mild-to-wild-samples:tag
+# Tekton:  PUBLIC_KEY=provenance.pub BUILT_IMAGE=quay.io/... ./2-medium/conforma/verify.sh
 ```
+
+**Outcome** (representative `mild-to-wild-samples` run):
+
+<div style="background: #272822; color: #e8e8e3; font-family: 'Ubuntu Mono', monospace; font-size: 0.62em; padding: 0.75em 1em; border-radius: 4px; line-height: 1.5; text-align: left;">
+<strong style="color: #a6e22e;">Pass 1</strong> · base <code>ubi-minimal@sha256:734d6c22…</code> → release signature OK, provenance OK<br/>
+<strong style="color: #a6e22e;">Pass 2</strong> · built <code>ghcr.io/arewm/mild-to-wild-samples@sha256:e9ac6c43…</code> → <code>Result: WARNING</code> (5× <code>github_certificate.gh_workflow_extensions</code>) · <strong>policy evaluation PASSED</strong><br/>
+<strong style="color: #a6e22e;">Levels</strong> · built <code>SLSA_BUILD_LEVEL_2</code> · base dependency <code>SLSA_BUILD_LEVEL_2</code> (count 1)<br/>
+<strong style="color: #a6e22e;">Write</strong> · <code>output/medium/conforma/image.vsa.json</code> (+ <code>base-report.json</code>, <code>built-report.json</code>)
+</div>
 
 ???
 
-Andrew: "Conforma does that too." The script extracts the base image from the OCI manifest annotations, verifies the base image release signature and provenance (pass 1), then verifies the built image's provenance using keyless Sigstore verification against the GitHub Actions OIDC identity (pass 2). It generates a SLSA VSA at Build Level 2 with the base image as a dependency. The VSA decouples "who evaluates" from "who enforces" — downstream consumers check the VSA instead of re-verifying provenance. The same script works with Tekton Chains (key-based) by swapping `--certificate-*` flags for `--public-key`.
+Andrew: "Conforma does that too." Pass 1 (base) then pass 2 (built, keyless GitHub Actions). Warnings are optional GitHub OIDC **certificate extensions** missing on the cert — not provenance failures; **violations stay 0** and the VSA file is still written. Next slide: what goes into that VSA. Tekton: `PUBLIC_KEY` + `BUILT_IMAGE`.
+
+---
+
+## 🌶🌶 Medium: Conforma — portable VSA (predicate)
+
+Downstream consumers care about the **verification summary** fields, not the full `ec` log.
+
+**`output/medium/conforma/image.vsa.json`** — downstream-facing predicate (trimmed):
+
+```json
+{
+  "verificationResult": "PASSED",
+  "verifiedLevels": ["SLSA_BUILD_LEVEL_2"],
+  "dependencyLevels": { "SLSA_BUILD_LEVEL_2": 1 },
+  "slsaVersion": "1.0"
+}
+```
+
+Same **in-toto** SLSA verification-summary shape AMPEL can emit — portable across policy engines.
+
+???
+
+Walk the JSON: **verifiedLevels** is the built image; **dependencyLevels** rolls up the base. Full files include `verifier`, `resourceUri`, `policy.uri`, `timeVerified`. Run `./2-medium/conforma/verify.sh` in `mild-to-wild-samples` to reproduce.
 
 ---
 
@@ -525,23 +574,23 @@ Andrew: "Conforma does that too." The script extracts the base image from the OC
 The policy doesn't care whether the image was built by GitHub Actions or Tekton:
 
 ```yaml
-# policy.yaml accepts both build systems
+# policy.yaml accepts both build systems (2-medium/conforma/policy.yaml)
 ruleData:
   allowed_builder_ids:
-    - "https://github.com/arewm/.../tekton-build"
-    - "https://github.com/puerco/...build-push.yaml@refs/heads/main"
+    - "https://github.com/arewm/mild-to-wild-samples/tekton-build"
+    - "https://github.com/arewm/mild-to-wild-samples/.github/workflows/build-push.yaml@refs/heads/main"
   allowed_build_types:
     - "https://tekton.dev/chains/v2/slsa"
     - "https://actions.github.io/buildtypes/workflow/v1"
 ```
 
-The `generate-vsa.sh` script works with either build system — swap `--certificate-*` for `--public-key` when using Tekton Chains. Same VSA output either way.
+`./2-medium/conforma/verify.sh` uses keyless flags by default; set `PUBLIC_KEY` for Tekton Chains. Same VSA predicate shape either way.
 
 Both engines verify the same properties and can produce VSAs for downstream enforcement. The VSA format is standardized (in-toto), so the output is portable across policy engines.
 
 ???
 
-Andrew's "me too." The key insight: the same Conforma policy accepts provenance from either build system because the SLSA format is standardized. The ruleData lists both builder IDs and build types. The generate-vsa.sh script handles key-based or keyless verification — just different CLI flags. The VSA format is standardized, so either engine can produce VSAs that any consumer can verify. About 45 seconds.
+Andrew's "me too." The key insight: the same Conforma policy accepts provenance from either build system because the SLSA format is standardized. The ruleData lists both builder IDs and build types. The repo helper switches key-based vs keyless via `PUBLIC_KEY` vs default certificate flags. The VSA format is standardized, so either engine can produce VSAs that any consumer can verify. About 45 seconds.
 
 ---
 
@@ -642,6 +691,39 @@ Show the trusted task data format. For PipelineRun provenance, the trusted task 
 
 ---
 
+## 🌶🌶🌶 Wild: Run Conforma
+
+```shell
+./3-wild/conforma/verify.sh
+# Default BUILT_IMAGE in script: quay.io/arewm/mild-to-wild-samples:build-20260319-164911
+```
+
+**Outcome** (same idea as medium — compress the long `ec` transcript):
+
+<div style="background: #272822; color: #e8e8e3; font-family: 'Ubuntu Mono', monospace; font-size: 0.62em; padding: 0.75em 1em; border-radius: 4px; line-height: 1.5; text-align: left;">
+<strong style="color: #a6e22e;">Pass 1</strong> · base <code>ubi-minimal@sha256:7ccae4b0…</code> → OK<br/>
+<strong style="color: #a6e22e;">Pass 2</strong> · built <code>quay.io/arewm/mild-to-wild-samples@sha256:288eb652…</code> · wild policy + <code>trusted-tasks.yaml</code> → <code>Result: SUCCESS</code>, no task warnings<br/>
+<strong style="color: #a6e22e;">Levels</strong> · built <code>SLSA_BUILD_LEVEL_3</code> · base dependency <code>SLSA_BUILD_LEVEL_2</code> ×1<br/>
+<strong style="color: #a6e22e;">Write</strong> · <code>output/wild/conforma/image.vsa.json</code>
+</div>
+
+**VSA predicate** (L3 on the artifact under verification):
+
+```json
+{
+  "verificationResult": "PASSED",
+  "verifiedLevels": ["SLSA_BUILD_LEVEL_3"],
+  "dependencyLevels": { "SLSA_BUILD_LEVEL_2": 1 },
+  "slsaVersion": "1.0"
+}
+```
+
+???
+
+Representative run from `3-wild/conforma/verify.sh`: trusted tasks satisfied → pass 2 stays **SUCCESS** (contrast medium’s GitHub cert **warnings**) → VSA promotes the built image to **L3**. Full stdout is in the samples repo if you want a backup slide with the raw log.
+
+---
+
 ## 🌶🌶🌶 Wild: "AMPEL Can Verify That Too"
 
 ```hjson
@@ -723,6 +805,27 @@ Both speakers together. Quick summary. The three key messages:
 
 ---
 
+class: center, middle, inverse
+
+<h1 style="font-size: 5em; padding:0; margin:0">Thank You</h1>
+
+<div style="font-size: 3em;">Questions?</div>
+
+<div style="font-size: 2em; margin-top: 2em; line-height: 1.2em;">
+  Andrew McNamara · <strong>arewm@redhat.com</strong><br>
+  Adolfo "puerco" García Veytia · <strong>puerco@carabiner.dev</strong>
+</div>
+
+.footnote[
+  <a href="https://slides.arewm.com/presentations/2026-03-23-from-mild-to-wild">slides.arewm.com/presentations/2026-03-23-from-mild-to-wild</a>
+]
+
+???
+
+Open for Q&A. Roughly 7 minutes. Both speakers take questions.
+
+---
+
 ## Resources
 
 <div style="display: flex; flex-direction: column; gap: 2.5em; margin-top: 2em;">
@@ -755,24 +858,3 @@ Both speakers together. Quick summary. The three key messages:
 ???
 
 Quick close. "Scan, follow along, try it yourself."
-
----
-
-class: center, middle, inverse
-
-<h1 style="font-size: 5em; padding:0; margin:0">Thank You</h1>
-
-<div style="font-size: 3em;">Questions?</div>
-
-<div style="font-size: 2em; margin-top: 2em; line-height: 1.2em;">
-  Andrew McNamara · <strong>arewm@redhat.com</strong><br>
-  Adolfo "puerco" García Veytia · <strong>puerco@carabiner.dev</strong>
-</div>
-
-.footnote[
-  <a href="https://slides.arewm.com/presentations/2026-03-23-from-mild-to-wild">slides.arewm.com/presentations/2026-03-23-from-mild-to-wild</a>
-]
-
-???
-
-Open for Q&A. Roughly 7 minutes. Both speakers take questions.
