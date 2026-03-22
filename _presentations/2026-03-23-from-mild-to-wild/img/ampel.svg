@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="107.90433mm"
+   height="26.501268mm"
+   viewBox="0 0 107.90433 26.501268"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-31.502423,-87.823551)">
+    <g
+       id="g5"
+       transform="translate(3.3175532,-0.55170733)">
+      <circle
+         style="fill:#ff0000;stroke-width:0.0932161"
+         id="circle1"
+         cx="35.865673"
+         cy="97.867821"
+         r="7.6808019" />
+      <circle
+         style="fill:#ffcc00;stroke-width:0.0932161"
+         id="circle2"
+         cx="43.602131"
+         cy="97.867813"
+         r="7.6808019" />
+      <circle
+         style="fill:#447821;stroke-width:0.0932161"
+         id="circle3"
+         cx="51.338589"
+         cy="97.867821"
+         r="7.6808019" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#447821;stroke-width:0.264583"
+       x="64.139359"
+       y="103.15389"
+       id="text4"><tspan
+         id="tspan4"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.7556px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4d4d4d;stroke-width:0.264583"
+         x="64.139359"
+         y="103.15389">ampel</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:1.5687px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#447821;stroke-width:0.130725"
+       x="31.652857"
+       y="113.27622"
+       id="text5"><tspan
+         id="tspan5"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:5.57761px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4d4d4d;stroke-width:0.130725"
+         x="31.652857"
+         y="113.27622">Amazing Multipurpose Policy Engine (and L)</tspan></text>
+  </g>
+</svg>

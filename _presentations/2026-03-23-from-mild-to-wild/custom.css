@@ -1,14 +1,21 @@
 /* Mild-to-wild: heat-scale color scheme (green → orange → red) */
 
+@import url('https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@200;500&display=swap');
+
 /* Content slides: warm off-white instead of stark white */
 .remark-slide-content {
   background: #faf8f5;
+  font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-weight: 200;
+  font-size: 1.5em;
 }
 
 .remark-slide-content h1,
 .remark-slide-content h2,
 .remark-slide-content h3 {
   color: #2c2415;
+  font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-weight: 500;
 }
 
 /* Title slide: gradient along the heat scale (mild → wild) */
@@ -50,6 +57,30 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+/* Medium section slides: orange */
+.medium {
+  background: #e65100 !important;
+  color: #fff;
+}
+
+.medium h1,
+.medium h2,
+.medium h3 {
+  color: #fff !important;
+}
+
+/* Wild section slides: spicy red */
+.wild {
+  background: #b71c1c !important;
+  color: #fff;
+}
+
+.wild h1,
+.wild h2,
+.wild h3 {
+  color: #fff !important;
+}
+
 /* Keep code blocks readable on warm background */
 .remark-code {
   background: #272822;
@@ -59,6 +90,14 @@
 .remark-inline-code {
   background: #ebe8e3;
   color: #333;
+}
+
+/* Subheadings: tight under the title */
+.subheading {
+  margin-top: -1.2em;
+  font-style: italic;
+  font-size: 1.1em;
+  color: #666;
 }
 
 /* Links: grey like footnotes, same when clicked */
