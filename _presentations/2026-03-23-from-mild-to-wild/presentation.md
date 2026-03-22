@@ -7,13 +7,16 @@ class: center, middle, inverse
 class: center, middle, title-slide
 
 <div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; margin: -2em -4em; padding: 2em 4em; background: linear-gradient(135deg, #2e7d32 0%, #388e3c 25%, #f57c00 50%, #e65100 75%, #b71c1c 100%); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-<h1 style="color: white; margin: 0;">From Mild To Wild</h1>
-<h2 style="color: white; margin: 0.5em 0;">How Hot Can Your SLSA Be?</h2>
-<p style="margin: 0.5em 0;">Andrew McNamara (Conforma) • Adolfo "puerco" Garcia (AMPEL)</p>
+<h1 style="color: white; margin: 0; font-size: 5em;">From Mild To Wild</h1>
+<h2 style="margin: 0.5em 0; color: #ffca43">How Hot Can Your SLSA Be?</h2>
+<p style="margin: 0.5em 0;">Andrew McNamara (Conforma) • Adolfo "puerco" García Veytia (AMPEL)</p>
 
-<div style="margin-top: 2em;">
-  <img src="/shared/logos/conforma.png" width="100" alt="Conforma logo" style="margin-right: 6em; vertical-align: middle;">
-  <span style="font-size: 2.5em; vertical-align: middle; margin-right: 2em;">🔴🟡🟢</span>
+<div style="margin-top: 2em; display:flex">
+  <div style="display: inline-flex; flex-direction: row; align-items: center; margin-right: 6em; vertical-align: middle; gap: 0.5em;">
+    <img src="/shared/logos/conforma.png" width="100" alt="Conforma logo">
+    <span style="font-family: sans-serif; font-weight: 700; font-size: 2.5em; color: #6b5b95;">conforma</span>
+  </div>
+  <img src="img/ampel.svg" width="350" alt="AMPEL logo" style="vertical-align: middle; margin-right: 2em;">
   <!--img src="/shared/logos/slsa.svg" width="100" alt="SLSA logo" style="vertical-align: middle;"-->
 </div>
 
@@ -42,20 +45,27 @@ layout: false
   <span style="display: inline-block; padding: 0.4em 0.8em; background: #f3e5f5; border-radius: 8px; font-size: 0.9em; font-weight: bold;">attestation</span>
 </div>
 
-<div style="background: #f5f5f5; border-left: 4px solid #1976d2; padding: 0.8em 1em; border-radius: 0 8px 8px 0; margin-bottom: 1em;">
+```jsonc
+{
+  "subject": {
+    "name": "registry.k8s.io/kube-proxy:v1.36.0-beta.0",
+    "digest": { "sha256": "5f013cc6fb21eb60820bfc4a925fddb710a70acecd56166874da8ef2c13d3933" }
+  },
+
+  "predicateType": "https://in-toto.io/attestation/promotion-record/v1",
+  "predicate": {
+    "srcRef": "us-central1-docker.pkg.dev/k8s-staging-images/kube-proxy:v1.36.0-beta.0",
+    "dstRef": "registry.k8s.io/kube-proxy:v1.36.0-beta.0",
+    "digest": "5f013cc6fb21eb60820bfc4a925fddb710a70acecd56166874da8ef2c13d3933",
+    "promotedAt": "2026-03-21T19:56:27Z",
+    "builderId": "htts://sigs.k8s.io/promo-tools/v4.0.9"
+  }
+}
+```
+<div style="background: #f5f5f5; border-left: 4px solid #1976d2; padding: 0.2em 1em; line-height: 1.3em ">
+  <img src="/shared/logos/intoto-icon.svg" style="float: right" width="75"  alt="in-toto" style="object-fit: contain;">
   <strong>Attestations</strong> = signed statements about an artifact (who built it, from what, how).  
-  Often <strong>in-toto</strong>: predicate (e.g. SLSA provenance) + signature.
-</div>
-
-<div style="text-align: center; font-size: 1.05em; color: #c62828;">
-  You get provenance and other predicates — the hard part is <em>using</em> them.
-</div>
-
-<div style="display: flex; align-items: center; justify-content: center; gap: 2em; margin-top: 1.5em; flex-wrap: wrap;">
-  <img src="/shared/logos/intoto-icon.svg" width="56" height="56" alt="in-toto" style="object-fit: contain;">
-  <img src="/shared/logos/slsa.svg" width="70" alt="SLSA" style="opacity: 0.9;">
-  <img src="/shared/logos/spdx-logo.svg" width="100" alt="SPDX" style="object-fit: contain;">
-  <img src="/shared/logos/cyclonedx-logo.svg" width="100" alt="CycloneDX" style="object-fit: contain;">
+  <br>Often <strong>in-toto</strong>: predicate (e.g. SLSA provenance) + signature.
 </div>
 
 ???
@@ -66,17 +76,32 @@ One-line setup: we're talking about signed metadata (provenance, etc.). Don't dw
 
 ## You Have Attestations. Now What?
 
-You've signed your artifacts. Provenance exists.
-
-But how do you actually *use* them to enforce policy?
-
-<div style="margin-top: 2em; font-size: 1.1em;">
-  Today: <strong>three levels</strong> of policy enforcement · <strong>two policy engines</strong> · <strong>one conclusion</strong>
+<div style="display: flex; gap: 2em; margin-top: 1.5em; align-items: center;">
+  <div style="flex: 1; ">
+    <div style="font-size: 1.3em; line-height: 1.5;">
+      ✅ You've signed your artifacts. <br>
+      ✅ Provenance exists.
+    </div>
+    <div style="font-size: 1.3em; line-height: 1.5; padding: 1em 0;">But how do you actually <em>use</em> them to enforce policy?</div>
+    <div style="font-weight: 500; font-size: 1.3em; color: #c62828; line-height: 1.5;">
+      👉 You get provenance and other predicates — the hard part is <em>using</em> them.
+      <div style="display: flex; align-items: center; gap: 1.5em; margin-top: 0.5em; flex-wrap: wrap;">
+        <img src="/shared/logos/slsa.svg" width="32" alt="SLSA" >
+        <img src="/shared/logos/spdx-logo.svg" width="140" alt="SPDX">
+        <img src="/shared/logos/cyclonedx-logo.svg" width="160" alt="CycloneDX">
+      </div>
+    </div>
+  </div>
+  <div style="flex: 1; padding: 1em; text-align: center;">
+  <div style=" font-size: 2em;">
+      Today: <strong>three levels</strong> of policy enforcement · <strong>two policy engines</strong> · <strong>one conclusion</strong>
+    </div>
+    <div style="text-align: center; margin-top: 3em;">
+      <img src="img/heat-scale.svg" width="600" alt="Heat scale: mild, medium, wild">
+    </div>
+  </div>
 </div>
 
-<div style="text-align: center; margin-top: 3em;">
-  <img src="img/heat-scale.svg" width="600" alt="Heat scale: mild, medium, wild">
-</div>
 
 ???
 
@@ -86,24 +111,41 @@ Andrew sets up the problem space. We're not talking about *generating* attestati
 
 ## Two Policy Engines Walk Into an Attestation...
 
-<div style="display: flex; gap: 3em; margin-top: 2em; align-items: flex-start;">
+<div style="display: flex; gap: 3em; margin-top: 2em; align-items: center; justify-content: center;">
   <div style="flex: 1; text-align: center;">
-    <div style="font-size: 3em; margin-bottom: 0.2em;">🔴🟡🟢</div>
-    <strong>AMPEL</strong><br>
+    <img src="img/ampel.svg" width="350" alt="AMPEL logo">
+  </div>
+  <div style="flex: 1; text-align: center;">
+    <div style="display: inline-flex; flex-direction: row; align-items: center; gap: 0.3em;">
+      <img src="/shared/logos/conforma.png" width="80" alt="Conforma logo">
+      <span style="font-family: sans-serif; font-weight: 700; font-size: 2em; color: #6b5b95;">conforma</span>
+    </div>
+  </div>
+</div>
+<div style="display: flex; gap: 3em; margin-top: 1em; align-items: flex-start; justify-content: center;">
+  <div style="flex: 1; text-align: center;">
     <small>Policy engine for in-toto attestation evaluation<br>produces VSAs</small>
   </div>
   <div style="flex: 1; text-align: center;">
-    <img src="/shared/logos/conforma.png" width="120" alt="Conforma logo"><br>
-    <strong>Conforma</strong><br>
     <small>Rego-based policy engine<br>incubated with Konflux</small>
   </div>
 </div>
 
-<div style="margin-top: 2.5em; border-top: 1px solid #ccc; padding-top: 1.5em; font-size: 0.9em;">
-  <strong>Coming up:</strong><br>
-  <span style="color: #2e7d32;">🌶 Mild</span> — simple verification &nbsp;·&nbsp;
-  <span style="color: #e65100;">🌶🌶 Medium</span> — combining attestations &nbsp;·&nbsp;
-  <span style="color: #b71c1c;">🌶🌶🌶 Wild</span> — digging into attestations
+<div style="position: relative; margin-top: 2.5em; border-top: 1px solid #ccc; text-align: center;">
+  <div style="position: relative; top: -0.9em; display: inline-block; background: #faf8f5; border: 1px solid #ccc; border-radius: 50%; padding: 0.3em 1.2em; font-size: 0.9em;">
+    <strong>Coming up:</strong>
+  </div>
+  <div style="display: flex; justify-content: center; gap: 1.5em; margin-top: -0.5em; font-size: 0.9em;">
+    <div style=" padding: 0.4em 1em; text-align: center;">
+      <span style="color: #2e7d32; font-size: 3em;">🌶 Mild</span><br><b>simple verification</b>
+    </div>
+    <div style=" padding: 0.4em 1em; text-align: center;">
+      <span style="color: #e65100; font-size: 3em;">🌶🌶 Medium</span><br><b>combining attestations</b>
+    </div>
+    <div style=" padding: 0.4em 1em; text-align: center;">
+      <span style="color: #b71c1c; font-size: 3em;">🌶🌶🌶 Wild</span><br><b>digging into attestations</b>
+    </div>
+  </div>
 </div>
 
 ???
@@ -114,9 +156,8 @@ Playful framing — introduce the "game." Puerco will demo a feature with AMPEL,
 
 class: center, middle, inverse
 
-# <span style="color: #2e7d32;">🌶 Mild</span>
-
-**Verify provenance properties**
+<h1 style="font-size: 5em; padding:0; margin:0">🌶 Mild</h1>
+<div style="font-size: 2em;">Verify provenance properties</span>
 
 ???
 
@@ -126,39 +167,162 @@ Puerco introduces this level. As mentioned before, an attestation is a signed st
 
 layout: false
 
-## Mild: Verify Provenance Properties
+## 🌶 Mild: Verify Provenance Properties
 
-class: small
+<div style="display: flex; gap: 2em; margin-top: 1.5em; align-items: stretch;">
+  <div style="flex: 1; padding: 1.5em; display: flex; align-items: center;">
+    <div style="font-size: 2em; line-height: 1.4;">
+      Consuming any <strong>OCI artifact</strong> with <strong>SLSA provenance</strong> — regardless of build system.
+    </div>
+  </div>
+  <div style="flex: 1; padding: 1.2em 1.5em;">
+    <strong style="font-size: 1.3em; color: #555;">Checks</strong>
+    <ol style="margin: 0.5em 0 0 0; padding-left: 1.2em; line-height: 1.8;">
+      <li><strong>Provenance attestation</strong> is present</li>
+      <li><strong>Build type</strong> is in the accepted list</li>
+      <li><strong>Builder identity</strong> matches expected builder</li>
+      <li><strong>Source materials</strong> are version-controlled with SHAs</li>
+      <li><strong>External parameters</strong> are restricted</li>
+    </ol>
+  </div>
+</div>
 
-**Scenario**: Consuming any OCI artifact with SLSA provenance — regardless of build system.
+???
 
-Checks:
-1. **Provenance attestation** is present
-2. **Build type** is in the accepted list
-3. **Builder identity** matches expected builder
-4. **Source materials** are version-controlled git repos with SHAs
-5. **External parameters** are restricted
+Puerco introduces the mild checks. These are the foundational properties every consumer should verify. They're entirely build-system-agnostic — they work with provenance from GitHub Actions, Tekton, or any other system that produces SLSA-formatted attestations.
+
+---
+
+## 🌶 Mild: AMPEL PolicySet
 
 ```hjson
-// AMPEL policy — verify SLSA provenance properties
-{ tenets: [
-  { id: provenance-present, runtime: "cel@v0", code: "size(predicates) > 0",
-    predicates: { types: ["https://slsa.dev/provenance/v1"] } },
-  { id: vsa-meets-slsa-level, runtime: "cel@v0",
-    code: "predicates.exists(p, p.data.verifiedLevels.exists(l, l == \"SLSA_BUILD_LEVEL_1\"))",
-    predicates: { types: ["https://slsa.dev/verification_summary/v1"] } }
-]}
+{
+    id: set-base-verification
+    frameworks: [ { id: SLSA, name: "Supply-Chain Levels for Software Artifacts" } ]
+    policies: [
+        {
+            id: slsa-builder-id
+            source: {
+                location: { uri: "git+https://github.com/carabiner-dev/policies#slsa/slsa-builder-id.json" }
+            }
+            meta: { controls: [ { framework: SLSA, class: BUILD, id: LEVEL_3 } ] }
+        }
+        {
+            id: slsa-build-type
+            source: {
+                location: { uri: "git+https://github.com/carabiner-dev/policies#slsa/slsa-build-type.json" }
+            }
+            meta: { controls: [ { framework: SLSA, class: BUILD, id: LEVEL_3 } ] }
+        }
+        {
+            id: slsa-build-point
+            source: {
+                location: { uri: "git+https://github.com/carabiner-dev/policies#slsa/slsa-build-point.json" }
+            }
+            meta: { controls: [ { framework: SLSA, class: BUILD, id: LEVEL_3 } ] }
+        }
+    ]
+}
 ```
 
 **Result**: pass / fail per rule. Works with any build system that produces SLSA provenance.
 
 ???
 
-Puerco walks through the AMPEL policy for mild. This is entirely build-system-agnostic — it checks for SLSA provenance presence and verifies the VSA declares at least Build Level 1. No hardcoded builder identity or build type. These checks work with provenance from GitHub Actions, Tekton, or any other system that produces SLSA-formatted attestations.
+Puerco walks through the AMPEL policy for mild. Two tenets: the first checks that SLSA provenance exists, the second verifies the VSA declares at least Build Level 1. No hardcoded builder identity or build type. CEL expressions keep the policy compact and readable.
 
 ---
 
-## Mild: "Conforma Does That Too"
+## 🌶 Mild: AMPEL Policy
+
+```hjson
+{
+    id: slsa-build-point
+    context: {
+        buildPoint:          { required: true,  type: string }
+        buildPointAllowRepo: { required: false, type: bool,   default: true }
+        buildPointCommit:    { required: false, type: string, default: "" }
+    }
+    tenets: [
+        {
+            predicates: { types: ["https://slsa.dev/provenance/v1"] }
+            outputs: {
+                uri: {
+                    code: "has(predicate.data.buildDefinition) && has(predicate.data.buildDefinition.resolvedDependencies) && predicate.data.buildDefinition.resolvedDependencies.exists(dep, has(dep.uri) && (dep.uri.contains('@') ? dep.uri.split('@')[0] : dep.uri) == (context.buildPoint.contains('@') ? context.buildPoint.split('@')[0] : context.buildPoint)) ? predicate.data.buildDefinition.resolvedDependencies.filter(dep, has(dep.uri) && (dep.uri.contains('@') ? dep.uri.split('@')[0] : dep.uri) == (context.buildPoint.contains('@') ? context.buildPoint.split('@')[0] : context.buildPoint))[0].uri : ''"
+                }
+                commitMatch: {
+                    code: "context.buildPointCommit != '' && has(predicate.data.buildDefinition) && has(predicate.data.buildDefinition.resolvedDependencies) && predicate.data.buildDefinition.resolvedDependencies.exists(dep, has(dep.uri) && (dep.uri.contains('@') ? dep.uri.split('@')[0] : dep.uri) == (context.buildPoint.contains('@') ? context.buildPoint.split('@')[0] : context.buildPoint) && has(dep.digest) && dep.digest.exists(k, dep.digest[k] == (context.buildPointCommit.contains(':') ? context.buildPointCommit.split(':')[1] : context.buildPointCommit)))"
+                }
+            }
+            code: "outputs.uri != '' && (context.buildPointAllowRepo || outputs.uri == context.buildPoint) && (context.buildPointCommit == '' || outputs.commitMatch)"
+            assessment: { message: "Expected build point found: {{ .Context.buildPoint }}" }
+            error: {
+                message: "Build point mismatch"
+                guidance: "The attested build point does not match the expected reference"
+            }
+        }
+    ]
+}
+```
+
+**Result**: pass / fail per rule. Works with any build system that produces SLSA provenance.
+
+???
+
+Puerco walks through the AMPEL policy for mild. Two tenets: the first checks that SLSA provenance exists, the second verifies the VSA declares at least Build Level 1. No hardcoded builder identity or build type. CEL expressions keep the policy compact and readable.
+
+---
+
+## 🌶 Mild: Run the AMPEL Policy
+
+```shell
+ampel verify sha256:734d6c22b80cdf9bd21c6b13d3475cf02c888d4a0b00d2e092a735 \
+   # Path to policy
+   --policy "1-mild/ampel/policy.hjson" \
+   # SLSA Attestation
+   --attestation "slsa.json"
+```
+
+<div style="background: #272822; color: rgb(166, 226, 46); font-family: 'Ubuntu Mono', monospace; font-size: 0.7em; padding: 1em; border-radius: 4px; overflow-x: auto; white-space: pre; line-height: 1.4;">+-------------------------------------------------------------------------------------------------------------------------------------------------+
+| <span style="color: #ff0000;">⬤</span><span style="color: #ffcc00;">⬤</span><span style="color: #447821;">⬤</span><span style="color: #fff; font-weight: bold;"> AMPEL: Evaluation Results</span>                                                                                                                    |
++------------------+-----------------------+--------+---------------------------------------------------------------------------------------------+
+| PolicySet        | set-base-verification | Date   | 2026-03-21 15:03:22.255829 +0100 CET                                                        |
++------------------+-----------------------+--------+---------------------------------------------------------------------------------------------+
+| Status: <span style="color: #447821;">●</span> PASS   | Subject               | - sha256:734d6c22b80cdf9bd21c6b13d3475cf0...                                                         |
++------------------+-----------------------+--------+---------------------------------------------------------------------------------------------+
+| Policy           | Controls              | Status | Details                                                                                     |
++------------------+-----------------------+--------+---------------------------------------------------------------------------------------------+
+| slsa-builder-id  | BUILD-LEVEL_3         | <span style="color: #447821;">●</span> PASS | Authorized builder ID detected                                                              |
+| slsa-build-type  | BUILD-LEVEL_3         | <span style="color: #447821;">●</span> PASS | Expected buildType found: tekton.dev/v1/PipelineRun                                         |
+| slsa-build-point | BUILD-LEVEL_3         | <span style="color: #447821;">●</span> PASS | Expected build point found: git+https://gitlab.com/redhat/rhel/containers/ubi10-minimal.git |
++------------------+-----------------------+--------+---------------------------------------------------------------------------------------------+
+</div>
+---
+
+## 🌶 Mild: Run the AMPEL Policy
+
+```shell
+ampel verify "$(crane registry.access.redhat.com/ubi10/ubi-minimal:latest)" \
+   
+   # Policy code
+   --policy '1-mild/ampel/policy.hjson' \
+   
+   # Read attestations attached to the image
+   --collector 'coci:registry.access.redhat.com/ubi10/ubi-minimal:latest' \
+   
+   # Pass the build point to check 
+   --context 'buildPoint:git+https://gitlab.com/redhat/rhel/containers/ubi10-minimal.git' \
+   
+   # Output an attested copy of the resutls 
+   --attest-results=true \
+   
+   # Output the results as a VSA
+   --attest-format 'vsa' 
+```
+
+---
+
+## 🌶 Mild: "Conforma Does That Too"
 
 Same checks, different engine:
 
@@ -191,14 +355,25 @@ Andrew's "me too." The Conforma policy does the same checks in Rego. Two custom 
 ---
 
 ## "But What About Multiple Attestations — and a Portable Summary?"
+<div class="subheading">Raising the bar</div>
 
-*Raising the bar*
-
-> "So you verified one artifact's provenance."
-
-> "What about its dependencies? Base image, other attestations — can you combine and verify them together?"
-
-> "And produce a signed summary so downstream doesn't have to re-verify all of them?"
+<div style="display: flex; flex-direction: column; gap: 1.2em; margin-top: 1em; align-items: flex-start;">
+  <div style="position: relative; background: #fff; border: 2px solid #333; border-radius: 20px; padding: 0.8em 1.2em; max-width: 75%; font-size: 1.1em;">
+    So you verified one artifact's provenance.
+    <div style="position: absolute; bottom: -10px; left: 30px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 12px solid #333;"></div>
+    <div style="position: absolute; bottom: -7px; left: 32px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid #fff;"></div>
+  </div>
+  <div style="position: relative; background: #fff; border: 2px solid #333; border-radius: 20px; padding: 0.8em 1.2em; max-width: 85%; align-self: flex-end; font-size: 1.1em;">
+    What about its dependencies? Base image, other attestations — can you combine and verify them together?
+    <div style="position: absolute; bottom: -10px; right: 30px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 12px solid #333;"></div>
+    <div style="position: absolute; bottom: -7px; right: 32px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid #fff;"></div>
+  </div>
+  <div style="position: relative; background: #fff; border: 2px solid #333; border-radius: 20px; padding: 0.8em 1.2em; max-width: 85%; font-size: 1.1em;">
+    And produce a signed summary so downstream doesn't have to re-verify all of them?
+    <div style="position: absolute; bottom: -10px; left: 30px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 12px solid #333;"></div>
+    <div style="position: absolute; bottom: -7px; left: 32px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid #fff;"></div>
+  </div>
+</div>
 
 ???
 
@@ -206,11 +381,10 @@ Puerco raises the bar. Medium does two things: combine multiple attestations (e.
 
 ---
 
-class: center, middle, inverse
+class: center, middle, medium
 
-# <span style="color: #e65100;">🌶🌶 Medium</span>
-
-**Combine multiple attestations · produce a VSA**
+<h1 style="font-size: 5em; padding:0; margin:0">🌶🌶 Medium</h1>
+<div style="font-size: 2em;">Combine multiple attestations · produce a VSA</span>
 
 ???
 
@@ -218,13 +392,25 @@ Puerco takes the lead. Medium combines and verifies multiple attestations (e.g. 
 
 ---
 
-## Medium: AMPEL — Producing a VSA
+## 🌶🌶 Medium: More Attestations & Producing a VSA
 
-**Scenario**: Image built with **GitHub Actions**, signed with **Sigstore keyless**. Verify the **built image** and its **base image** (multiple attestations), then produce a signed **VSA at SLSA Build Level 2**.
-
-**Combine & verify**: Same mild-style tenets across both attestations; AMPEL produces a single VSA with verified level and dependency levels. **Portable summary**: Downstream checks the VSA instead of re-verifying each attestation.
-
-**Result**: One VSA at L2 attached — one check for downstream.
+<div style="display: flex; gap: 2em; margin-top: 1.5em; align-items: stretch;">
+  <div style="flex: 1; padding: 1.5em; display: flex; align-items: center;">
+    <div style="font-size: 1.6em; line-height: 1.4;">
+      Image built with <strong>GitHub Actions</strong>, signed with <strong>Sigstore keyless</strong>.
+      <br/><br/>Verify the <strong>built image</strong> and its <strong>base image</strong>, then produce a signed <strong>VSA at SLSA Build Level 2</strong>.
+    </div>
+  </div>
+  <div style="flex: 1.1; padding: 1.2em 1.5em;">
+    <strong style="font-size: 1.3em; color: #555;">What's new</strong>
+    <ul style="margin: 0.5em 0 0 0; padding-left: 1.2em; line-height: 1.8;">
+      <li><strong>Combine & verify</strong> multiple attestations (built image + base image)</li>
+      <li>AMPEL produces a single <strong>VSA</strong> with verified level and dependency levels</li>
+      <li><strong>Portable summary</strong> — downstream checks the VSA instead of re-verifying each attestation</li>
+    </ul>
+    <div style="margin-top: 1em; font-weight: 500;">Result: One VSA at L2 attached — one check for downstream.</div>
+  </div>
+</div>
 
 ???
 
@@ -232,9 +418,64 @@ Puerco leads. AMPEL policy at medium extends mild: same provenance checks, plus 
 
 ---
 
-## Medium: AMPEL — [Placeholder]
+## 🌶🌶 Medium: AMPEL - Ensuring SLSA Level 2
 
-*Policy snippet and/or demo output to be added.*
+```hjson
+{
+    id: slsa-source-level-2
+    meta: {
+        description: "Checks for SLSA_SOURCE Level 2 or higher compliance in a VSA"
+    }
+    tenets: [
+        {
+            predicates: { types: ["https://slsa.dev/verification_summary/v1"] }
+            outputs: {
+                pass: { code: "has(predicates[0].data.verificationResult) ? predicates[0].data.verificationResult == 'PASSED' : false" }
+                levels: { code: "has(predicates[0].data.verifiedLevels) ? predicates[0].data.verifiedLevels : []" }
+            }
+            code: "outputs.pass && outputs.levels.exists(k, v, (v == 'SLSA_SOURCE_LEVEL_2' || v == 'SLSA_SOURCE_LEVEL_3' || v == 'SLSA_SOURCE_LEVEL_4'))"
+            assessment: {
+              message: "VSA attesting SLSA_SOURCE L2 compliance checks"
+            }
+            error: {
+                message: "SLSA Source L2+ not recorded in verification summary"
+            }
+        }
+    ]
+}
+```
+???
+
+Placeholder: add AMPEL medium policy (hjson) and/or CLI output when ready.
+
+---
+
+## 🌶🌶 Medium: AMPEL - Chaining Provenance to VSA
+
+```hjson
+{
+  id: verify-base-image
+  source: {
+    location: { uri: "git+https://github.com/carabiner-dev/policies#vsa/slsa-build-level2.json" }
+  },
+  context: {
+    // This is the base image reference
+    baseImage: { default: "registry.access.redhat.com/ubi10/ubi-minimal", required: true, }
+  },
+  chain: [
+    {
+      // Same as above, we chain the build provenance to extract
+      // the digest of the image. 
+      predicate: {
+        type: "https://slsa.dev/provenance/v1",
+        selector: "has(predicate.data.buildDefinition) ? (has(predicate.data.buildDefinition.resolvedDependencies) ? (predicate.data.buildDefinition.resolvedDependencies.map(dep, dep.uri.startsWith(context.baseImage), \"sha256:\" + dep.digest[\"sha256\"])[0]) : '') : ''"
+      }
+    }
+  ],
+}
+```
+
+*Chaining predicates: find a VSA from the policy*
 
 ???
 
@@ -242,9 +483,9 @@ Placeholder: add AMPEL medium policy (hjson) and/or CLI output when ready.
 
 ---
 
-## Medium: Verification Results as a Portable VSA (Conforma)
+## 🌶🌶 Medium: Verification Results as a Portable VSA (Conforma)
 
-**Scenario**: Same — **two attestations** (built image + base). Conforma policy + `generate-vsa.sh` verify both and produce one VSA.
+<span style="font-size: 0.95em">**Scenario**: Same — **two attestations** (built image + base). Conforma policy + `generate-vsa.sh` verify both and produce one VSA.</style>
 
 ```bash
 $ generate-vsa.sh \
@@ -279,7 +520,7 @@ Andrew: "Conforma does that too." The script extracts the base image from the OC
 
 ---
 
-## Medium: "Conforma Does That Too"
+## 🌶🌶 Medium: "Conforma Does That Too"
 
 The policy doesn't care whether the image was built by GitHub Actions or Tekton:
 
@@ -305,16 +546,26 @@ Andrew's "me too." The key insight: the same Conforma policy accepts provenance 
 ---
 
 ## "But Here's What Keeps Me Up at Night"
+<div class="subheading">Raising the bar</div>
 
-*Raising the bar*
-
-> "We can verify what the provenance says and produce a VSA at L2."
-
-> "But did the tasks recorded in the provenance actually *produce* this artifact?"
-
-> "Tekton Chains records tasks accurately — but pipelines are user-customizable. Any task could have injected a different artifact."
-
-> "If we verify the tasks themselves were pinned and trusted, can we upgrade to L3?"
+<div style="display: flex; flex-direction: column; gap: 1.2em; margin-top: 1em; align-items: flex-start;">
+  
+  <div style="position: relative; background: #fff; border: 2px solid #333; border-radius: 20px; padding: 0.8em 1.2em; max-width: 85%; align-self: flex-end; font-size: 1.1em;">
+    But did the tasks recorded in the provenance actually <em>produce</em> this artifact?
+    <div style="position: absolute; bottom: -10px; right: 30px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 12px solid #333;"></div>
+    <div style="position: absolute; bottom: -7px; right: 32px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid #fff;"></div>
+  </div>
+  <div style="position: relative; background: #fff; border: 2px solid #333; border-radius: 20px; padding: 0.8em 1.2em; max-width: 85%; font-size: 1.1em;">
+    Tekton Chains records tasks accurately — but pipelines are user-customizable. Any task could have injected a different artifact.
+    <div style="position: absolute; bottom: -10px; left: 30px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 12px solid #333;"></div>
+    <div style="position: absolute; bottom: -7px; left: 32px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid #fff;"></div>
+  </div>
+  <div style="position: relative; background: #fff; border: 2px solid #333; border-radius: 20px; padding: 0.8em 1.2em; max-width: 80%; align-self: flex-end; font-size: 1.1em;">
+    If we verify the tasks themselves were pinned and trusted, can we upgrade to L3?
+    <div style="position: absolute; bottom: -10px; right: 30px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 12px solid #333;"></div>
+    <div style="position: absolute; bottom: -7px; right: 32px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid #fff;"></div>
+  </div>
+</div>
 
 ???
 
@@ -322,19 +573,17 @@ Andrew raises the deeper trust question. This is the distinction between recordi
 
 ---
 
-class: center, middle, inverse
+class: center, middle, wild
 
-# <span style="color: #b71c1c;">🌶🌶🌶 Wild</span>
-
-**Upgrade from L2 to L3 with trusted task verification**
+<h1 style="font-size: 5em; padding:0; margin:0">🌶🌶🌶 Wild</h1>
+<div style="font-size: 2em;">Upgrade from L2 to L3 with trusted task verification</span>
 
 ???
 
 Andrew introduces the wild level. Wild does the same thing as medium but for Tekton, where we have trusted tasks and isolation guarantees that let us upgrade to L3. Tekton Chains records task references in the provenance. Wild policy verifies every task is a known, pinned bundle or git reference. If all tasks are trusted, the build environment's isolation guarantees are established, and the VSA declares L3. If any are untrusted, warnings are produced and the VSA stays at L2.
 
 ---
-
-## Wild: Trusted Task Verification for L3
+## 🌶🌶🌶 Wild: Trusted Task Verification for L3
 
 Tekton provenance records remote task references including bundle digests or git SHAs.
 
@@ -366,7 +615,7 @@ Andrew explains the wild approach. Tekton Chains records task bundle references 
 
 ---
 
-## Wild: Trusted Task Data Format
+## 🌶🌶🌶 Wild: Trusted Task Data Format
 
 The allowlist specifies which task references are trusted:
 
@@ -393,16 +642,33 @@ Show the trusted task data format. For PipelineRun provenance, the trusted task 
 
 ---
 
-## Wild: "AMPEL Can Verify That Too"
+## 🌶🌶🌶 Wild: "AMPEL Can Verify That Too"
 
 ```hjson
-// AMPEL — all tasks from allowed bundle prefix
-{ context: { allowed_bundle_prefix: { type: "string", default: "quay.io/konflux-ci/tekton-catalog/" } }
-  tenets: [{
-    id: all-tasks-trusted, runtime: "cel@v0",
-    code: "predicates.exists(p, p.data.buildConfig.tasks.all(task, has(task.ref.bundle) && task.ref.bundle.startsWith(context.allowed_bundle_prefix)))",
-    predicates: { types: ["https://slsa.dev/provenance/v0.2"] }
-  }]
+{
+    id: verify-trusted-tasks
+    context: {
+        // This is the context data from the file
+        trusted_task_refs: { required: true }
+    }
+    tenets: [
+        {
+            predicates: { types: ["https://slsa.dev/provenance/v1"] }
+            code:
+                '''
+                has(predicates[0].data.buildDefinition) && has(predicates[0].data.buildDefinition.resolvedDependencies) && has(context.trusted_task_refs)
+                && predicates[0].data.buildDefinition.resolvedDependencies.filter(dep, has(dep.name) && dep.name == 'task')
+                    .all(dep, context.trusted_task_refs.exists(ref, ref.uri == dep.uri))
+                '''
+            assessment: {
+              message: "All tasks are in the allow list of trusted tasks"
+            }
+            error: {
+                message: "Untrusted task found"
+                guidance: "At least one task was not found in the allowed tasklist"
+            }
+        }
+    ]
 }
 ```
 
@@ -466,9 +732,7 @@ Both speakers together. Quick summary. The three key messages:
       <strong><a href="https://conforma.dev">conforma.dev</a></strong>
     </div>
     <div style="text-align: center;">
-      <div style="width: 140px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2em;">
-        🔴🟡🟢
-      </div><br>
+      <img src="img/ampel-qr-code.svg" width="140" alt="AMPEL QR code"><br>
       <strong><a href="https://github.com/carabiner-dev/ampel">github.com/carabiner-dev/ampel</a></strong>
     </div>
     <div style="text-align: center;">
@@ -496,13 +760,13 @@ Quick close. "Scan, follow along, try it yourself."
 
 class: center, middle, inverse
 
-# Thank You
+<h1 style="font-size: 5em; padding:0; margin:0">Thank You</h1>
 
-Questions?
+<div style="font-size: 3em;">Questions?</div>
 
-<div style="margin-top: 2em;">
+<div style="font-size: 2em; margin-top: 2em; line-height: 1.2em;">
   Andrew McNamara · <strong>arewm@redhat.com</strong><br>
-  Adolfo "puerco" Garcia · <strong>AMPEL</strong>
+  Adolfo "puerco" García Veytia · <strong>puerco@carabiner.dev</strong>
 </div>
 
 .footnote[
