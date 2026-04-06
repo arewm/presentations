@@ -2,6 +2,32 @@
 layout: default
 ---
 
+<style>
+.tip-toggle {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+.tip-toggle .tip-text {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  white-space: nowrap;
+  z-index: 1;
+}
+.tip-toggle:hover .tip-text,
+.tip-toggle.active .tip-text {
+  display: block;
+}
+</style>
+
 <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
   <meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">
   <meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once }}">
@@ -21,20 +47,23 @@ layout: default
     </header>
 
     <section class="page__content" itemprop="text">
-      {% if page.recording or page.session or page.slides_pdf %}
+      {% if page.recording or page.session or page.slides_pdf or page.demo %}
       <div class="notice--info">
         <h4 class="no_toc">Resources:</h4>
         <ul>
           {% if page.slides_pdf %}
           <li><a href="{{ page.slides_pdf }}">View Slides (PDF)</a></li>
           {% elsif page.slides_path %}
-          <li><a href="/presentations/slides.html?p={{ page.path | split: '/' | slice: 1 }}">View Full-Screen Presentation</a></li>
+          <li><a href="/presentations/slides.html?p={{ page.path | split: '/' | slice: 1 }}">View Full-Screen Presentation</a> <span class="tip-toggle" onclick="this.classList.toggle('active')">&#9432;<span class="tip-text">Press 'p' during the presentation to toggle speaker notes</span></span></li>
           {% endif %}
           {% if page.recording %}
           <li><a href="{{ page.recording }}">Watch Recording</a></li>
           {% endif %}
           {% if page.session %}
           <li><a href="{{ page.session }}">Session Details</a></li>
+          {% endif %}
+          {% if page.demo %}
+          <li><a href="{{ page.demo }}">Demo Repository</a></li>
           {% endif %}
         </ul>
       </div>
@@ -43,7 +72,7 @@ layout: default
         {% if page.slides_pdf %}
         <p><a href="{{ page.slides_pdf }}">View Slides (PDF)</a></p>
         {% elsif page.slides_path %}
-        <p><a href="/presentations/slides.html?p={{ page.path | split: '/' | slice: 1 }}">View Full-Screen Presentation</a></p>
+        <p><a href="/presentations/slides.html?p={{ page.path | split: '/' | slice: 1 }}">View Full-Screen Presentation</a> <span class="tip-toggle" onclick="this.classList.toggle('active')">&#9432;<span class="tip-text">Press 'p' during the presentation to toggle speaker notes</span></span></p>
         {% endif %}
       </div>
       {% endif %}
