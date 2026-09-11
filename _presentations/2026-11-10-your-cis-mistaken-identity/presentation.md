@@ -441,13 +441,15 @@ spiffe://konflux-ci.dev/trusted/cluster-01/release-sa/attach-summary-attestation
 --
 
 ### The Next Evolution: Dual-Control & Clearance Tokens
-* **Pipeline-Scoped Identity:** SVID identifies the whole verified release pipeline authority.
-* **Policy Clearance Tokens:** `verify-conforma` mints an ephemeral token tied to `PipelineRun.UID` *only* when 100% of policy rules pass.
-* The attachment task must present **both** identity and clearance token to sign the VSA.
+* **Pipeline-Scoped Identity (Working Today):** SVID identifies the whole verified release pipeline authority:
+  `spiffe://konflux-ci.dev/release/{app}/{pipeline}`
+  Issued *only* when Kyverno validates the pipeline run AND SPIRE matches the attachment step.
+* **Policy Clearance Tokens (The Horizon):** `verify-conforma` mints an ephemeral capability token tied to `PipelineRun.UID` *only* when 100% of policy rules pass.
+* The attachment task presents identity to Fulcio to sign the VSA keylessly into Rekor.
 
 ???
 
-This is a great thought-provoking teaser for the audience. Inside the build namespace, task-scoped identity enforces separation of duties. At the release boundary, identity evolves into proof of policy compliance.
+Inside the build namespace, task-scoped identity enforces separation of duties. At the release boundary, we demonstrate Pipeline-Scoped Dual-Gating: early tasks get zero signing access, while the VSA attachment step receives a release authority SVID. Looking forward, capability clearance tokens make it physically impossible to sign without a cryptographic policy verdict.
 
 ---
 

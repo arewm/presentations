@@ -81,6 +81,15 @@ body {
 }
 
 /* Code Blocks & Inlines */
+pre {
+  background: #0f172a !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  padding: 0.8em 1.2em !important;
+  overflow-x: auto !important;
+  margin: 0.8em 0 !important;
+}
+
 code {
   font-family: 'IBM Plex Mono', monospace !important;
   font-size: 0.85em;
@@ -91,15 +100,19 @@ code {
   border: 1px solid #e2e8f0;
 }
 
+pre code,
 .remark-code {
   font-family: 'IBM Plex Mono', monospace !important;
   font-size: 0.8em;
   line-height: 1.45;
   background: #0f172a !important;
   color: #e2e8f0 !important;
-  border-radius: 8px;
-  padding: 1em !important;
-  border: 1px solid #334155;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 /* Utility classes */
