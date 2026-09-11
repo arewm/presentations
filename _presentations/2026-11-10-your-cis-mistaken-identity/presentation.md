@@ -57,33 +57,116 @@ Yet in nearly every Kubernetes CI/CD pipeline running today:
 
 ???
 
-Think about what happens when a pipeline runs in Kubernetes. Tekton spawns a series of pods for tasks. All of them run in the same namespace, usually under the same service account. If you give that service account an IAM role or a Cosign key, any task that gets compromised can produce any attestation it wants.
+Maia opens the talk.
+"Think about what happens when a pipeline runs in Kubernetes. Tekton spawns a series of pods for tasks. All of them run in the same namespace, usually under the same service account. If you give that service account an IAM role or a Cosign key, any task that gets compromised can produce any attestation it wants."
 
 ---
 
-## Where Are We Today? (Ambient Authority)
+## The Identity Perspective: Why Location Fails Us
 
-In standard Tekton and Kubernetes pipelines:
+<span class="pill pill-blue">Maia · Identity & Auth</span>
+
+In the cloud-native identity world, we solved machine-to-machine authentication with **Workload Identity (SPIFFE/SPIRE)**.
+
+We said: *"No more hardcoded API keys or static credentials in Kubernetes Secrets."*
+
+--
+
+### The Standard SPIFFE Deployment Model:
+Workload Attestors inspect the running container:
+* Kubernetes Namespace (`default-tenant`)
+* ServiceAccount Name (`pipeline-runner`)
+* Node or Cluster Name (`prod-cluster-01`)
 
 ```text
-PipelineRun: build-and-test
-  ├── Task 1: git-clone         [SA: pipeline-runner]  ◄── Untrusted code / PRs
-  ├── Task 2: fetch-deps        [SA: pipeline-runner]  ◄── Ecosystem packages
-  ├── Task 3: build-container   [SA: pipeline-runner]  ──► Signs SBOM
-  └── Task 4: trivy-scan        [SA: pipeline-runner]  ──► Signs CVE Report
+spiffe://company.org/ns/default-tenant/sa/pipeline-runner
 ```
 
 --
 
-### The Failure Mode:
-* If `fetch-deps` or an inline script executes malicious code, it possesses the ambient tokens of `pipeline-runner`.
-* It can call Fulcio, AWS STS, or HashiCorp Vault directly.
-* It can sign an in-toto attestation claiming: *"0 vulnerabilities found!"*
-* Downstream policy engines look at the signature and say: *"Signed by pipeline-runner? Looks legit to me!"*
+### The Blind Spot:
+* Workload identity was designed for **long-running microservices** communicating over mTLS (`service-a` talking to `service-b`).
+* In microservices, the service boundary *is* the identity boundary.
+* In CI/CD, the workload is an **ephemeral DAG of heterogeneous tools** executing wildly different actions under a single tenant identity.
 
 ???
 
-Signature presence is not authorization. Just because something has a cryptographic signature doesn't mean the entity signing it had the authority to make that claim.
+Maia: "From the identity community's perspective, SPIFFE was a huge leap forward. We eliminated static credentials. But we brought microservice-era assumptions into CI/CD. In a microservice, ServiceAccount ≈ Application. In CI/CD, ServiceAccount ≈ The entire factory, including untrusted PR checkouts, third-party package downloaders, compiler toolchains, security scanners, and release signers. Location alone no longer tells you who is calling."
+
+---
+
+## The Supply Chain Threat: Confused Deputies in CI
+
+<span class="pill pill-blue">Maia · Identity & Auth</span>
+
+When identity is coarse, every pipeline step becomes a potential **Confused Deputy**:
+
+```text
+PipelineRun: build-and-test
+  ├── Task 1: git-clone         [SA: runner]  ◄── Untrusted code / PRs
+  ├── Task 2: fetch-deps        [SA: runner]  ◄── Dynamic package downloads
+  ├── Task 3: build-container   [SA: runner]  ──► Needs builder authority
+  └── Task 4: trivy-scan        [SA: runner]  ──► Needs scanner authority
+```
+
+--
+
+### What Actually Happens During an Attack:
+1. **Malicious PR / Typosquatted Dependency:** Injects code during `git-clone` or `fetch-deps`.
+2. **Ambient Authority Exploitation:** The malicious code accesses the pod's ambient token or local identity socket.
+3. **Identity Impersonation:** Because all tasks share `sa/runner`, the compromised step can exchange its token with Fulcio, Vault, or AWS STS.
+4. **Forged Integrity:** The attacker signs an attestation claiming: *"Vulnerabilities: 0; SBOM: Clean"*.
+
+--
+
+<div class="warn-box">
+  <strong>Takeaway:</strong> Cryptographic signatures are only as good as the authorization of the signer. Signature presence without role constraints is security theater.
+</div>
+
+???
+
+Maia: "This isn't hypothetical. Most modern supply chain compromises don't break crypto; they abuse legitimate credentials running in the wrong context. If a dependency download step can sign a vulnerability report, your policy engine has no way to detect the forgery because the signature is mathematically valid and issued by your cluster."
+
+---
+
+## The Core Tenet: Authentication vs. Authorization
+
+<span class="pill pill-blue">Maia · Identity & Auth</span>
+
+SPIFFE's architectural boundary has always been clear:
+* **SPIFFE does Authentication**: Cryptographically proves *who* a workload is.
+* **Consuming Systems do Authorization**: Decides *what* that workload is allowed to do.
+
+--
+
+### How Do We Bridge the Gap in CI?
+
+```text
+[ Typical SPIFFE (Location) ]
+spiffe://trust-domain/ns/{namespace}/sa/{service-account}
+      │
+      │  ❌ Does not capture what code is running or whether it was verified
+      ▼
+[ Role-Scoped SPIFFE (Verified Role) ]
+spiffe://trust-domain/trusted/{cluster}/{sa}/{task-role}
+      │
+      │  ✅ Encodes the vetted task definition verified at admission time
+      ▼
+[ Policy Engine (Authorization) ]
+Conforma / OPA evaluates: Is {task-role} authorized to sign this claim?
+```
+
+--
+
+<div class="highlight-box">
+  <strong>The Division of Labor:</strong><br>
+  • <strong>Maia (Identity):</strong> How we make SPIFFE SVIDs express fine-grained task roles without changing SPIFFE's core tenets.<br>
+  • <strong>Andrew (Implementation):</strong> How Tekton, Kyverno, Sigstore, and Conforma make this work end-to-end in Kubernetes.
+</div>
+
+???
+
+Maia: "We don't need to reinvent SPIFFE or break its boundaries. We keep SPIFFE doing what it does best: authenticating the workload. But instead of only feeding SPIRE dumb metadata like namespace and service account, we feed SPIRE admission-verified task roles. Let's hand it over to Andrew to show how we wire this through Tekton, Kyverno, and Sigstore."
 
 ---
 
