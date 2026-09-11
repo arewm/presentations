@@ -130,3 +130,53 @@ code {
 .pill-green { background: #dcfce7; color: #15803d; }
 .pill-red { background: #fee2e2; color: #b91c1c; }
 .pill-purple { background: #f3e8ff; color: #7e22ce; }
+
+/* Watermark: Sample indicator across all slides for this presentation */
+.remark-slide-content::after {
+  content: "SAMPLE";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 8em;
+  font-weight: 800;
+  color: rgba(148, 163, 184, 0.16);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  pointer-events: none;
+  z-index: 999;
+  white-space: nowrap;
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+  user-select: none;
+}
+
+.remark-slide-content::before {
+  content: "SAMPLE PRESENTATION";
+  position: absolute;
+  top: 1em;
+  right: 1.5em;
+  font-size: 0.6em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #dc2626;
+  background: rgba(254, 226, 226, 0.85);
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  padding: 0.25em 0.7em;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 1000;
+  user-select: none;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.title-slide::after,
+.inverse::after {
+  color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.title-slide::before,
+.inverse::before {
+  color: #fca5a5 !important;
+  background: rgba(153, 27, 27, 0.45) !important;
+  border: 1px solid rgba(252, 165, 165, 0.35) !important;
+}
