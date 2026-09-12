@@ -447,9 +447,18 @@ spiffe://konflux-ci.dev/trusted/cluster-01/release-sa/attach-summary-attestation
 * **Policy Clearance Tokens (The Horizon):** `verify-conforma` mints an ephemeral capability token tied to `PipelineRun.UID` *only* when 100% of policy rules pass.
 * The attachment task presents identity to Fulcio to sign the VSA keylessly into Rekor.
 
+--
+
+### Beyond Sigstore: Secretless, Environment-Agnostic Tasks
+* **Zero Pre-Shared Secrets:** Tasks exchange SPIFFE JWTs with external services (Zot, HashiCorp Vault, AWS/GCP STS).
+* **Portability:** Tasks run in *any* cluster or ephemeral cloud runner without copying Kubernetes Secrets across environments.
+* **Registry Push Gating:** Zot validates OIDC Bearer tokens—the same release SVID that signs the VSA gates write access to the release repository.
+
 ???
 
 Inside the build namespace, task-scoped identity enforces separation of duties. At the release boundary, we demonstrate Pipeline-Scoped Dual-Gating: early tasks get zero signing access, while the VSA attachment step receives a release authority SVID. Looking forward, capability clearance tokens make it physically impossible to sign without a cryptographic policy verdict.
+
+Furthermore, this identity pattern is not limited to Sigstore signing. By leveraging SPIRE's OIDC discovery endpoint, tasks can exchange their SPIFFE identity with HashiCorp Vault, cloud IAM (AWS/GCP Workload Identity), or OCI registries like Zot. Tasks become completely secretless and portable across any Kubernetes cluster or cloud environment.
 
 ---
 
