@@ -3,6 +3,8 @@ title: "Your CI's Mistaken Identity: Task-Scoped Trust in Cloud-Native Pipelines
 event: "KubeCon + CloudNativeCon North America 2026"
 date: 2026-11-10
 slides_path: presentation.md
+custom_css: custom.css
+custom_js: custom.js
 excerpt: "You wouldn't ask a plumber to sign off on your electrical work. Yet most CI/CD pipelines run under a single identity: one credential for signing SBOMs and reporting vulnerabilities alike. How Tekton, Kyverno, SPIFFE/SPIRE, and Sigstore close this gap."
 # session: "https://kccncna2026.sched.com/event/..."
 # recording: "https://www.youtube.com/watch?v=..."

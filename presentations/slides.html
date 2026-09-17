@@ -194,6 +194,21 @@
                 slideNumberFormat: '%current% / %total%',
                 ratio: '16:9'
               });
+              window.slideshow = slideshow;
+
+              // Try to load custom JS if it exists
+              const customJsPath = `${presentationBase}/custom.js`;
+              fetch(customJsPath, { method: 'HEAD' })
+                .then(response => {
+                  if (response.ok) {
+                    const script = document.createElement('script');
+                    script.src = customJsPath;
+                    document.body.appendChild(script);
+                  }
+                })
+                .catch(() => {
+                  // Ignore errors, custom JS is optional
+                });
             })
             .catch(error => {
               document.getElementById('source').value =

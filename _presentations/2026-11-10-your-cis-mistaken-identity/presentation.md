@@ -415,6 +415,108 @@ We run through the demo live on a local cluster. Show the TaskRun admission, ins
 
 ---
 
+layout: false
+
+## Live Demo: Act 1 — Kyverno at the Gate & Separation of Duties
+
+<div class="demo-slide-container" data-port="7681">
+  <div class="demo-offline-fallback">
+    <div class="demo-fallback-header">
+      <h3 class="demo-fallback-title">🖥️ Live Demo: Act 1</h3>
+      <span class="demo-badge-offline">ttyd offline</span>
+    </div>
+    <div class="demo-fallback-desc">
+      <strong>Admission Classification & Separation of Duties Attestations</strong><br>
+      • Inline untrusted tasks are classified into the unprivileged <code>dev</code> role.<br>
+      • Pinned, catalog-signed tasks receive production identities (<code>builder</code> vs. <code>scanner</code>).<br>
+      • Conforma policy blocks adversarial attacks when a builder attempts to forge a clean CVE report.
+    </div>
+    <div class="demo-cmd-box">
+      <span class="demo-cmd-code">./demo/run-demo.sh --act 1</span>
+      <button class="demo-btn demo-copy-btn">Copy</button>
+    </div>
+    <div class="demo-fallback-footer">
+      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code></span>
+      <button class="demo-btn demo-retry-btn">Retry Connection</button>
+    </div>
+  </div>
+  <div class="demo-terminal-frame" style="display: none;"></div>
+</div>
+
+???
+
+Demonstrates Kyverno mutating TaskRuns before admission, SPIRE minting role-scoped SVIDs, and Conforma validating separation of duties.
+
+---
+
+layout: false
+
+## Live Demo: Act 2 — Ambient Push Hijack vs. Task-Scoped OCI Gating
+
+<div class="demo-slide-container" data-port="7682">
+  <div class="demo-offline-fallback">
+    <div class="demo-fallback-header">
+      <h3 class="demo-fallback-title">🖥️ Live Demo: Act 2</h3>
+      <span class="demo-badge-offline">ttyd offline</span>
+    </div>
+    <div class="demo-fallback-desc">
+      <strong>Ambient Push Hijack vs. Task-Scoped OCI Push Gating</strong><br>
+      • Standard projected ServiceAccount token exposes namespace-wide ambient push authority (attacker uploads malware).<br>
+      • Task-scoped SPIFFE identity restricts write sessions strictly to the designated build step with audience validation.<br>
+      • Malicious tasks attempting OCI blob upload are rejected with <code>HTTP 401 Unauthorized</code>.
+    </div>
+    <div class="demo-cmd-box">
+      <span class="demo-cmd-code">./demo/run-demo.sh --act 2</span>
+      <button class="demo-btn demo-copy-btn">Copy</button>
+    </div>
+    <div class="demo-fallback-footer">
+      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code></span>
+      <button class="demo-btn demo-retry-btn">Retry Connection</button>
+    </div>
+  </div>
+  <div class="demo-terminal-frame" style="display: none;"></div>
+</div>
+
+???
+
+Contrasts ambient Kubernetes ServiceAccount tokens with audience-bound SPIFFE SVIDs gating Zot OCI upload sessions.
+
+---
+
+layout: false
+
+## Live Demo: Act 3 — Portable Secretless Service Access
+
+<div class="demo-slide-container" data-port="7683">
+  <div class="demo-offline-fallback">
+    <div class="demo-fallback-header">
+      <h3 class="demo-fallback-title">🖥️ Live Demo: Act 3</h3>
+      <span class="demo-badge-offline">ttyd offline</span>
+    </div>
+    <div class="demo-fallback-desc">
+      <strong>Cross-Namespace Token Exchange (Zero Kubernetes Secrets)</strong><br>
+      • An internal CVE vulnerability database service runs with zero static API credentials.<br>
+      • Dev/untrusted task queries are denied with <code>HTTP 403 Forbidden</code>.<br>
+      • Catalog scanner presents audience-scoped JWT SVID validated via SPIRE OIDC discovery keys (<code>HTTP 200 OK</code>).
+    </div>
+    <div class="demo-cmd-box">
+      <span class="demo-cmd-code">./demo/run-demo.sh --act 3</span>
+      <button class="demo-btn demo-copy-btn">Copy</button>
+    </div>
+    <div class="demo-fallback-footer">
+      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code></span>
+      <button class="demo-btn demo-retry-btn">Retry Connection</button>
+    </div>
+  </div>
+  <div class="demo-terminal-frame" style="display: none;"></div>
+</div>
+
+???
+
+Demonstrates environment-agnostic, secretless service authentication across namespaces using SPIRE OIDC keys.
+
+---
+
 class: center, middle, inverse
 
 # Act 4: The Next Frontier
@@ -462,6 +564,40 @@ Furthermore, this identity pattern is not limited to Sigstore signing. By levera
 
 ---
 
+layout: false
+
+## Live Demo: Act 4 — Dual-Gated Managed Release Authority
+
+<div class="demo-slide-container" data-port="7684">
+  <div class="demo-offline-fallback">
+    <div class="demo-fallback-header">
+      <h3 class="demo-fallback-title">🖥️ Live Demo: Act 4</h3>
+      <span class="demo-badge-offline">ttyd offline</span>
+    </div>
+    <div class="demo-fallback-desc">
+      <strong>Managed Release Boundary & Dual-Control Signing</strong><br>
+      • Ambient ServiceAccount release authority is prohibited in <code>managed-tenant</code>.<br>
+      • Dual-gating requires Kyverno PipelineRun validation AND SPIRE attachment task selector matching.<br>
+      • Attaches Verification Summary Attestation (VSA) keylessly with Cosign into Rekor and verifies the transparency log.
+    </div>
+    <div class="demo-cmd-box">
+      <span class="demo-cmd-code">./demo/run-demo.sh --act 4</span>
+      <button class="demo-btn demo-copy-btn">Copy</button>
+    </div>
+    <div class="demo-fallback-footer">
+      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code></span>
+      <button class="demo-btn demo-retry-btn">Retry Connection</button>
+    </div>
+  </div>
+  <div class="demo-terminal-frame" style="display: none;"></div>
+</div>
+
+???
+
+Demonstrates the managed release pipeline authority executing keyless Cosign attestations recorded in Rekor with full transparency log verification.
+
+---
+
 ## Key Takeaways
 
 1. **Location ≠ Authorization**: Stop treating Kubernetes namespaces and generic ServiceAccounts as authorization boundaries.
@@ -474,7 +610,7 @@ Furthermore, this identity pattern is not limited to Sigstore signing. By levera
 <div class="highlight-box" style="text-align: center; margin-top: 1.5em;">
   <strong>Working Code & Helm Charts:</strong><br>
   <code>github.com/arewm/slsa-konflux-example</code><br>
-  (Branch: <code>worktree-spiffe-spire-exploration</code>)
+  (Branch: <code>kubecon-na-2026-your-cis-mistaken-identity</code>)
 </div>
 
 ---
@@ -497,3 +633,35 @@ class: center, middle, inverse
     <code>github.com/arewm/slsa-konflux-example</code>
   </div>
 </div>
+
+---
+
+layout: false
+
+## Appendix: Full End-to-End Demonstration Arc
+
+<div class="demo-slide-container" data-port="7680">
+  <div class="demo-offline-fallback">
+    <div class="demo-fallback-header">
+      <h3 class="demo-fallback-title">🖥️ Live Demo: Complete Arc</h3>
+      <span class="demo-badge-offline">ttyd offline</span>
+    </div>
+    <div class="demo-fallback-desc">
+      <strong>Complete Walkthrough (Acts 0 through 4)</strong><br>
+      Runs the entire end-to-end demonstration arc from pre-flight cluster baseline through Kyverno admission, OCI push gating, secretless service exchange, and dual-gated release authority.
+    </div>
+    <div class="demo-cmd-box">
+      <span class="demo-cmd-code">./demo/run-demo.sh</span>
+      <button class="demo-btn demo-copy-btn">Copy</button>
+    </div>
+    <div class="demo-fallback-footer">
+      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code></span>
+      <button class="demo-btn demo-retry-btn">Retry Connection</button>
+    </div>
+  </div>
+  <div class="demo-terminal-frame" style="display: none;"></div>
+</div>
+
+???
+
+Full uninterrupted demonstration arc from pre-flight baseline to final Rekor verification.
