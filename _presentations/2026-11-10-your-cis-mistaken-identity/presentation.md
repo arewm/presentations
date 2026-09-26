@@ -247,37 +247,32 @@ Let's walk through how these pieces connect in real time. We aren't introducing 
 Kyverno intercepts the `TaskRun` at admission time:
 
 ```yaml
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1beta1
+kind: ImageValidatingPolicy
 metadata:
   name: verify-bundle-signatures
 spec:
-  validationFailureAction: Enforce
-  rules:
-  - name: verify-trusted-bundle
-    match:
-      resources:
-        kinds: [TaskRun]
-    imageExtractors:
-      TaskRun:
-      - path: "/spec/taskRef/params/*"
-        name: "bundle"
-        key: "name"
-        value: "value"
-        filter: "bundle"
-    verifyImages:
-    - type: SigstoreBundle
-      imageReferences:
-      - "quay.io/konflux-ci/tekton-catalog/*"
-      attestors:
-      - entries:
-        - keys:
-            publicKeys: "k8s://tekton-pipelines/catalog-pubkey"
+  validationActions: [Deny]
+  matchConstraints:
+    resourceRules:
+    - apiGroups: ["tekton.dev"]
+      resources: ["taskruns"]
+  images:
+  - name: taskBundle
+    expression: >-
+      object.spec.taskRef.params
+        .filter(p, p.name == "bundle")
+        .map(p, p.value)
+  validations:
+  - expression: >-
+      images.taskBundle.map(img,
+        verifyImageSignatures(img, [attestors.catalogKey])
+      ).all(valid, valid > 0)
 ```
 
 ???
 
-Notice the imageExtractors stanza. Tekton bundles are OCI artifacts stored in registries. Kyverno uses our upstream filter extension to isolate the bundle parameter from general task parameters and validates its Cosign signature before the task pod is allowed to run as prod.
+Notice the CEL `images` stanza. Tekton bundles are OCI artifacts stored in registries. Kyverno's CEL-based `ImageValidatingPolicy` natively isolates the bundle parameter from other task parameters and validates its Cosign signature before the task pod is admitted to run as prod.
 
 ---
 
