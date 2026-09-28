@@ -27,11 +27,51 @@
     if (active && active.tagName === 'IFRAME') {
       active.blur();
     }
+    document.querySelectorAll('.demo-iframe').forEach(iframe => {
+      try {
+        iframe.blur();
+      } catch (e) {}
+    });
     window.focus();
     if (document.body) {
       document.body.focus();
     }
   }
+
+  // Visual feedback on toolbar badge when focus returns to presentation
+  function notifyFocusReleased(message) {
+    const visibleSlide = document.querySelector('.remark-visible');
+    if (!visibleSlide) return;
+    const badge = visibleSlide.querySelector('.demo-port-badge');
+    if (badge) {
+      const origText = badge.dataset.origText || badge.innerText;
+      badge.dataset.origText = origText;
+      badge.innerText = message || 'SLIDES ACTIVE (➔ / PgDn)';
+      badge.classList.add('slides-active');
+      setTimeout(() => {
+        badge.innerText = origText;
+        badge.classList.remove('slides-active');
+      }, 3000);
+    }
+  }
+
+  // Cross-origin message receiver from embedded ttyd terminals
+  window.addEventListener('message', (event) => {
+    if (!event.data || typeof event.data !== 'object') return;
+
+    if (event.data.type === 'DEMO_ESCAPE') {
+      returnFocusToSlides();
+      notifyFocusReleased('SLIDES ACTIVE (➔ / PgDn)');
+    } else if (event.data.type === 'DEMO_ACT_COMPLETE') {
+      returnFocusToSlides();
+      notifyFocusReleased('ACT FINISHED (➔ NEXT SLIDE)');
+    } else if (event.data.type === 'DEMO_NEXT_SLIDE') {
+      returnFocusToSlides();
+      if (window.slideshow && typeof window.slideshow.gotoNextSlide === 'function') {
+        window.slideshow.gotoNextSlide();
+      }
+    }
+  });
 
   // Initialize a demo container
   async function initContainer(container) {
@@ -145,6 +185,7 @@
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       returnFocusToSlides();
+      notifyFocusReleased('SLIDES ACTIVE (➔ / PgDn)');
     }
   });
 

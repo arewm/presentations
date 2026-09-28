@@ -254,6 +254,14 @@ pre code,
   color: #89b4fa;
   padding: 0.15em 0.5em;
   border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+.demo-port-badge.slides-active {
+  background: #a6e3a1 !important;
+  color: #11111b !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 10px rgba(166, 227, 161, 0.6);
 }
 
 .demo-toolbar-right {
