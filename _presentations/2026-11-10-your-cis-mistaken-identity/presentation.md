@@ -39,8 +39,6 @@ layout: false
 
 ## The Hook: A Simple Question
 
-<span class="pill pill-blue">Maia · Identity & Auth</span>
-
 > **"You wouldn't ask a plumber to sign off on your electrical work."**
 
 --
@@ -59,14 +57,14 @@ Yet in nearly every Kubernetes CI/CD pipeline running today:
 
 ???
 
+Speaker: Maia
+
 Maia opens the talk.
 "Think about what happens when a pipeline runs in Kubernetes. Tekton spawns a series of pods for tasks. All of them run in the same namespace, usually under the same service account. If you give that service account an IAM role or a Cosign key, any task that gets compromised can produce any attestation it wants."
 
 ---
 
 ## The Identity Perspective: Why Location Fails Us
-
-<span class="pill pill-blue">Maia · Identity & Auth</span>
 
 In the cloud-native identity world, we solved machine-to-machine authentication with **Workload Identity (SPIFFE/SPIRE)**.
 
@@ -93,13 +91,13 @@ spiffe://company.org/ns/default-tenant/sa/pipeline-runner
 
 ???
 
+Speaker: Maia
+
 Maia: "From the identity community's perspective, SPIFFE was a huge leap forward. We eliminated static credentials. But we brought microservice-era assumptions into CI/CD. In a microservice, ServiceAccount ≈ Application. In CI/CD, ServiceAccount ≈ The entire factory, including untrusted PR checkouts, third-party package downloaders, compiler toolchains, security scanners, and release signers. Location alone no longer tells you who is calling."
 
 ---
 
 ## The Supply Chain Threat: Confused Deputies in CI
-
-<span class="pill pill-purple">Maia & Andrew</span>
 
 When identity is coarse, every pipeline step becomes a potential **Confused Deputy**:
 
@@ -126,6 +124,8 @@ PipelineRun: build-and-test
 </div>
 
 ???
+
+Speaker: Maia & Andrew
 
 Maia: "This isn't hypothetical. Most modern supply chain compromises don't break crypto; they abuse legitimate credentials running in the wrong context."
 Andrew: "Let's pull up our live cluster and demonstrate how an untrusted step silently hijacks ambient authority to overwrite a production container tag."
@@ -162,6 +162,8 @@ layout: false
 
 ???
 
+Speaker: Andrew
+
 Andrew runs Act 1 live in the embedded terminal.
 Walk the audience through:
 1. Inspecting the projected ServiceAccount token: issuer is Kubernetes, subject is coarse-grained to default-tenant:default.
@@ -181,8 +183,6 @@ class: center, middle, inverse
 layout: false
 
 ## Tekton Architecture: Tasks, TaskRuns, and Resolvers
-
-<span class="pill pill-red">Andrew · Pipelines & Architecture</span>
 
 How do pipelines execute in cloud-native Kubernetes?
 
@@ -205,14 +205,14 @@ How do pipelines execute in cloud-native Kubernetes?
 
 ???
 
+Speaker: Andrew
+
 Andrew explains Tekton primitives.
 "To solve the identity problem, we have to know what code is scheduled before the pod starts running. Tekton Resolvers give us exactly that hook."
 
 ---
 
 ## Tekton Resolvers: Pinned OCI Bundles as Trust Anchors
-
-<span class="pill pill-red">Andrew · Pipelines & Architecture</span>
 
 A **Tekton Bundle** is a Tekton `Task` packaged inside an OCI container image layer:
 
@@ -243,13 +243,13 @@ spec:
 
 ???
 
+Speaker: Andrew
+
 Andrew: "Because the bundle is an OCI artifact pinned by digest, we can treat task definitions the same way we treat container images: we can sign them with Cosign and verify them with Kyverno at admission time."
 
 ---
 
 ## Bridging Tekton to SPIRE: Kyverno at the Gate
-
-<span class="pill pill-red">Andrew · Pipelines & Architecture</span>
 
 Kyverno intercepts the `TaskRun` at admission time using a CEL-based `ImageValidatingPolicy`:
 
@@ -286,13 +286,13 @@ spec:
 
 ???
 
+Speaker: Andrew
+
 Andrew: "Notice what's happening here. Kyverno inspects the TaskRun before scheduling. If the bundle is signed by our trusted catalog key, Kyverno promotes the TaskRun label to 'prod'. An anti-spoofing policy ensures pods cannot self-assign this label."
 
 ---
 
 ## Step 2: SPIRE Mints the Role SVID
-
-<span class="pill pill-red">Andrew · Pipelines & Architecture</span>
 
 `ClusterSPIFFEID` evaluates the Kyverno-verified pod labels:
 
@@ -326,6 +326,8 @@ spec:
 </div>
 
 ???
+
+Speaker: Andrew
 
 Andrew: "Even though all three tasks share the exact same ServiceAccount, they no longer share the same cryptographic identity. The identity is bound to the verified catalog code."
 
@@ -361,6 +363,8 @@ layout: false
 
 ???
 
+Speaker: Andrew
+
 Andrew runs Act 2 live:
 1. Shows classify-taskrun and prevent-pod-label-spoofing policies.
 2. Submits untrusted inline task: Kyverno sets trusted-task-role: dev, SPIRE mints spiffe://konflux-ci.dev/dev/...
@@ -380,8 +384,6 @@ class: center, middle, inverse
 layout: false
 
 ## The Implications: Cryptographic Proof of Code, Not Just Location
-
-<span class="pill pill-blue">Maia · Identity & Auth</span>
 
 What did we just establish?
 
@@ -407,14 +409,14 @@ What did we just establish?
 
 ???
 
+Speaker: Maia
+
 Maia reflects on the implications.
 "This is the critical conceptual pivot. In the identity world, we always say: Authentication is identity; Authorization is policy. But if the identity only says 'Kubernetes Pod in Namespace X', downstream services have no signal to authorize. By feeding admission-verified task roles into the SPIFFE ID hierarchy, we give downstream services the exact signal they need."
 
 ---
 
 ## Generalizing Within the Namespace: Three Core Patterns
-
-<span class="pill pill-blue">Maia · Identity & Auth</span>
 
 Once tasks possess fine-grained cryptographic identities, how do we use them inside the tenant namespace?
 
@@ -437,14 +439,14 @@ Once tasks possess fine-grained cryptographic identities, how do we use them ins
 
 ???
 
+Speaker: Maia
+
 Maia outlines the three same-namespace patterns.
 "We now have three immediate use cases inside the same namespace that completely eliminate ambient secrets."
 
 ---
 
 ## Patterns 1 & 2: Push Gating and Secretless Services
-
-<span class="pill pill-purple">Maia & Andrew</span>
 
 ### Pattern 1: Zot OCI Push Gating
 Zot validates bearer JWTs against SPIRE's OIDC discovery endpoint (`/keys`):
@@ -471,13 +473,13 @@ Zot validates bearer JWTs against SPIRE's OIDC discovery endpoint (`/keys`):
 
 ???
 
+Speaker: Maia & Andrew
+
 Andrew explains Zot's access control policy: "Notice that we don't need dockerconfigjson secrets in the namespace anymore. Zot accepts the SPIFFE JWT as an OIDC bearer token and checks if the subject is the approved builder task."
 
 ---
 
 ## Pattern 3: Scoped Attestations & Separation of Duties
-
-<span class="pill pill-red">Andrew · Pipelines & Architecture</span>
 
 Each task produces attestations matching its specific domain:
 
@@ -510,6 +512,8 @@ deny[msg] {
 </div>
 
 ???
+
+Speaker: Andrew
 
 Andrew: "This is the separation of duties punchline. A signature from the cluster isn't enough. Conforma verifies that the certificate identity matches the role authorized to make that claim."
 
@@ -545,6 +549,8 @@ layout: false
 
 ???
 
+Speaker: Andrew
+
 Andrew runs Act 3 live:
 1. Zot push gating: rogue dev task attempts upload handshake -> 403 Forbidden. Vetted builder task attempts upload handshake -> 202 Accepted.
 2. Secretless CVE database: dev task queries internal service -> 403 Forbidden. Scanner task queries internal service -> 200 OK with vulnerability feed.
@@ -564,15 +570,15 @@ layout: false
 
 ## Cross-Task Data Plane: Why PVCs Undermine Task Trust
 
-<span class="pill pill-red">Andrew · Pipelines & Architecture</span>
-
 Does securing task identities protect the entire pipeline? **Not if tasks share a disk.**
 
 --
 
 ### The Data Plane Loophole: Shared PersistentVolumes
 * Most CI pipelines share a `PersistentVolumeClaim` (PVC) across tasks in a PipelineRun.
-* `git-clone` writes source $ightarrow$ `build` compiles binary $ightarrow$ `package` builds container.
+* `git-clone` writes source $
+ightarrow$ `build` compiles binary $
+ightarrow$ `package` builds container.
 * If a linter or test task executes on that shared volume, it can **tamper with compiled binaries on disk** before packaging!
 
 ```text
@@ -591,13 +597,13 @@ Task A (build) ──────► [ Shared PVC Workspace ] ◄─────
 
 ???
 
+Speaker: Andrew
+
 Andrew: "Identity on the control plane is useless if your data plane is compromised. If tasks share a PVC, any task can alter the binaries before they are packaged. Trusted Artifacts replace shared PVCs with immutable OCI storage."
 
 ---
 
 ## The Managed Release Boundary: Dual-Gated Release Authority
-
-<span class="pill pill-purple">Maia & Andrew</span>
 
 Build-time tasks in `default-tenant` must **never** possess release authority.
 
@@ -623,6 +629,8 @@ spiffe://konflux-ci.dev/release/demo-app/slsa-e2e-release-dual-gated
 * Signed keylessly with Cosign into Rekor; verified via the transparency log.
 
 ???
+
+Speaker: Maia & Andrew
 
 Maia and Andrew explain dual-gating:
 "In the release namespace, we don't just ask if the task is attach-summary-attestations. We ask: is this task running inside an authorized, policy-governed release pipeline? Both conditions must be met simultaneously."
@@ -659,6 +667,8 @@ layout: false
 
 ???
 
+Speaker: Andrew
+
 Andrew runs Act 4 live:
 1. Submits AppStudio Release CR in default-tenant referencing demo-app snapshot.
 2. Watches managed-tenant release pipeline execute verify-conforma, push-snapshot, and attach-summary-attestations.
@@ -668,8 +678,6 @@ Hit Escape or click Next to advance to conclusions.
 ---
 
 ## Key Takeaways
-
-<span class="pill pill-purple">Maia & Andrew</span>
 
 1. **Location ≠ Authorization**: Stop treating Kubernetes namespaces and generic ServiceAccounts as authorization boundaries.
 2. **Shift Verification to Admission**: Intercepting task bundles at admission with Kyverno prevents untrusted code from ever gaining production identities.
@@ -685,6 +693,8 @@ Hit Escape or click Next to advance to conclusions.
 </div>
 
 ???
+
+Speaker: Maia & Andrew
 
 Maia and Andrew deliver the closing thoughts.
 
@@ -738,5 +748,7 @@ layout: false
 </div>
 
 ???
+
+Speaker: Andrew
 
 Full uninterrupted demonstration arc from pre-flight baseline to final Rekor verification.
