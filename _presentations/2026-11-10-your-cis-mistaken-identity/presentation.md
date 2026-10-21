@@ -48,7 +48,7 @@ Yet in nearly every Kubernetes CI/CD pipeline running today:
 * A compromised dependency-fetch task inherits the **exact same authority** as build and release tasks.
 
 <div class="warn-box" style="margin-top: 1.2em;">
-  <strong>The Problem:</strong> Workload identities encode <em>location</em> (where something ran), not <em>authorization</em> (what it was permitted to do).
+  <strong>The Problem:</strong> Workload identity is only as granular as you configure it. In most CI/CD deployments it's configured around <em>location</em> (namespace + ServiceAccount) rather than <em>role</em> (what the workload actually is) — leaving downstream services to infer authority from a signal that doesn't carry it.
 </div>
 
 ???
@@ -62,7 +62,7 @@ Maia opens the talk.
 
 layout: false
 
-## The Identity Perspective: Why Location Fails Us
+## The Identity Perspective: Why the Standard Deployment Model Fails Us
 
 In the cloud-native identity world, we solved machine-to-machine authentication with **Workload Identity (SPIFFE/SPIRE)**.
 
@@ -82,7 +82,7 @@ spiffe://company.org/ns/default-tenant/sa/pipeline-runner
 
 Speaker: Maia
 
-Maia: "From the identity community's perspective, SPIFFE was a huge leap forward. We eliminated static credentials. We gave workloads cryptographically verifiable identities based on kernel and kubelet attestation."
+Maia: "From the identity community's perspective, SPIFFE was a huge leap forward. We eliminated static credentials. We gave workloads cryptographically verifiable identities based on kernel and kubelet attestation. SPIFFE itself lets you encode whatever identity you need — but the deployment patterns the community defaulted to lean on namespace and ServiceAccount, and that configuration choice is what collapses in CI/CD."
 
 ---
 
@@ -109,7 +109,7 @@ SPIFFE was designed with **long-running microservices** in mind:
 
 Speaker: Maia
 
-Maia: "In a microservice, ServiceAccount ≈ Application. In CI/CD, ServiceAccount ≈ The entire factory. A single ServiceAccount represents everything from untrusted PR checkouts to production release signers. Location alone is not an authorization signal."
+Maia: "In a microservice, ServiceAccount ≈ Application. In CI/CD, ServiceAccount ≈ The entire factory. A single ServiceAccount represents everything from untrusted PR checkouts to production release signers. Location alone is not a role signal — and downstream services need role to authorize."
 
 ---
 
@@ -831,7 +831,7 @@ layout: false
 
 ## Key Takeaways
 
-1. **Location ≠ Authorization**: Stop treating Kubernetes namespaces and generic ServiceAccounts as authorization boundaries.
+1. **Location ≠ Role**: Stop treating Kubernetes namespaces and generic ServiceAccounts as authorization boundaries.
 2. **Shift Verification to Admission**: Intercepting task bundles at admission with Kyverno prevents untrusted code from ever gaining production identities.
 3. **Task-Scoped Identity is Real Today**: Combining Tekton, Kyverno, SPIFFE/SPIRE, and Sigstore brings least-privilege cryptographic identity to every CI step.
 4. **Policy Closes the Loop**: In-toto attestations signed by role-scoped SVIDs allow policy engines like Conforma to verify *who was authorized to make each claim*.
