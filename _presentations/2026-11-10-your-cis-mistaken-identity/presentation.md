@@ -12,14 +12,16 @@ class: center, middle, title-slide
 
 Andrew McNamara (Red Hat) • Maia Iyer (IBM Research)
 
-<div style="margin-top: 2em; display: flex; justify-content: center; align-items: center; gap: 2.5em;">
+<div style="margin-top: 2em; display: flex; justify-content: center; align-items: center; gap: 2.2em;">
   <img src="/shared/logos/tekton.png" width="90" alt="Tekton logo">
   <span style="font-size: 2em; color: #94a3b8;">+</span>
   <img src="/shared/logos/intoto-icon.svg" width="90" alt="in-toto logo">
   <span style="font-size: 2em; color: #94a3b8;">+</span>
-  <span style="font-family: sans-serif; font-weight: 700; font-size: 2.2em; color: #38bdf8;">SPIFFE / SPIRE</span>
+  <img src="img/spiffe-icon-color.svg" width="100" alt="SPIFFE/SPIRE logo">
   <span style="font-size: 2em; color: #94a3b8;">+</span>
-  <span style="font-family: sans-serif; font-weight: 700; font-size: 2.2em; color: #f59e0b;">Kyverno</span>
+  <img src="img/kyverno-icon-color.svg" width="100" alt="Kyverno logo">
+  <span style="font-size: 2em; color: #94a3b8;">+</span>
+  <img src="img/sigstore-icon-white.svg" width="90" alt="Sigstore logo">
 </div>
 
 .footnote[
@@ -128,7 +130,8 @@ PipelineRun: build-and-test
 ```
 
 * All four tasks share `sa/runner` in `default-tenant`.
-* If Step 1 or Step 2 is compromised, it inherits the **full authority of Step 3 and Step 4**.
+* Early steps **execute untrusted code by design** — PR code, dependency install scripts — so a compromised Step 1 or 2 runs with the full authority of Step 3 and Step 4.
+* Provenance + policy verification catches a forged *artifact* — but the hijacked step's authority abuse (secrets, tag pushes, service access) happens outside the provenance channel, before any verifier sees it.
 
 ???
 
@@ -136,6 +139,7 @@ Speaker: Maia & Andrew
 
 Maia: "This isn't hypothetical. Most modern supply chain compromises don't break crypto; they abuse legitimate credentials running in the wrong context."
 Andrew: "When every task shares one identity, the least trusted step has the authority of the most trusted step."
+Andrew (if asked about provenance): "Full PipelineRun provenance plus policy verification catches a forged artifact at the consumer — that's a consumption-side control, and it only works if every consumer verifies every time. Task identity is generation-side: the rogue step never holds the authority in the first place. They compose."
 
 ---
 
@@ -183,7 +187,7 @@ layout: false
       <button class="demo-btn demo-copy-btn">Copy</button>
     </div>
     <div class="demo-fallback-footer">
-      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code></span>
+      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code> &middot; No demo terminal? Run locally: <code>git clone github.com/arewm/slsa-konflux-example</code> (branch <code>kubecon-na-2026-your-cis-mistaken-identity</code>), then the same command — see <code>demo/README.md</code></span>
       <button class="demo-btn demo-retry-btn">Retry Connection</button>
     </div>
   </div>
@@ -227,6 +231,11 @@ How do pipelines execute in cloud-native Kubernetes?
 * **`TaskRun`**: Execution instance that instantiates a Kubernetes `Pod` to run the steps.
 * **`Pipeline` & `PipelineRun`**: Directed Acyclic Graph (DAG) orchestrating multiple TaskRuns.
 
+```text
+TaskRun ──creates──► Pod        (labeled tekton.dev/task)
+  Step  ──maps───►  Container  (image + command defined by the Task)
+```
+
 ### The Problem: Where Do Tasks Come From?
 * Historically, tasks were pasted inline into YAML or installed cluster-wide.
 * If developers write inline bash in `TaskRun.spec.taskSpec`, they can execute arbitrary, unvetted binaries.
@@ -246,6 +255,8 @@ layout: false
 ## Tekton Resolvers: Pinned OCI Bundles
 
 A **Tekton Bundle** is a Tekton `Task` packaged inside an OCI container image layer:
+
+* The bundle pins the **exact container images, commands, and scripts** each step will run — verifying the bundle verifies the code **before any Pod is scheduled**.
 
 ```yaml
 apiVersion: tekton.dev/v1
@@ -275,18 +286,19 @@ layout: false
 
 ## Why OCI Bundles Change the Game
 
-Treating task definitions as OCI artifacts unlocks three critical capabilities:
+Task definitions become verifiable *before execution*:
 
-1. **Content-Addressable & Immutable**
-   * Pinned by cryptographic digest (`@sha256:...`).
-   * No silent drift or upstream tag mutation.
+1. **Immutable by Digest**
+   * A TaskRun pins the exact task definition (`@sha256:...`).
+   * The cluster knows *precisely what code will run* — no tag drift, no silent mutation.
 
-2. **Registry-Native & Cryptographically Signable**
-   * Stored directly in existing container registries.
-   * Signed with Cosign keys or Fulcio keyless certificates.
+2. **Signable like any OCI Artifact**
+   * Stored in existing registries, signed with Cosign / Fulcio keyless.
+   * "Trusted catalog" = a signing key, not a curated git repo.
 
-3. **Admission-Time Visibility**
-   * When a TaskRun is submitted, `taskRef.params.bundle` is **immediately inspectable** by admission webhooks before any Pod is scheduled!
+3. **Visible at Admission — Before Any Pod Exists**
+   * `taskRef.params.bundle` is inspectable by webhooks the moment the TaskRun is submitted.
+   * Verify signature → classify role → *then* the Pod is created. Unverified code never receives a **trusted** identity — it runs, but identified only as what it was verified to be.
 
 ???
 
@@ -300,25 +312,27 @@ layout: false
 
 ## Kyverno at the Gate: Admission-Time Verification
 
-Kyverno intercepts `TaskRun` admission using CEL `ImageValidatingPolicy`:
+When a `TaskRun` is submitted, Kyverno intercepts it **before any Pod is scheduled** — the policy matches on `tekton.dev/taskruns`, then narrows via CEL to bundles matching the **trusted catalog patterns**:
+
+1. **Extract** each pinned bundle digest from `taskRef.params`.
+2. **Verify**: catalog bundles must be `@sha256:`-pinned **and** signed by the trusted catalog key.
+3. **Decide**: catalog bundle failing either → **Deny**. Everything else (inline scripts, git tasks, unknown registries) is *not blocked* — it just **never gets promoted**.
 
 ```yaml
-apiVersion: policies.kyverno.io/v1beta1
-kind: ImageValidatingPolicy
-metadata:
-  name: verify-bundle-signatures
+kind: ImageValidatingPolicy        # Kyverno (CEL), matched on tekton.dev/taskruns
 spec:
-  validationActions: [Deny]
-  matchConstraints:
-    resourceRules:
-    - apiGroups: ["tekton.dev"]
-      resources: ["taskruns"]
   images:
   - name: taskBundle
     expression: 'object.spec.taskRef.params.filter(p, p.name == "bundle").map(p, p.value)'
   validations:
+  - expression: 'images.taskBundle.all(img, img.matches("@sha256:[a-f0-9]{64}$"))'
   - expression: 'images.taskBundle.map(img, verifyImageSignatures(img, [attestors.catalogKey])).all(v, v > 0)'
 ```
+
+<div class="highlight-box" style="margin-top: 0.6em;">
+  <strong>Reading it:</strong> catalog bundles must be digest-pinned and signed by <code>attestors.catalogKey</code>
+  (the trusted catalog's public key) — one failure denies the whole TaskRun.
+</div>
 
 ???
 
@@ -336,8 +350,8 @@ How admission policy categorizes tasks before execution:
 
 * **Verified Signed Bundles**
   * Kyverno mutates the TaskRun label: `trusted-task-role: prod`.
-* **Inline Scripts / Unsigned Bundles**
-  * Kyverno restricts the label to: `trusted-task-role: dev`.
+* **Everything Else** — inline scripts, git-resolved tasks, unknown registries
+  * Every TaskRun is labeled `trusted-task-role: dev` **by default**; trust is opt-in, never assumed.
 * **Anti-Spoofing Policy (`prevent-pod-label-spoofing`)**
   * Blocks pods from self-assigning or altering `trusted-task-role` labels.
 
@@ -366,7 +380,7 @@ metadata:
   name: konflux-trusted-prod
 spec:
   spiffeIDTemplate: >-
-    spiffe://konflux-ci.dev/trusted/cluster-01/{{ .PodSpec.ServiceAccountName }}/{{ index .PodMeta.Labels "tekton.dev/task" }}
+    spiffe://konflux-ci.dev/trusted/kind-konflux/{{ .PodSpec.ServiceAccountName }}/{{ index .PodMeta.Labels "tekton.dev/task" }}
   podSelector:
     matchLabels:
       trusted-task-role: "prod"
@@ -387,21 +401,21 @@ layout: false
 
 ## Cryptographic Task Roles in Practice
 
-Three tasks sharing `sa/runner`, but minted distinct cryptographic identities:
+Three tasks sharing `sa/default`, but minted distinct cryptographic identities:
 
 ```text
 # Scanner Task (Verified Catalog Bundle)
-spiffe://konflux-ci.dev/trusted/cluster-01/runner/trivy-sbom-scan
+spiffe://konflux-ci.dev/trusted/kind-konflux/default/trivy-sbom-scan
 
 # Builder Task (Verified Catalog Bundle)
-spiffe://konflux-ci.dev/trusted/cluster-01/runner/buildah-oci-ta
+spiffe://konflux-ci.dev/trusted/kind-konflux/default/buildah-oci-ta
 
 # Untrusted Task (Inline Script or Unsigned Bundle)
-spiffe://konflux-ci.dev/dev/cluster-01/runner/arbitrary-script
+spiffe://konflux-ci.dev/dev/kind-konflux/default/arbitrary-script
 ```
 
 <div class="highlight-box" style="margin-top: 0.8em;">
-  <strong>Key Architectural Leap:</strong> All three tasks share <code>sa/runner</code>, but receive completely different cryptographic identities based on <em>admission-verified task code</em>!
+  <strong>Key Architectural Leap:</strong> All three tasks share <code>sa/default</code>, but receive completely different cryptographic identities based on <em>admission-verified task code</em>!
 </div>
 
 ???
@@ -433,7 +447,7 @@ layout: false
       <button class="demo-btn demo-copy-btn">Copy</button>
     </div>
     <div class="demo-fallback-footer">
-      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code></span>
+      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code> &middot; No demo terminal? Run locally: <code>git clone github.com/arewm/slsa-konflux-example</code> (branch <code>kubecon-na-2026-your-cis-mistaken-identity</code>), then the same command — see <code>demo/README.md</code></span>
       <button class="demo-btn demo-retry-btn">Retry Connection</button>
     </div>
   </div>
@@ -522,7 +536,7 @@ Once tasks possess fine-grained cryptographic identities, how do we use them ins
 Speaker: Maia
 
 Maia outlines the three same-namespace patterns.
-"We now have three immediate use cases inside the same namespace that completely eliminate ambient secrets."
+"We now have three immediate use cases inside the same namespace that eliminate ambient secrets for these flows."
 
 ---
 
@@ -537,7 +551,7 @@ Zot OCI registry validates bearer JWTs against SPIRE's OIDC discovery endpoint (
   "repositories": {
     "slsa-e2e-test": {
       "policies": [{
-        "users": ["spiffe://konflux-ci.dev/trusted/cluster-01/runner/buildah-oci-ta"],
+        "users": ["spiffe://konflux-ci.dev/trusted/kind-konflux/default/buildah-oci-ta"],
         "actions": ["read", "create"]
       }]
     }
@@ -566,8 +580,13 @@ Internal cluster services authenticate callers using SPIRE JWTs directly:
 * **Zero Static Secrets:** No API keys or database tokens mounted into pipeline pods.
 * **Direct JWKS Validation:** Services validate bearer JWT signatures against SPIRE's `/keys` endpoint.
 * **Role-Based Authorization:**
-  * Only `runner/trivy-sbom-scan` is permitted to query the CVE vulnerability feed.
+  * Only `default/trivy-sbom-scan` is permitted to query the CVE vulnerability feed.
   * Inline tasks or unauthorized builders receive **`HTTP 403 Forbidden`**.
+* **Legacy Services Without OIDC:**
+  * A broker (e.g. Vault) trusts SPIRE's OIDC endpoint and exchanges a
+    JWT-SVID for a static credential — issued only to specific SPIFFE IDs.
+  * The pod still holds **no long-lived secret**; the exchange is per-run
+    and role-scoped.
 
 <div class="highlight-box" style="margin-top: 1.2em;">
   <strong>Benefit:</strong> Secrets cannot leak from compromised containers because the secrets simply do not exist in the tenant pod.
@@ -578,6 +597,7 @@ Internal cluster services authenticate callers using SPIRE JWTs directly:
 Speaker: Andrew & Maia
 
 Andrew: "In Pattern 2, internal microservices like our CVE database validate caller JWTs directly against SPIRE's JWKS. No secrets exist in the pod for an attacker to steal."
+Andrew: "And when a service can't speak OIDC at all — say a legacy content repository that only accepts a static API token — you don't fall back to mounting that token everywhere. A broker like Vault trusts SPIRE's OIDC endpoint and exchanges the task's JWT-SVID for the static credential, only for the specific SPIFFE IDs authorized to have it. We use this pattern internally at Red Hat for pipeline access to our Pulp-based content repositories."
 
 ---
 
@@ -618,7 +638,7 @@ deny[msg] {
   attestation.predicateType == "https://aquasecurity.github.io/trivy/report/v1"
   
   not startswith(attestation.certificate.uri, 
-                 "spiffe://konflux-ci.dev/trusted/cluster-01/runner/trivy-sbom-scan")
+                 "spiffe://konflux-ci.dev/trusted/kind-konflux/default/trivy-sbom-scan")
   
   msg := sprintf("CVE scan signed by unauthorized role: %s", [attestation.certificate.uri])
 }
@@ -638,48 +658,35 @@ Andrew: "Conforma evaluates the in-toto attestation against this Rego policy. It
 
 layout: false
 
-## Live Demo: Act 3 — Same-Namespace API Gating & Separation of Duties
+## What Identity Alone Doesn't Solve: The Data Plane
 
-<div class="demo-slide-container" data-port="7683">
-  <div class="demo-offline-fallback">
-    <div class="demo-fallback-header">
-      <h3 class="demo-fallback-title">🖥️ Live Demo: Act 3</h3>
-      <span class="demo-badge-offline">ttyd offline</span>
-    </div>
-    <div class="demo-fallback-desc">
-      <strong>OCI Push Gating, Secretless Services & Separation of Duties</strong><br>
-      • <strong>Zot OCI Push Gating:</strong> Rogue task rejected with <code>403 Forbidden</code>; vetted builder accepted with <code>202 Accepted</code>.<br>
-      • <strong>Secretless CVE DB:</strong> Zero secrets in namespace; untrusted caller gets <code>403</code>; scanner gets <code>200 OK</code>.<br>
-      • <strong>Separation of Duties:</strong> OPA tests prove builder forgery of scanner reports is blocked.
-    </div>
-    <div class="demo-cmd-box">
-      <span class="demo-cmd-code">./demo/run-demo.sh --act 3</span>
-      <button class="demo-btn demo-copy-btn">Copy</button>
-    </div>
-    <div class="demo-fallback-footer">
-      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code></span>
-      <button class="demo-btn demo-retry-btn">Retry Connection</button>
-    </div>
-  </div>
-  <div class="demo-terminal-frame" style="display: none;"></div>
+Does securing task identities protect the pipeline? **Not if tasks share a disk.**
+
+```text
+Task A (build) ──────► [ Shared PVC Workspace ] ◄────── Task B (untrusted test)
+                             │
+                             ▼ (tampered files)
+                       Task C (package & sign) ──► Cryptographically valid MALWARE!
+```
+
+**OCI Trusted Artifacts** close the loophole: each task packages its output into an immutable, digest-pinned OCI layer; downstream tasks fetch strictly immutable digests, never shared mutable volumes (required for SLSA Build Level 3).
+
+<div class="highlight-box" style="margin-top: 1.0em;">
+  <strong>Key Principle:</strong> Control plane identity (SPIRE) + Data plane immutability (OCI Trusted Artifacts) = End-to-End Pipeline Integrity.
 </div>
 
 ???
 
 Speaker: Andrew
 
-Andrew runs Act 3 live:
-1. Zot push gating: rogue dev task attempts upload handshake -> 403 Forbidden. Vetted builder task attempts upload handshake -> 202 Accepted.
-2. Secretless CVE database: dev task queries internal service -> 403 Forbidden. Scanner task queries internal service -> 200 OK with vulnerability feed.
-3. Separation of duties: runs opa test proving builder forgery is blocked.
-Hit Escape or click Next to return to slides.
+Andrew: "Identity on the control plane is useless if your data plane is compromised. If tasks share a PVC, any task can alter the binaries before they are packaged. Trusted Artifacts replace shared volumes with immutable, digest-pinned OCI layers — a requirement for SLSA Build Level 3. And keep this mechanism in mind: immutable OCI handoffs between tasks become important again in a moment, for the release boundary."
 
 ---
 
 class: center, middle, inverse
 
 # Part 4: The Next Frontier
-## Cross-Task Artifacts and the Managed Release Boundary
+## The Managed Release Boundary
 
 ???
 
@@ -691,139 +698,38 @@ Andrew: "Now let's examine the boundaries that stretch beyond a single task: dat
 
 layout: false
 
-## The Data Plane Loophole: Shared PersistentVolumes
-
-Does securing task identities protect the pipeline? **Not if tasks share a disk.**
-
-* Most Kubernetes CI pipelines share a `PersistentVolumeClaim` (PVC) across tasks.
-* If a linter or test task executes on that shared volume, it can **tamper with compiled binaries on disk** before packaging!
-
-```text
-Task A (build) ──────► [ Shared PVC Workspace ] ◄────── Task B (untrusted test)
-                             │
-                             ▼ (tampered files)
-                       Task C (package & sign) ──► Cryptographically valid MALWARE!
-```
-
-???
-
-Speaker: Andrew
-
-Andrew: "Identity on the control plane is useless if your data plane is compromised. If tasks share a PVC, any task can alter the binaries before they are packaged."
-
----
-
-layout: false
-
-## The Solution: OCI Trusted Artifacts
-
-Replace shared mutable volumes with immutable OCI storage:
-
-* **Digest-Pinned Storage:** Each task packages output artifacts into an OCI image layer and pushes it to the registry pinned by digest.
-* **Hermetic Consumption:** Downstream tasks fetch strictly immutable digests, never shared mutable directories.
-* **SLSA Build Level 3 Compliance:** Required to achieve tamper-resistant, isolated build environments.
-
-<div class="highlight-box" style="margin-top: 1.2em;">
-  <strong>Key Principle:</strong> Control plane identity (SPIRE) + Data plane immutability (OCI Trusted Artifacts) = End-to-End Pipeline Integrity.
-</div>
-
-???
-
-Speaker: Andrew
-
-Andrew: "Trusted Artifacts eliminate shared PVCs. Every task produces an immutable, digest-pinned artifact in the registry, ensuring tasks cannot tamper with each other's inputs or outputs."
-
----
-
-layout: false
-
 ## The Managed Release Boundary
 
-Build-time tasks in `default-tenant` must **never** possess release authority:
+**Dual-gating.** The release SVID is minted only when **three conditions all hold**:
 
-* **Tenant Namespaces (`default-tenant`):**
-  * Untrusted developer code, compiler execution, unit tests, and vulnerability scans.
-  * Can produce build provenance, but cannot trigger final release.
+1. An operator-designated **release namespace**
+2. The **one sanctioned release pipeline** — classified at admission time
+3. The **designated signing task** within it
 
-* **Managed Release Namespaces (`managed-tenant`):**
-  * Isolated, hardened environment for enterprise release pipelines.
-  * Governs final release gating, registry promotion, and signing.
+Every other step in that pipeline — including the steps *before* policy verification —
+is denied an identity entirely. Keyless-signed with Cosign into Rekor.
 
-### The Challenge:
-How do downstream verifiers know an attestation was produced by an authorized **release pipeline**, not an arbitrary tenant pod?
+```text
+spiffe://konflux-ci.dev/release/demo-app/slsa-e2e-release-dual-gated
+```
+
+**Policy clearance tokens.** Dual-gating still *assumes* the pipeline orders
+verification before signing. To close that: the policy task mints a short-lived signed
+**clearance token** (carried via an immutable Trusted Artifact), and the signer must present
+**workload identity + token** to obtain the release certificate — making "policy passed" a
+*cryptographic fact* instead of a structural assumption.
+
+<div class="highlight-box" style="margin-top: 0.8em;">
+  From <em>structural</em> trust to <em>cryptographic</em> trust. Find out more in the demo repo.
+</div>
 
 ???
 
 Speaker: Maia & Andrew
 
 Maia: "Build tasks should never have release authority. We separate tenant build namespaces from managed release namespaces."
-Andrew: "And to prove an artifact passed the managed release gate, we use Dual-Gated Release Authority."
-
----
-
-layout: false
-
-## Model 2: Dual-Gated Release Authority
-
-SPIRE issues the release SVID *only* upon the conjunction of two distinct gates:
-
-1. **Gate 1 (PipelineRun Classification):**
-   Kyverno validates the managed PipelineRun definition and labels:
-   `trusted-pipeline-role: release-authority`
-2. **Gate 2 (Task Selector Conjunction):**
-   SPIRE matches both the pipeline label AND the specific task selector (`attach-summary-attestations`).
-
-```text
-spiffe://konflux-ci.dev/release/demo-app/slsa-e2e-release-dual-gated
-```
-
-* Signed keylessly with Cosign into Rekor; verified via the transparency log.
-
-???
-
-Speaker: Andrew
-
-Andrew: "In the release namespace, we don't just ask if the task is attach-summary-attestations. We ask: is this task running inside an authorized, policy-governed release pipeline? Both conditions must be met simultaneously."
-
----
-
-layout: false
-
-## Live Demo: Act 4 — Dual-Gated Managed Release Authority
-
-<div class="demo-slide-container" data-port="7684">
-  <div class="demo-offline-fallback">
-    <div class="demo-fallback-header">
-      <h3 class="demo-fallback-title">🖥️ Live Demo: Act 4</h3>
-      <span class="demo-badge-offline">ttyd offline</span>
-    </div>
-    <div class="demo-fallback-desc">
-      <strong>Managed Release Boundary & Dual-Control Signing</strong><br>
-      • Ambient ServiceAccount release authority is prohibited in <code>managed-tenant</code>.<br>
-      • Dual-gating requires Kyverno PipelineRun validation AND SPIRE attachment task selector matching.<br>
-      • Attaches Verification Summary Attestation (VSA) keylessly with Cosign into Rekor and verifies the transparency log.
-    </div>
-    <div class="demo-cmd-box">
-      <span class="demo-cmd-code">./demo/run-demo.sh --act 4</span>
-      <button class="demo-btn demo-copy-btn">Copy</button>
-    </div>
-    <div class="demo-fallback-footer">
-      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code></span>
-      <button class="demo-btn demo-retry-btn">Retry Connection</button>
-    </div>
-  </div>
-  <div class="demo-terminal-frame" style="display: none;"></div>
-</div>
-
-???
-
-Speaker: Andrew
-
-Andrew runs Act 4 live:
-1. Submits AppStudio Release CR in default-tenant referencing demo-app snapshot.
-2. Watches managed-tenant release pipeline execute verify-conforma, push-snapshot, and attach-summary-attestations.
-3. Shows Rekor query: extracts log entry, parses X.509 certificate SAN, verifies it matches spiffe://konflux-ci.dev/release/demo-app/...
-Hit Escape or click Next to advance to conclusions.
+Andrew: "Each condition alone fails differently: namespace-only makes every pod in the release namespace a signer; pipeline-only makes every step a signer; task-only lets anyone invoke the signing task from an unsanctioned pipeline. The conjunction makes exactly one pod, in one pipeline, the signer."
+Andrew: "Clearance tokens remove the ordering assumption: the policy engine mints a capability the signer must present. Trust moves from structure to cryptography. Find out more in the demo repo."
 
 ---
 
@@ -835,12 +741,6 @@ layout: false
 2. **Shift Verification to Admission**: Intercepting task bundles at admission with Kyverno prevents untrusted code from ever gaining production identities.
 3. **Task-Scoped Identity is Real Today**: Combining Tekton, Kyverno, SPIFFE/SPIRE, and Sigstore brings least-privilege cryptographic identity to every CI step.
 4. **Policy Closes the Loop**: In-toto attestations signed by role-scoped SVIDs allow policy engines like Conforma to verify *who was authorized to make each claim*.
-
-<div class="highlight-box" style="text-align: center; margin-top: 1.5em;">
-  <strong>Working Code & Helm Charts:</strong><br>
-  <code>github.com/arewm/slsa-konflux-example</code><br>
-  (Branch: <code>kubecon-na-2026-your-cis-mistaken-identity</code>)
-</div>
 
 ???
 
@@ -861,13 +761,16 @@ class: center, middle, inverse
 **Andrew McNamara** (amcnamar@redhat.com) • **Maia Iyer** (miyer@redhat.com)
 
 <div style="margin-top: 2em; display: flex; justify-content: center; gap: 4em;">
-  <div>
-    <strong>Presentation & Code</strong><br>
-    <code>github.com/arewm/presentations</code>
+  <div style="text-align: center;">
+    <img src="img/qr-demo-repo.png" width="150" alt="QR code: demo repo branch"><br>
+    <strong>Working Demo & Helm Charts</strong><br>
+    <code>arewm/slsa-konflux-example</code><br>
+    <span style="font-size: 0.75em; color: #64748b;">branch: kubecon-na-2026-your-cis-mistaken-identity</span>
   </div>
-  <div>
-    <strong>SLSA & Tekton Demo</strong><br>
-    <code>github.com/arewm/slsa-konflux-example</code>
+  <div style="text-align: center;">
+    <img src="img/qr-slides.png" width="150" alt="QR code: slides repo"><br>
+    <strong>Presentation & Code</strong><br>
+    <code>arewm/presentations</code>
   </div>
 </div>
 
@@ -881,32 +784,37 @@ Open the floor for questions from the audience.
 
 layout: false
 
-## Appendix: Full End-to-End Demonstration Arc
+## Explore the Repo: The Full Demonstration Arc
 
-<div class="demo-slide-container" data-port="7680">
-  <div class="demo-offline-fallback">
-    <div class="demo-fallback-header">
-      <h3 class="demo-fallback-title">🖥️ Live Demo: Complete Arc</h3>
-      <span class="demo-badge-offline">ttyd offline</span>
-    </div>
-    <div class="demo-fallback-desc">
-      <strong>Complete Walkthrough (Acts 0 through 4)</strong><br>
-      Runs the entire end-to-end demonstration arc from pre-flight cluster baseline through ambient breakdown, Kyverno admission, same-namespace API gating, and dual-gated release authority.
-    </div>
-    <div class="demo-cmd-box">
-      <span class="demo-cmd-code">./demo/run-demo.sh</span>
-      <button class="demo-btn demo-copy-btn">Copy</button>
-    </div>
-    <div class="demo-fallback-footer">
-      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code></span>
-      <button class="demo-btn demo-retry-btn">Retry Connection</button>
-    </div>
-  </div>
-  <div class="demo-terminal-frame" style="display: none;"></div>
+Everything we didn't have time to run live is in the demo repo:
+
+* **Act 3 — Same-Namespace API Gating & Separation of Duties:**
+  Zot OCI push gating (rogue task `403`, vetted builder `202`), secretless CVE database, OPA tests proving builder forgery is blocked.
+* **Act 4 — The Managed Release Boundary:**
+  Managed-tenant release pipeline, dual-gated release SVID, keyless VSA signing into Rekor,
+  transparency-log verification.
+* **The complete arc:** `./demo/run-demo.sh` runs Acts 0 through 4 end-to-end —
+  pre-flight baseline, ambient breakdown, admission, API gating, and dual-gated release.
+* **Also in the repo:** Helm charts for every policy (`charts/admission-policy/`, `charts/spiffe-spire/`),
+  the Conforma separation-of-duties policy, and an idempotent `setup-demo.sh` for a
+  KinD + Konflux + SPIRE + Sigstore cluster.
+* **Going further:** the legacy-service token exchange and policy clearance token designs
+  are in the repo, alongside everything else we showed today.
+
+```bash
+git clone https://github.com/arewm/slsa-konflux-example
+git checkout kubecon-na-2026-your-cis-mistaken-identity
+./demo/run-demo.sh              # full arc, or --act N for a single act
+```
+
+<div class="highlight-box" style="margin-top: 0.8em; display: flex; align-items: center; gap: 1.5em;">
+  <img src="img/qr-demo-repo.png" width="110" alt="QR code: demo repo branch" style="flex-shrink: 0;">
+  <div><strong>Scan to clone:</strong> github.com/arewm/slsa-konflux-example<br>
+  <span style="font-size: 0.8em; color: #64748b;">branch <code>kubecon-na-2026-your-cis-mistaken-identity</code> &middot; full setup guide in <code>demo/README.md</code></span></div>
 </div>
 
 ???
 
 Speaker: Andrew
 
-Full uninterrupted demonstration arc from pre-flight baseline to final Rekor verification.
+Andrew: "We showed Acts 1 and 2 live. Acts 3 and 4 — and the complete end-to-end arc — are all runnable from the repo. Clone the branch, run setup-demo.sh once, and run-demo.sh takes you through everything we showed today and more."
