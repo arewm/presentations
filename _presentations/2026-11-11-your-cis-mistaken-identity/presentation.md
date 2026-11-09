@@ -25,7 +25,7 @@ Andrew McNamara (Red Hat) • Maia Iyer (IBM Research)
 </div>
 
 .footnote[
-  KubeCon + CloudNativeCon North America · November 10, 2026
+  KubeCon + CloudNativeCon North America · November 11, 2026
 ]
 
 ???
@@ -768,9 +768,9 @@ class: center, middle, inverse
     <span style="font-size: 0.75em; color: #64748b;">branch: kubecon-na-2026-your-cis-mistaken-identity</span>
   </div>
   <div style="text-align: center;">
-    <img src="img/qr-slides.png" width="150" alt="QR code: slides repo"><br>
-    <strong>Presentation & Code</strong><br>
-    <code>arewm/presentations</code>
+    <img src="img/qr-slides.png" width="150" alt="QR code: view slides online"><br>
+    <strong>View These Slides</strong><br>
+    <code>slides.arewm.com</code>
   </div>
 </div>
 

@@ -124,23 +124,29 @@
       <script>
         // Parse the URL to extract the presentation name
         // Supports both query parameter (?p=name) and path-based (/presentations/name/slides.html)
+        // Legacy directory-name aliases: transparently redirect renamed decks
+        // (query-param URLs like ?p=2026-11-10-... can't be caught by
+        // jekyll-redirect-from static alias pages).
+        const LEGACY_ALIASES = {
+          '2026-11-10-your-cis-mistaken-identity': '2026-11-11-your-cis-mistaken-identity',
+        };
+
         function getPresentationName() {
           const urlParams = new URLSearchParams(window.location.search);
           const queryParam = urlParams.get('p');
 
           if (queryParam) {
-            return queryParam;
+            return LEGACY_ALIASES[queryParam] || queryParam;
           }
 
           // Extract from path: /presentations/PRESENTATION_NAME/slides.html
           const pathMatch = window.location.pathname.match(/\/presentations\/([^\/]+)\/slides\.html/);
           if (pathMatch) {
-            return pathMatch[1];
+            return LEGACY_ALIASES[pathMatch[1]] || pathMatch[1];
           }
 
           return null;
         }
-
         const presentationName = getPresentationName();
 
         if (!presentationName) {
