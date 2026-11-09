@@ -9,9 +9,6 @@ excerpt: "You wouldn't ask a plumber to sign off on your electrical work. Yet mo
 session: "https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/program/schedule/?id=1248924"
 # recording: "https://www.youtube.com/watch?v=..."
 demo: "https://github.com/arewm/slsa-konflux-example/tree/kubecon-na-2026-your-cis-mistaken-identity"
-redirect_from:
-  - /presentations/2026-11-10-your-cis-mistaken-identity/
-  - /presentations/2026-11-10-your-cis-mistaken-identity/slides.html
 ---
 
 ## Abstract
