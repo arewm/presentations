@@ -6,9 +6,9 @@ slides_path: presentation.md
 custom_css: custom.css
 custom_js: custom.js
 excerpt: "You wouldn't ask a plumber to sign off on your electrical work. Yet most CI/CD pipelines run under a single identity: one credential for signing SBOMs and reporting vulnerabilities alike. How Tekton, Kyverno, SPIFFE/SPIRE, and Sigstore close this gap."
-# session: "https://kccncna2026.sched.com/event/..."
+session: "https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/program/schedule/?id=1248924"
 # recording: "https://www.youtube.com/watch?v=..."
-demo: "https://github.com/arewm/slsa-konflux-example/tree/worktree-spiffe-spire-exploration"
+demo: "https://github.com/arewm/slsa-konflux-example/tree/kubecon-na-2026-your-cis-mistaken-identity"
 ---
 
 ## Abstract
@@ -26,4 +26,4 @@ Attendees leave with a working technique and one transferable insight: authoriza
 - **Dynamic Identity Issuance**: Using SPIFFE/SPIRE to mint task-scoped SVIDs based on admission verification labels.
 - **Role-Based Attestations**: Tasks using short-lived SVIDs to sign role-specific in-toto statements (Trivy scanner signing vulnerability reports, Buildah signing SBOMs).
 - **Policy Enforcement (Conforma)**: Verifying that each claim was authored by an authorized task role, eliminating ambient ServiceAccount authority.
-- **Managed Release Boundaries**: Extending task identity to pipeline-scoped authority and cryptographic policy clearance tokens.
+- **Managed Release Boundaries**: Extending task identity to pipeline-scoped authority with dual-gated release signing.
