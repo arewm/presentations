@@ -758,7 +758,7 @@ class: center, middle, inverse
 
 ### Questions & Discussion
 
-**Andrew McNamara** (amcnamar@redhat.com) • **Maia Iyer** (miyer@redhat.com)
+**Andrew McNamara** (amcnamar@redhat.com) • **Maia Iyer** (maia.iyer@ibm.com)
 
 <div style="margin-top: 2em; display: flex; justify-content: center; gap: 4em;">
   <div style="text-align: center;">
