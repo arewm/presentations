@@ -156,7 +156,7 @@
           // Construct the base path for the presentation
           // Files are served from /_presentations/ as static files
           const presentationBase = `/_presentations/${presentationName}`;
-          const presentationMdPath = `${presentationBase}/presentation.md`;
+          const presentationMdPath = `${presentationBase}/presentation.md?v=${Date.now()}`;
           const customCssPath = `${presentationBase}/custom.css`;
 
           // NOTE: We intentionally do NOT set a <base> element here. Remark.js uses

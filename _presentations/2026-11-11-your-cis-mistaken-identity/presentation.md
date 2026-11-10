@@ -101,7 +101,7 @@ SPIFFE was designed with **long-running microservices** in mind:
 
 * **CI/CD Pipeline Reality:**
   * Ephemeral DAGs of wildly heterogeneous tools.
-  * Untrusted PR checkouts, third-party package downloaders, compiler toolchains, scanners, and release signers all run under **one tenant identity**.
+  * Anyone who can add a task to the pipeline — one PR away — runs with **one tenant identity**: the PR checkout, the dependency downloader, the compiler toolchain, the scanner, the release signer, and whatever a compromised PR injects beside them.
 
 <div class="highlight-box" style="margin-top: 1em;">
   <strong>In CI/CD:</strong> ServiceAccount ≈ The entire factory. Location alone no longer tells you who is calling.
@@ -123,14 +123,15 @@ When identity is coarse, every pipeline step becomes a potential **Confused Depu
 
 ```text
 PipelineRun: build-and-test
-  ├── Task 1: git-clone         [SA: runner]  ◄── Untrusted code / PRs
+  ├── Task 1: git-clone         [SA: runner]  ◄── PR-controlled
   ├── Task 2: fetch-deps        [SA: runner]  ◄── Dynamic package downloads
   ├── Task 3: build-container   [SA: runner]  ──► Needs builder authority
-  └── Task 4: trivy-scan        [SA: runner]  ──► Needs scanner authority
+  ├── Task 4: registry-mirror   [SA: runner]  ◄── INJECTED by a compromised PR
+  └── Task 5: trivy-scan        [SA: runner]  ──► Needs scanner authority
 ```
 
-* All four tasks share `sa/runner` in `default-tenant`.
-* Early steps **execute untrusted code by design** — PR code, dependency install scripts — so a compromised Step 1 or 2 runs with the full authority of Step 3 and Step 4.
+* All five tasks share `sa/runner` in `default-tenant`.
+* The pipeline definition is **PR-controlled** — a compromised PR doesn't need to exploit a step, it simply *adds one*: plausible-looking, same ServiceAccount, indistinguishable from real work, with the full authority of every other task.
 * Provenance + policy verification catches a forged *artifact*... but the hijacked step's authority abuse (secrets, tag pushes, service access) happens outside the provenance channel, before any verifier sees it.
 
 ???
@@ -147,12 +148,16 @@ layout: false
 
 ## Anatomy of an Attack: Ambient Authority Hijack
 
-How an attacker exploits shared namespace credentials:
+How an attacker exploits shared namespace credentials — with one task added to the pipeline:
 
-1. **Compromised Dependency / PR:** Attacker injects code during `git-clone` or `fetch-deps`.
-2. **Ambient Credential Access:** Malicious script reads the mounted `regcred` secret or projected ServiceAccount token.
-3. **Identity Impersonation:** Because all tasks share `sa/runner`, the compromised step possesses push and sign privileges.
-4. **Forged Integrity:** Attacker overwrites production tags or signs false claims: *"0 vulnerabilities, clean SBOM"*.
+<div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72em; background: #f1f5f9; padding: 0.5em 0.9em; border-radius: 6px; margin: 0.6em 0;">
+init &rarr; clone-repository &rarr; prefetch-dependencies &rarr; build-container &rarr; <span style="color:#b91c1c; font-weight:600;">[registry-mirror]</span> &rarr; build-image-index &rarr; apply-tags &rarr; trivy-sbom-scan
+</div>
+
+1. **Injected Task:** A compromised PR adds one plausible-looking task — a registry mirror — between the build and the scan — same namespace, same ServiceAccount. The cluster cannot tell it apart from real work.
+2. **Ambient Credential Access:** The injected task reads the mounted `regcred` secret and the projected ServiceAccount token.
+3. **Identity Impersonation:** Because all tasks share the namespace identity, the injected task holds push and sign privileges.
+4. **Forged Integrity:** It overwrites the production tag with a backdoor — and the scan that follows simply scans whatever the tag points at now.
 
 <div class="warn-box" style="margin-top: 1em;">
   <strong>The Fundamental Gap:</strong> The Pod ran with ambient cluster authority. The cluster had no verification of what code was executing inside the container.
@@ -293,7 +298,7 @@ Task definitions become verifiable *before execution*:
 
 2. **Signable like any OCI Artifact**
    * Stored in existing registries, signed with Cosign / Fulcio keyless.
-   * "Trusted catalog" = a signing key, not a curated git repo.
+   * "Trusted catalog" = a signing key, not a curated source.
 
 3. **Visible at Admission — Before Any Pod Exists**
    * `taskRef.params.bundle` is inspectable by webhooks the moment the TaskRun is submitted.
@@ -320,8 +325,7 @@ When a `TaskRun` is submitted, Kyverno intercepts it **before any Pod is schedul
 
 <div class="highlight-box" style="margin-top: 0.6em;">
   <strong>Scope → Pin → Sign → Outcome:</strong> the path pattern is the trust grant; the pin and signature
-  are mandatory for <em>every</em> bundle on that path. The real policy is on screen in the live demo —
-  Act 2 Part 1 shows it exactly as the cluster evaluates it.
+  are mandatory for <em>every</em> bundle on that path.
 </div>
 
 ???
@@ -338,15 +342,12 @@ layout: false
 
 How admission policy categorizes tasks before execution:
 
-* **Verified Signed Bundles**
-  * Kyverno mutates the TaskRun label: `trusted-task-role: prod`.
-* **Everything Else** — inline scripts, git-resolved tasks, unknown registries
-  * Every TaskRun is labeled `trusted-task-role: dev` **by default**; trust is opt-in, never assumed.
-* **Anti-Spoofing Policy (`prevent-pod-label-spoofing`)**
-  * Blocks pods from self-assigning or altering `trusted-task-role` labels.
+* **Dev by default** — every TaskRun is labeled `trusted-task-role: dev`; trust is opt-in, never assumed.
+* **Prod is earned** — digest-pinned, signed catalog bundles are promoted to `prod` at admission.
+* **Labels are locked** — pods cannot self-assign the label, and it is immutable once stamped.
 
 <div class="highlight-box" style="margin-top: 1.2em;">
-  <strong>Result:</strong> Pod labels reflect cryptographically verified admission state, immune to tenant pod tampering.
+  <strong>Result:</strong> identity follows cryptographically verified provenance — re-checked fail-closed on every write.
 </div>
 
 ???
@@ -373,7 +374,9 @@ metadata:
   name: konflux-trusted-prod
 spec:
   spiffeIDTemplate: >-
-    spiffe://konflux-ci.dev/trusted/kind-konflux/{{ .PodSpec.ServiceAccountName }}/{{ index .PodMeta.Labels "tekton.dev/task" }}
+    spiffe://konflux-ci.dev/trusted/kind-konflux/
+    {{ .PodSpec.ServiceAccountName }}/
+    {{ index .PodMeta.Labels "tekton.dev/task" }}
   podSelector:
     matchLabels:
       trusted-task-role: "prod"
