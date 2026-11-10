@@ -153,6 +153,24 @@ pre code,
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
 }
 
+/* Full-height live terminal: custom.js measures the slide's pixel canvas
+   (remark uses fixed-size, transform-scaled slides) and sets an explicit
+   height on .demo-slide-container / .demo-iframe so the terminal fills
+   the slide below the title, with bottom space mirroring the title block. */
+.remark-slide-content.has-live-demo {
+  /* remark table-cells vertically center shorter content; top-align so
+     the terminal's position (and custom.js's measurement) is stable. */
+  vertical-align: top;
+}
+
+.has-live-demo .demo-slide-container {
+  margin-bottom: 0;
+}
+
+.has-live-demo .demo-iframe {
+  height: 100%;
+}
+
 .demo-terminal-frame {
   width: 100%;
   display: flex;

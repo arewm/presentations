@@ -370,6 +370,9 @@ layout: false
 
 ## Step 2: SPIRE Mints the Role SVID
 
+*(SVID: SPIFFE Verifiable Identity Document — the cryptographically verifiable
+credential SPIRE issues to a workload.)*
+
 `ClusterSPIFFEID` evaluates the Kyverno-verified pod labels:
 
 ```yaml
@@ -437,9 +440,10 @@ layout: false
     </div>
     <div class="demo-fallback-desc">
       <strong>Task Admission Classification & SPIRE Identity Minting</strong><br>
-      • Inline untrusted tasks are classified into the unprivileged <code>dev</code> role.<br>
-      • Attacker attempting to spoof catalog namespace with unsigned task is denied at admission.<br>
-      • Cosign-signed catalog bundle verified by Kyverno, promoted to <code>prod</code>, and minted production SVID.
+      • Inline untrusted tasks are classified into the unprivileged <code>dev</code> role — trust is earned from the task's bundle, never claimed.<br>
+      • The catalog path pattern is the trust grant: <code>tekton-catalog/*</code> + digest pin ⇒ eligible for <code>prod</code>.<br>
+      • Signature verification (Kyverno ImageValidatingPolicy) is mandatory for <em>every</em> bundle from that path — an unsigned spoof is denied admission outright, not just downgraded.<br>
+      • Cosign-signed catalog bundle verified, promoted to <code>prod</code>, and minted a production SVID.
     </div>
     <div class="demo-cmd-box">
       <span class="demo-cmd-code">./demo/run-demo.sh --act 2</span>

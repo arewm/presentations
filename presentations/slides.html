@@ -169,7 +169,7 @@
           fetch(customCssPath, { method: 'HEAD' })
             .then(response => {
               if (response.ok) {
-                document.getElementById('custom-css-link').href = customCssPath;
+                document.getElementById('custom-css-link').href = customCssPath + `?v=${Date.now()}`;
               }
             })
             .catch(() => {
@@ -208,7 +208,9 @@
                 .then(response => {
                   if (response.ok) {
                     const script = document.createElement('script');
-                    script.src = customJsPath;
+                    // Cache-buster: static servers send no cache headers, so
+                    // browsers heuristic-cache custom.js between edits.
+                    script.src = customJsPath + `?v=${Date.now()}`;
                     document.body.appendChild(script);
                   }
                 })

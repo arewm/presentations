@@ -82,7 +82,46 @@
     const port = container.dataset.port;
     if (!port) return;
 
-    const fallback = container.querySelector('.demo-offline-fallback');
+    // Lay the slide out as title + full-height terminal. remark slides use
+    // a fixed pixel canvas scaled via CSS transform, so flex sizing is
+    // unreliable — compute explicit pixel heights instead: the terminal
+    // fills the slide below the title, and bottom space mirrors the title
+    // block for visual balance.
+    const slide = container.closest('.remark-slide-content');
+    if (slide) {
+      slide.classList.add('has-live-demo');
+      const sizeTerminal = () => {
+        // remark sizes .remark-slide-scaler to the deck's natural canvas
+        // (e.g. 908x681 for 16:9) and CSS-transform-scales it to fit the
+        // window. The slide content is a table-cell whose height follows
+        // its content, so measure the SCALER for the canvas height.
+        const scaler = slide.closest('.remark-slide-scaler');
+        if (!scaler) return;
+        // Parse the scale from remark's inline transform: deriving it from
+        // getBoundingClientRect mid-resize catches a stale transform.
+        const tm = /scale\(([\d.]+)\)/.exec(scaler.style.transform || '');
+        const scale = tm ? parseFloat(tm[1]) : 1;
+        const canvasH = scaler.offsetHeight;
+        // Space above the terminal, in natural (unscaled) pixels: from the
+        // top of the slide content (inside the scaler) to the container.
+        const titleSpace = Math.max((container.getBoundingClientRect().top - slide.getBoundingClientRect().top) / scale, 0);
+        // Terminal fills the canvas below the title, with a bottom margin
+        // mirroring the title block for visual balance.
+        const containerH = Math.max(canvasH - titleSpace - titleSpace, 200);
+        container.style.height = `${containerH.toFixed(0)}px`;
+        const toolbar = container.querySelector('.demo-toolbar');
+        const toolbarH = toolbar ? toolbar.offsetHeight : 0;
+        const iframe = container.querySelector('.demo-iframe');
+        if (iframe) {
+          const iframeH = Math.max(containerH - toolbarH - 2, 150);
+          iframe.style.height = `${iframeH.toFixed(0)}px`;
+        }
+        container.setAttribute('data-debug',
+          `canvasH=${canvasH} titleSpace=${titleSpace.toFixed(1)} scale=${scale.toFixed(3)} slideOffsetH=${slide.offsetHeight}`);
+      };
+      window.addEventListener('resize', sizeTerminal);
+      container._sizeTerminal = sizeTerminal;
+    }    const fallback = container.querySelector('.demo-offline-fallback');
     const termFrame = container.querySelector('.demo-terminal-frame');
     if (!termFrame) return;
 
@@ -117,6 +156,11 @@
         ></iframe>
       `;
 
+      // Now that the toolbar + iframe exist, size the terminal to fill
+      // the slide (one frame later so layout settles first).
+      if (container._sizeTerminal) {
+        requestAnimationFrame(container._sizeTerminal);
+      }
       const unfocusBtn = termFrame.querySelector('.demo-btn-unfocus');
       if (unfocusBtn) {
         unfocusBtn.addEventListener('click', (e) => {
