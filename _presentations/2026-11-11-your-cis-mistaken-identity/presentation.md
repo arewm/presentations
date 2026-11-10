@@ -311,26 +311,17 @@ layout: false
 
 ## Kyverno at the Gate: Admission-Time Verification
 
-When a `TaskRun` is submitted, Kyverno intercepts it **before any Pod is scheduled** — the policy matches on `tekton.dev/taskruns`, then narrows via CEL to bundles matching the **trusted catalog patterns**:
+When a `TaskRun` is submitted, Kyverno intercepts it **before any Pod is scheduled**. The policy works in the same order you will see in the live demo — scope first, then the checks, then the outcome:
 
-1. **Extract** each pinned bundle digest from `taskRef.params`.
-2. **Verify**: catalog bundles must be `@sha256:`-pinned **and** signed by the trusted catalog key.
-3. **Decide**: catalog bundle failing either → **Deny**. Everything else (inline scripts, git tasks, unknown registries) is *not blocked* — it just **never gets promoted**.
-
-```yaml
-kind: ImageValidatingPolicy        # Kyverno (CEL), matched on tekton.dev/taskruns
-spec:
-  images:
-  - name: taskBundle
-    expression: 'object.spec.taskRef.params.filter(p, p.name == "bundle").map(p, p.value)'
-  validations:
-  - expression: 'images.taskBundle.all(img, img.matches("@sha256:[a-f0-9]{64}$"))'
-  - expression: 'images.taskBundle.map(img, verifyImageSignatures(img, [attestors.catalogKey])).all(v, v > 0)'
-```
+1. **Scope** — the policy only *fires* for TaskRuns referencing a bundle from the trusted catalog paths (resolver param or direct `taskRef.bundle`). Everything else never reaches these checks — and can never be promoted either.
+2. **Pin** — every in-scope bundle must be `@sha256:` digest-pinned. Floating tags can never be trusted.
+3. **Sign** — every in-scope bundle must carry a valid Cosign signature from the trusted catalog key.
+4. **Outcome** — failing either check **denies the whole TaskRun at admission**: no TaskRun, no Pod, nothing scheduled. Out-of-scope tasks (inline scripts, git tasks, unknown registries) are *not blocked* — they just **never get promoted**.
 
 <div class="highlight-box" style="margin-top: 0.6em;">
-  <strong>Reading it:</strong> catalog bundles must be digest-pinned and signed by <code>attestors.catalogKey</code>
-  (the trusted catalog's public key) — one failure denies the whole TaskRun.
+  <strong>Scope → Pin → Sign → Outcome:</strong> the path pattern is the trust grant; the pin and signature
+  are mandatory for <em>every</em> bundle on that path. The real policy is on screen in the live demo —
+  Act 2 Part 1 shows it exactly as the cluster evaluates it.
 </div>
 
 ???
@@ -716,9 +707,9 @@ is denied an identity entirely. Keyless-signed with Cosign into Rekor.
 spiffe://konflux-ci.dev/release/demo-app/slsa-e2e-release-dual-gated
 ```
 
-**Guaranteeing policy before privilege** *(the next step — design in the repo)*.
-Dual-gating still *assumes* the pipeline orders verification before signing. The design
-removes that assumption: on a passing run, the policy task materializes a **short-lived,
+**Guaranteeing policy before privilege** *(the next step — designed in the repo, not yet implemented)*.
+The dual-gate you just saw is implemented and running in the repo. But it still *assumes* the
+pipeline orders verification before signing. The next design removes that assumption: on a passing run, the policy task materializes a **short-lived,
 run-scoped signing capability**
 that only the sanctioned signer *in that same run* can obtain — no passing policy, no capability,
 no signature. "Policy passed" becomes a **verified fact**, not a pipeline-ordering assumption.
@@ -734,6 +725,42 @@ Speaker: Maia & Andrew
 Maia: "Build tasks should never have release authority. We separate tenant build namespaces from managed release namespaces."
 Andrew: "Each condition alone fails differently: namespace-only makes every pod in the release namespace a signer; pipeline-only makes every step a signer; task-only lets anyone invoke the signing task from an unsanctioned pipeline. The conjunction makes exactly one pod, in one pipeline, the signer."
 Andrew: "One honest caveat: the dual-gate you saw in the demo is what runs today. The run-scoped signing capability is a design documented in the repo. Trust moves from structure to cryptography."
+
+---
+
+layout: false
+
+## The Roadmap: From Standard Identities to Task-Scoped Trust
+
+<div style="display: flex; flex-direction: column; gap: 0.7em; margin-top: 0.8em;">
+  <div class="highlight-box">
+    <strong>What is standard today</strong> — identity by location and role assumption:<br>
+    Kubernetes ServiceAccounts (namespace + SA is the whole identity) &middot; GitHub Actions / GitLab CI
+    OIDC (repo + branch) &middot; Sigstore keyless (proves a container ran, not <em>which</em> task it was) &middot;
+    SPIFFE/SPIRE deployments that still select on namespace.
+  </div>
+  <div class="highlight-box">
+    <strong>Generating task-scoped identities</strong> — provenance in, identity out:<br>
+    Kyverno classifies each TaskRun at admission from its bundle provenance (catalog path + digest pin +
+    Cosign signature) &rarr; stamps <code>trusted-task-role</code> &rarr; SPIRE mints the matching SVID
+    (per-task, per-pod, short-lived) &rarr; Fulcio laminates identities into signing certificates.
+  </div>
+  <div class="highlight-box">
+    <strong>What the identities unlock</strong> — authority without ambient secrets:<br>
+    <strong>Pattern 1:</strong> registry push gating (no <code>regcred</code>) &middot;
+    <strong>Pattern 2:</strong> secretless service access, plus Vault exchange for legacy static-token
+    services &middot; <strong>Pattern 3:</strong> role-scoped attestations with separation of duties &middot;
+    <strong>Dual-gated release:</strong> policy-verified signing authority.
+  </div>
+</div>
+
+???
+
+Speaker: Andrew
+
+Andrew: "Where this sits: today's standard gives you location-shaped identity. The demo showed the full
+path — provenance becomes a classification, the classification becomes a cryptographic identity, and the
+identity replaces every ambient secret in the pipeline. Every piece you saw is in the repo."
 
 ---
 
@@ -822,3 +849,80 @@ git checkout kubecon-na-2026-your-cis-mistaken-identity
 Speaker: Andrew
 
 Andrew: "We ran Acts 1 and 2 live. Acts 3 and 4 — and the complete end-to-end arc — are all runnable from the repo. Clone the branch, run setup-demo.sh once, and run-demo.sh takes you through everything we showed today and more."
+
+---
+
+layout: false
+
+## Backup: Live Demo — Act 3 (Same-Namespace API Gating & Vault Exchange)
+
+<div class="demo-slide-container" data-port="7683">
+  <div class="demo-offline-fallback">
+    <div class="demo-fallback-header">
+      <h3 class="demo-fallback-title">🖥️ Live Demo: Act 3</h3>
+      <span class="demo-badge-offline">ttyd offline</span>
+    </div>
+    <div class="demo-fallback-desc">
+      <strong>Task-Scoped Registry, Service &amp; Broker Access</strong><br>
+      • OCI push gating: the rogue task's own push handshake is rejected (<code>403</code>); the vetted builder's succeeds (<code>202</code>) — zero <code>regcred</code> mounted.<br>
+      • Secretless service access: the scanner task queries the CVE database with its own SVID (<code>200</code>); the dev task is refused (<code>403</code>).<br>
+      • Separation of duties: Conforma/OPA denies a builder forging a clean CVE scan.<br>
+      • Vault token exchange: the scanner exchanges its JWT-SVID for the legacy static credential — the dev-tier identity is denied by <code>bound_subject</code>.
+    </div>
+    <div class="demo-cmd-box">
+      <span class="demo-cmd-code">./demo/run-demo.sh --act 3</span>
+      <button class="demo-btn demo-copy-btn">Copy</button>
+    </div>
+    <div class="demo-fallback-footer">
+      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code> &middot; No demo terminal? Run locally: <code>git clone github.com/arewm/slsa-konflux-example</code> (branch <code>kubecon-na-2026-your-cis-mistaken-identity</code>), then the same command — see <code>demo/README.md</code></span>
+      <button class="demo-btn demo-retry-btn">Retry Connection</button>
+    </div>
+  </div>
+  <div class="demo-terminal-frame" style="display: none;"></div>
+</div>
+
+???
+
+Speaker: Andrew
+
+Backup slide for Q&A: Act 3 live terminal (port 7683). Every task performs its own
+work with its own identity — no relay pods. ~5 minutes to run live; the preserved
+scrollback also walks well after a pre-run.
+
+---
+
+layout: false
+
+## Backup: Live Demo — Act 4 (Managed Release Boundary)
+
+<div class="demo-slide-container" data-port="7684">
+  <div class="demo-offline-fallback">
+    <div class="demo-fallback-header">
+      <h3 class="demo-fallback-title">🖥️ Live Demo: Act 4</h3>
+      <span class="demo-badge-offline">ttyd offline</span>
+    </div>
+    <div class="demo-fallback-desc">
+      <strong>Dual-Gated Release Authority</strong><br>
+      • A hand-crafted 'managed' release PipelineRun is denied by <code>guard-managed-labels</code> — location ≠ authorization.<br>
+      • The release-service controller creates the legitimate managed PipelineRun; only <code>attach-summary-attestations</code> receives the release authority SVID.<br>
+      • Keyless VSA signing into Rekor; OCI 1.1 referrers on the released image digest.
+    </div>
+    <div class="demo-cmd-box">
+      <span class="demo-cmd-code">./demo/run-demo.sh --act 4</span>
+      <button class="demo-btn demo-copy-btn">Copy</button>
+    </div>
+    <div class="demo-fallback-footer">
+      <span class="demo-fallback-instructions">To run live in slide: <code>./demo/serve-slides.sh start</code> &middot; The release PipelineRun takes several minutes (EC verification retries) — prefer walking the preserved scrollback of a pre-run session.</span>
+      <button class="demo-btn demo-retry-btn">Retry Connection</button>
+    </div>
+  </div>
+  <div class="demo-terminal-frame" style="display: none;"></div>
+</div>
+
+???
+
+Speaker: Andrew
+
+Backup slide for Q&A: Act 4 live terminal (port 7684). The release pipeline takes
+several minutes — best shown by scrolling a pre-run session (the terminal
+preserves everything by design).
