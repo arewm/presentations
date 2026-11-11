@@ -414,14 +414,14 @@ layout: false
 Three tasks sharing `sa/default`, but minted distinct cryptographic identities:
 
 ```text
+# Untrusted Task (Inline Script or Unsigned Bundle)
+spiffe://konflux-ci.dev/dev/kind-konflux/default/arbitrary-script
+
 # Scanner Task (Verified Catalog Bundle)
 spiffe://konflux-ci.dev/trusted/kind-konflux/default/trivy-sbom-scan
 
 # Builder Task (Verified Catalog Bundle)
 spiffe://konflux-ci.dev/trusted/kind-konflux/default/buildah-oci-ta
-
-# Untrusted Task (Inline Script or Unsigned Bundle)
-spiffe://konflux-ci.dev/dev/kind-konflux/default/arbitrary-script
 ```
 
 <div class="highlight-box" style="margin-top: 0.8em;">
@@ -432,7 +432,7 @@ spiffe://konflux-ci.dev/dev/kind-konflux/default/arbitrary-script
 
 Speaker: Andrew
 
-Andrew: "All three tasks share the exact same ServiceAccount... but not the same cryptographic identity. The identity is bound to the verified catalog code."
+Andrew: "All three tasks share the exact same ServiceAccount... but not the same cryptographic identity. Start with the floor: an untrusted inline task gets a dev identity — that's what everything is by default. The scanner and the builder, running verified catalog bundles, earn trusted prod identities. The identity is bound to the verified catalog code."
 
 ---
 
