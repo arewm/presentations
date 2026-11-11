@@ -64,6 +64,42 @@ Maia opens the talk.
 
 layout: false
 
+## The Roadmap: From Standard Identities to Task-Scoped Trust
+
+<div style="display: flex; flex-direction: column; gap: 0.7em; margin-top: 0.8em;">
+  <div class="highlight-box">
+    <strong>What is standard today</strong> — identity by location and role assumption:<br>
+    Kubernetes ServiceAccounts (namespace + SA is the whole identity) &middot; GitHub Actions / GitLab CI
+    OIDC (repo + branch) &middot; Sigstore keyless (proves a container ran, not <em>which</em> task it was) &middot;
+    SPIFFE/SPIRE deployments that still select on namespace.
+  </div>
+  <div class="highlight-box">
+    <strong>Generating task-scoped identities</strong> — provenance in, identity out:<br>
+    Kyverno classifies each TaskRun at admission from its bundle provenance (catalog path + digest pin +
+    Cosign signature) &rarr; stamps <code>trusted-task-role</code> &rarr; SPIRE mints the matching SVID
+    (per-task, per-pod, short-lived) &rarr; Fulcio laminates identities into signing certificates.
+  </div>
+  <div class="highlight-box">
+    <strong>What the identities unlock</strong> — authority without ambient secrets:<br>
+    <strong>Pattern 1:</strong> registry push gating (no <code>regcred</code>) &middot;
+    <strong>Pattern 2:</strong> secretless service access, plus Vault exchange for legacy static-token
+    services &middot; <strong>Pattern 3:</strong> role-scoped attestations with separation of duties &middot;
+    <strong>Dual-gated release:</strong> policy-verified signing authority.
+  </div>
+</div>
+
+???
+
+Speaker: Andrew
+
+Andrew: "Where this sits: today's standard gives you location-shaped identity. We'll show the full
+path — provenance becomes a classification, the classification becomes a cryptographic identity, and the
+identity replaces every ambient secret in the pipeline. Every piece you see is in the repo."
+
+---
+
+layout: false
+
 ## The Identity Perspective: Why the Standard Deployment Model Fails Us
 
 In the cloud-native identity world, we solved machine-to-machine authentication with **Workload Identity (SPIFFE/SPIRE)**.
@@ -701,42 +737,6 @@ Speaker: Maia & Andrew
 Maia: "Build tasks should never have release authority. We separate tenant build namespaces from managed release namespaces."
 Andrew: "Each condition alone fails differently: namespace-only makes every pod in the release namespace a signer; pipeline-only makes every step a signer; task-only lets anyone invoke the signing task from an unsanctioned pipeline. The conjunction makes exactly one pod, in one pipeline, the signer."
 Andrew: "One honest caveat: the dual-gate you saw in the demo is what runs today. The run-scoped signing capability is a design documented in the repo. Trust moves from structure to cryptography."
-
----
-
-layout: false
-
-## The Roadmap: From Standard Identities to Task-Scoped Trust
-
-<div style="display: flex; flex-direction: column; gap: 0.7em; margin-top: 0.8em;">
-  <div class="highlight-box">
-    <strong>What is standard today</strong> — identity by location and role assumption:<br>
-    Kubernetes ServiceAccounts (namespace + SA is the whole identity) &middot; GitHub Actions / GitLab CI
-    OIDC (repo + branch) &middot; Sigstore keyless (proves a container ran, not <em>which</em> task it was) &middot;
-    SPIFFE/SPIRE deployments that still select on namespace.
-  </div>
-  <div class="highlight-box">
-    <strong>Generating task-scoped identities</strong> — provenance in, identity out:<br>
-    Kyverno classifies each TaskRun at admission from its bundle provenance (catalog path + digest pin +
-    Cosign signature) &rarr; stamps <code>trusted-task-role</code> &rarr; SPIRE mints the matching SVID
-    (per-task, per-pod, short-lived) &rarr; Fulcio laminates identities into signing certificates.
-  </div>
-  <div class="highlight-box">
-    <strong>What the identities unlock</strong> — authority without ambient secrets:<br>
-    <strong>Pattern 1:</strong> registry push gating (no <code>regcred</code>) &middot;
-    <strong>Pattern 2:</strong> secretless service access, plus Vault exchange for legacy static-token
-    services &middot; <strong>Pattern 3:</strong> role-scoped attestations with separation of duties &middot;
-    <strong>Dual-gated release:</strong> policy-verified signing authority.
-  </div>
-</div>
-
-???
-
-Speaker: Andrew
-
-Andrew: "Where this sits: today's standard gives you location-shaped identity. The demo showed the full
-path — provenance becomes a classification, the classification becomes a cryptographic identity, and the
-identity replaces every ambient secret in the pipeline. Every piece you saw is in the repo."
 
 ---
 
