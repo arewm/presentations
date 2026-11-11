@@ -322,9 +322,35 @@ Andrew: "A Tekton Bundle packages the Task definition inside an OCI container im
 
 layout: false
 
+## Why OCI Bundles Change the Game
+
+Task definitions become verifiable *before execution*:
+
+1. **Immutable by Digest**
+   * A TaskRun pins the exact task definition (`@sha256:...`).
+   * The cluster knows *precisely what code will run* — no tag drift, no silent mutation.
+
+2. **Signable like any OCI Artifact**
+   * Stored in existing registries, signed with Cosign / Fulcio keyless.
+   * "Trusted catalog" = a signing key, not a curated source.
+
+3. **Visible at Admission — Before Any Pod Exists**
+   * `taskRef.params.bundle` is inspectable by webhooks the moment the TaskRun is submitted.
+   * Verify signature → classify role → *then* the Pod is created. Unverified code never receives a **trusted** identity — it runs, but identified only as what it was verified to be.
+
+???
+
+Speaker: Andrew
+
+Andrew: "Because the bundle is an OCI artifact pinned by digest, task definitions work like container images: sign them with Cosign, verify with Kyverno at admission."
+
+---
+
+layout: false
+
 ## Kyverno at the Gate: Admission-Time Verification
 
-When a `TaskRun` is submitted, Kyverno intercepts it — and this is also where **dynamic role promotion** happens: the same admission pass verifies the bundle and stamps the task's role (`dev` → `prod`). The policy works in the same order you will see in the live demo — scope first, then the checks, then the outcome:
+When a `TaskRun` is submitted, Kyverno intercepts it **before any Pod is scheduled**. The policy works in the same order you will see in the live demo — scope first, then the checks, then the outcome:
 
 1. **Scope** — the policy only *fires* for TaskRuns referencing a bundle from the trusted catalog paths (resolver param or direct `taskRef.bundle`). Everything else never reaches these checks — and can never be promoted either.
 2. **Pin** — every in-scope bundle must be `@sha256:` digest-pinned. Floating tags can never be trusted.
@@ -336,17 +362,11 @@ When a `TaskRun` is submitted, Kyverno intercepts it — and this is also where 
   are mandatory for <em>every</em> bundle on that path.
 </div>
 
-<div class="highlight-box" style="margin-top: 0.6em;">
-  <strong>All verification precedes execution.</strong> Everything above happens when the TaskRun is
-  created — before Tekton ever creates or schedules the pod. By the time a container exists, its
-  identity and role are already decided; no pod is ever scheduled first and verified later.
-</div>
-
 ???
 
 Speaker: Andrew
 
-Andrew: "Kyverno uses CEL image validation to check the bundle digest referenced in the TaskRun is signed by the trusted catalog key — and the same admission pass is what promotes the role label from dev to prod. Not signed? Denied on the spot. And note the timing: all of this happens at TaskRun creation, before Tekton ever creates the pod — verification strictly precedes execution."
+Andrew: "Kyverno uses CEL image validation to check the bundle digest referenced in the TaskRun is signed by the trusted catalog key. Not signed? Denied on the spot."
 
 ---
 
