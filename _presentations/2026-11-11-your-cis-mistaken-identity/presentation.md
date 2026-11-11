@@ -348,47 +348,31 @@ Andrew: "Because the bundle is an OCI artifact pinned by digest, task definition
 
 layout: false
 
-## Kyverno at the Gate: Admission-Time Verification
-
-When a `TaskRun` is submitted, Kyverno intercepts it **before any Pod is scheduled**. The policy works in the same order you will see in the live demo — scope first, then the checks, then the outcome:
-
-1. **Scope** — the policy only *fires* for TaskRuns referencing a bundle from the trusted catalog paths (resolver param or direct `taskRef.bundle`). Everything else never reaches these checks — and can never be promoted either.
-2. **Pin** — every in-scope bundle must be `@sha256:` digest-pinned. Floating tags can never be trusted.
-3. **Sign** — every in-scope bundle must carry a valid Cosign signature from the trusted catalog key.
-4. **Outcome** — failing either check **denies the whole TaskRun at admission**: no TaskRun, no Pod, nothing scheduled. Out-of-scope tasks (inline scripts, git tasks, unknown registries) are *not blocked* — they just **never get promoted**.
-
-<div class="highlight-box" style="margin-top: 0.6em;">
-  <strong>Scope → Pin → Sign → Outcome:</strong> the path pattern is the trust grant; the pin and signature
-  are mandatory for <em>every</em> bundle on that path.
-</div>
-
-???
-
-Speaker: Andrew
-
-Andrew: "Kyverno uses CEL image validation to check the bundle digest referenced in the TaskRun is signed by the trusted catalog key. Not signed? Denied on the spot."
-
----
-
-layout: false
-
 ## Policy Enforcement: Dynamic Role Promotion
 
-How admission policy categorizes tasks before execution:
+When a `TaskRun` is submitted, Kyverno intercepts it and categorizes the task — in the same order you will see in the live demo:
 
-* **Dev by default** — every TaskRun is labeled `trusted-task-role: dev`; trust is opt-in, never assumed.
-* **Prod is earned** — digest-pinned, signed catalog bundles are promoted to `prod` at admission.
-* **Labels are locked** — pods cannot self-assign the label, and it is immutable once stamped.
+1. **Scope** — the policy only *fires* for TaskRuns referencing a bundle from the trusted catalog paths. Everything else never reaches these checks — and can never be promoted either.
+2. **Pin** — every in-scope bundle must be `@sha256:` digest-pinned. Floating tags can never be trusted.
+3. **Sign** — every in-scope bundle must carry a valid Cosign signature from the trusted catalog key.
+4. **Promote** — **dev by default**: every TaskRun is labeled `trusted-task-role: dev` (trust is opt-in, never assumed). Digest-pinned, signed catalog bundles are promoted to `prod` at admission. Failing either check **denies the whole TaskRun**: no TaskRun, no Pod, nothing scheduled.
+5. **Lock** — pods cannot self-assign the label, and it is immutable once stamped.
 
-<div class="highlight-box" style="margin-top: 1.2em;">
+<div class="highlight-box" style="margin-top: 0.8em;">
   <strong>Result:</strong> identity follows cryptographically verified provenance — re-checked fail-closed on every write.
 </div>
 
+<div class="highlight-box" style="margin-top: 0.6em;">
+  <strong>All verification precedes execution.</strong> Everything above happens when the TaskRun is
+  created — before Tekton ever creates or schedules the pod. By the time a container exists, its
+  identity and role are already decided; no pod is ever scheduled first and verified later.
+</div>
+
 ???
 
 Speaker: Andrew
 
-Andrew: "Note the separation of concerns: Kyverno inspects the TaskRun before scheduling. If the bundle is signed by our catalog key, Kyverno promotes the label to 'prod'. An anti-spoofing policy keeps pods from grabbing the label themselves."
+Andrew: "Kyverno uses CEL image validation to check the bundle digest referenced in the TaskRun is signed by the trusted catalog key — scope, pin, sign, then promote. Dev is the default; prod is earned. Not signed? Denied on the spot. And note the timing: all of this happens at TaskRun creation, before Tekton ever creates the pod — verification strictly precedes execution. An anti-spoofing policy keeps pods from grabbing the label themselves."
 
 ---
 
