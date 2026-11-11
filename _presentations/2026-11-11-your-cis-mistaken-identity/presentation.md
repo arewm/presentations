@@ -350,7 +350,7 @@ layout: false
 
 ## Policy Enforcement: Dynamic Role Promotion
 
-Kyverno categorizes every task at admission, before execution:
+Kyverno categorizes every task at admission, before execution — and only the Tekton controller can propagate these labels to pods:
 
 * **Dev by default** — every TaskRun is labeled `trusted-task-role: dev`; trust is opt-in, never assumed.
 * **Prod is earned** — digest-pinned, signed catalog bundles are promoted to `prod` at admission.
@@ -370,7 +370,7 @@ Kyverno categorizes every task at admission, before execution:
 
 Speaker: Andrew
 
-Andrew: "Note the separation of concerns: Kyverno inspects the TaskRun and controls the role promotion — dev is the default, prod is earned by a verified catalog bundle. If the bundle is not signed, the TaskRun is denied on the spot. An anti-spoofing policy keeps pods from grabbing the label themselves. And the timing matters: all of this happens at TaskRun creation, before Tekton ever creates the pod — verification strictly precedes execution. We will walk the exact scope-pin-sign order in the live demo."
+Andrew: "Note the separation of concerns: Kyverno inspects the TaskRun and controls the role promotion, and only the Tekton controller may propagate these labels to pods — so the label on a pod is always inherited from a classified TaskRun, never self-assigned — dev is the default, prod is earned by a verified catalog bundle. If the bundle is not signed, the TaskRun is denied on the spot. An anti-spoofing policy keeps pods from grabbing the label themselves. And the timing matters: all of this happens at TaskRun creation, before Tekton ever creates the pod — verification strictly precedes execution. We will walk the exact scope-pin-sign order in the live demo."
 
 ---
 
