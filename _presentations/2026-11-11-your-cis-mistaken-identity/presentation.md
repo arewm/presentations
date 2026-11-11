@@ -190,7 +190,7 @@ PipelineRun ──► TaskRun ──creates──► Pod    (labeled tekton.dev/
 ```
 
 * Each **step** in a Task maps to a **container** in the pod — the Task definition decides exactly what runs.
-* The pod runs under the namespace ServiceAccount — shared by every task in the namespace.
+* The pod runs under the namespace and ServiceAccount — shared by every task.
 
 ???
 
@@ -662,29 +662,21 @@ layout: false
 
 ## The Managed Release Boundary
 
-**Dual-gating.** The release SVID is minted only when **three conditions all hold**:
+Build tasks should never hold release authority. The release boundary separates tenant build namespaces from an operator-managed **release namespace** — and inside it, a **dual-gated identity**:
 
-1. An operator-designated **release namespace**
-2. The **one sanctioned release pipeline** — classified at admission time
-3. The **designated signing task** within it
+The release SVID is minted only when **all three** conditions hold:
 
-Every other step in that pipeline — including the steps *before* policy verification —
-is denied an identity entirely. Keyless-signed with Cosign into Rekor.
+1. **Namespace** — the operator-designated release namespace
+2. **Pipeline** — a platform-controlled marker identifies the sanctioned pipelines; only a designated platform controller can set it; no hand-crafted pipeline or task can claim it
+3. **Task** — only the designated tasks receive an identity, and only after the artifacts' provenance has passed policy verification
+
+Each alone fails differently: namespace-only makes every pod there a signer; pipeline-only makes every step a signer; task-only lets anyone invoke the signer from an unsanctioned pipeline. **The conjunction makes exactly one pod — in one pipeline, in one namespace — the release signer.** Every other step is denied an identity entirely.
 
 ```text
 spiffe://konflux-ci.dev/release/demo-app/slsa-e2e-release-dual-gated
 ```
 
-**Guaranteeing policy before privilege** *(the next step — designed in the repo, not yet implemented)*.
-The dual-gate you just saw is implemented and running in the repo. But it still *assumes* the
-pipeline orders verification before signing. The next design removes that assumption: on a passing run, the policy task materializes a **short-lived,
-run-scoped signing capability**
-that only the sanctioned signer *in that same run* can obtain — no passing policy, no capability,
-no signature. "Policy passed" becomes a **verified fact**, not a pipeline-ordering assumption.
-
-<div class="highlight-box" style="margin-top: 0.8em;">
-  From <em>structural</em> trust to <em>cryptographic</em> trust. Find out more in the demo repo.
-</div>
+The release is signed keyless (Cosign → Fulcio → Rekor) under exactly that identity.
 
 ???
 
