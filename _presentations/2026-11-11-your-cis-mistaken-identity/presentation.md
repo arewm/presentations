@@ -178,30 +178,26 @@ In CI/CD, where we are concerned with not just one but a whole factory of pods, 
 
 layout: false
 
-## Confused Deputies in CI
+## A Quick Tekton Primer
 
-When identity is coarse, every pipeline step becomes a potential **Confused Deputy**:
+* **`Task`** — reusable step definition (image, commands, scripts).
+* **`Pipeline`** — a DAG of tasks.
+* **`TaskRun` / `PipelineRun`** — execution instances. **A `TaskRun` directly creates a Kubernetes `Pod`** — every pipeline step *is* a pod.
 
 ```text
-PipelineRun: build-and-test
-  ├── Task 1: git-clone         [SA: runner]  ◄── PR-controlled
-  ├── Task 2: fetch-deps        [SA: runner]  ◄── Dynamic package downloads
-  ├── Task 3: build-container   [SA: runner]  ──► Needs builder authority
-  ├── Task 4: registry-mirror   [SA: runner]  ◄── INJECTED by a compromised PR
-  └── Task 5: trivy-scan        [SA: runner]  ──► Needs scanner authority
+PipelineRun ──► TaskRun ──creates──► Pod    (labeled tekton.dev/task)
+                   Step ───maps────► Container   (image + command defined by the Task)
 ```
 
-* All five tasks share `sa/runner` in `default-tenant`.
-* The pipeline definition is **PR-controlled** — a compromised PR doesn't need to exploit a step, it simply *adds one*: plausible-looking, same ServiceAccount, indistinguishable from real work, with the full authority of every other task.
-* Provenance + policy verification catches a forged *artifact*... but the hijacked step's authority abuse (secrets, tag pushes, service access) happens outside the provenance channel, before any verifier sees it.
+* Each **step** in a Task maps to a **container** in the pod — the Task definition decides exactly what runs.
+* The pod runs under the namespace ServiceAccount — shared by every task in the namespace.
 
 ???
 
-Speaker: Maia & Andrew
+Speaker: Andrew
 
-Maia: "This isn't hypothetical. Most modern supply chain compromises don't break crypto; they abuse legitimate credentials running in the wrong context."
-Andrew: "When every task shares one identity, the least trusted step has the authority of the most trusted step."
-Andrew (if asked about provenance): "Full PipelineRun provenance plus policy verification catches a forged artifact at the consumer... but that's a consumption-side control, and it only works if every consumer verifies every time. Task identity is generation-side — the rogue step never holds the authority in the first place. They compose."
+Andrew: "Quick Tekton primer, because it explains the attack surface. A TaskRun doesn't just run a container — it creates a Pod, labeled and running under the namespace ServiceAccount. And the definitions come from your pull requests. So a compromised PR doesn't need to exploit anything: it adds a task, and that task's pod carries the same authority as every other task. Compromise the definition, compromise the pod."
+Andrew (if asked about provenance): "Full PipelineRun provenance plus policy verification catches a forged artifact at the consumer... but that's a consumption-side control. Task identity is generation-side — the rogue step never holds the authority in the first place. They compose."
 
 ---
 
@@ -262,87 +258,33 @@ Andrew starts Part 2:
 
 layout: false
 
-## Tekton Architecture: Tasks, TaskRuns, and Resolvers
+## Tekton Resolvers: Reusable, Verifiable Definitions
 
-How do pipelines execute in cloud-native Kubernetes?
+**Resolvers** fetch task definitions from remote sources (`git`, `cluster`, `bundles`) instead of pasting them inline
 
-* **`Task`**: Reusable definition containing container steps (commands, env vars, image).
-* **`TaskRun`**: Execution instance that instantiates a Kubernetes `Pod` to run the steps.
-* **`Pipeline` & `PipelineRun`**: Directed Acyclic Graph (DAG) orchestrating multiple TaskRuns.
+### Tekton Bundle
 
-```text
-TaskRun ──creates──► Pod        (labeled tekton.dev/task)
-  Step  ──maps───►  Container  (image + command defined by the Task)
-```
-
-### The Problem: Where Do Tasks Come From?
-* Historically, tasks were pasted inline into YAML or installed cluster-wide.
-* If developers write inline bash in `TaskRun.spec.taskSpec`, they can execute arbitrary, unvetted binaries.
-* **Tekton Resolvers**: Remote, pluggable task resolution (`git`, `cluster`, and `bundles`).
-
-???
-
-Speaker: Andrew
-
-Andrew: "To fix identity we need to know what code runs before the pod starts. Tekton Resolvers give us that hook."
-
----
-
-layout: false
-
-## Tekton Resolvers: Pinned OCI Bundles
-
-A **Tekton Bundle** is a Tekton `Task` packaged inside an OCI container image layer:
-
-* The bundle pins the **exact container images, commands, and scripts** each step will run — verifying the bundle verifies the code **before any Pod is scheduled**.
+A Tekton bundle is a `Task` packaged inside an OCI artifact:
 
 ```yaml
-apiVersion: tekton.dev/v1
-kind: TaskRun
-metadata:
-  generateName: demo-signed-task-
-  namespace: default-tenant
-spec:
-  taskRef:
-    resolver: bundles
-    params:
-    - name: bundle
-      value: registry.kind/tekton-catalog/builder@sha256:ce7492...
-    - name: name
-      value: buildah-oci-ta
+taskRef:
+  resolver: bundles
+  params:
+  - name: bundle
+    value: registry/tekton-catalog/builder@sha256:ce7492...
+  - name: name
+    value: buildah-oci-ta
 ```
 
-???
-
-Speaker: Andrew
-
-Andrew: "A Tekton Bundle packages the Task definition inside an OCI container image layer, pinned by an immutable SHA-256 digest."
-
----
-
-layout: false
-
-## Why OCI Bundles Change the Game
-
-Task definitions become verifiable *before execution*:
-
-1. **Immutable by Digest**
-   * A TaskRun pins the exact task definition (`@sha256:...`).
-   * The cluster knows *precisely what code will run* — no tag drift, no silent mutation.
-
-2. **Signable like any OCI Artifact**
-   * Stored in existing registries, signed with Cosign / Fulcio keyless.
-   * "Trusted catalog" = a signing key, not a curated source.
-
-3. **Visible at Admission — Before Any Pod Exists**
-   * `taskRef.params.bundle` is inspectable by webhooks the moment the TaskRun is submitted.
-   * Verify signature → classify role → *then* the Pod is created. Unverified code never receives a **trusted** identity — it runs, but identified only as what it was verified to be.
+* **Immutable by digest** — the TaskRun pins the exact task definition; the cluster knows precisely what code will run. No tag drift, no silent mutation.
+* **Signable like any OCI artifact** — signed with Cosign; a "trusted catalog" is a signing key, not a curated source.
+* **Visible at admission, before any pod exists** — `taskRef.params.bundle` is inspectable the moment the TaskRun is submitted: verify signature → classify role → *then* the pod is created.
 
 ???
 
 Speaker: Andrew
 
-Andrew: "Because the bundle is an OCI artifact pinned by digest, task definitions work like container images: sign them with Cosign, verify with Kyverno at admission."
+Andrew: "Instead of pasting task YAML inline, Tekton Resolvers fetch reusable definitions from remote sources — and the bundles resolver serves Tasks as OCI artifacts. That buys us everything containers already have: pin by digest, sign with Cosign, and — critically — the reference is visible to admission webhooks the moment the TaskRun is submitted, before any pod exists. Verify, classify, then schedule."
 
 ---
 
@@ -350,14 +292,14 @@ layout: false
 
 ## Policy Enforcement: Dynamic Role Promotion
 
-Kyverno categorizes every task at admission, before execution — and only the Tekton controller can propagate these labels to pods:
+Kyverno stamps every task with a `trusted-task-role` label at admission, before execution — and only the Tekton controller can propagate the label to pods:
 
 * **Dev by default** — every TaskRun is labeled `trusted-task-role: dev`; trust is opt-in, never assumed.
-* **Prod is earned** — digest-pinned, signed catalog bundles are promoted to `prod` at admission.
+* **Prod is earned** — digest-pinned, signed catalog bundles are promoted to `prod` — the one trusted value — at admission.
 * **Labels are locked** — pods cannot self-assign the label, and it is immutable once stamped.
 
 <div class="highlight-box" style="margin-top: 1.2em;">
-  <strong>Result:</strong> a task's identity is earned by its cryptographically verified task definition — never claimed, never changed after the fact.
+  <strong>Result:</strong> a task's identity is earned by its cryptographically verified task definition — never claimed, never changed after the fact. And the label is exactly what SPIRE selects on to mint the workload's identity.
 </div>
 
 
@@ -365,7 +307,7 @@ Kyverno categorizes every task at admission, before execution — and only the T
 
 Speaker: Andrew
 
-Andrew: "Note the separation of concerns: Kyverno inspects the TaskRun and controls the role promotion, and only the Tekton controller may propagate these labels to pods — so the label on a pod is always inherited from a classified TaskRun, never self-assigned — dev is the default, prod is earned by a verified catalog bundle. If the bundle is not signed, the TaskRun is denied on the spot. An anti-spoofing policy keeps pods from grabbing the label themselves. And the timing matters: all of this happens at TaskRun creation, before Tekton ever creates the pod — verification strictly precedes execution. We will walk the exact scope-pin-sign order in the live demo."
+Andrew: "Kyverno's verdict becomes a label — trusted-task-role — and that label is the handoff: it's what SPIRE will select on. Only the Tekton controller may propagate the label to pods — so the label on a pod is always inherited from a classified TaskRun, never self-assigned — dev is the default, prod is earned by a verified catalog bundle. If the bundle is not signed, the TaskRun is denied on the spot. An anti-spoofing policy keeps pods from grabbing the label themselves. And the timing matters: all of this happens at TaskRun creation, before Tekton ever creates the pod — verification strictly precedes execution. We will walk the exact scope-pin-sign order in the live demo."
 
 ---
 
