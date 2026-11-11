@@ -39,7 +39,7 @@ Andrew: "Today: why workload identity in CI/CD has an identity crisis."
 
 layout: false
 
-## The Hook: A Simple Question
+## A Simple Question
 
 > **"You wouldn't ask a plumber to sign off on your electrical work."**
 
@@ -64,7 +64,7 @@ Maia opens the talk.
 
 layout: false
 
-## The Roadmap: From Standard Identities to Task-Scoped Trust
+## From Standard Identities to Task-Scoped Trust
 
 <div style="display: flex; flex-direction: column; gap: 0.7em; margin-top: 0.8em;">
   <div class="highlight-box">
@@ -100,7 +100,7 @@ identity replaces every ambient secret in the pipeline. Every piece you see is i
 
 layout: false
 
-## The Identity Perspective: Why the Standard Deployment Model Fails Us
+## Why the Standard Deployment Model Fails Us
 
 In the cloud-native identity world, we solved machine-to-machine authentication with **Workload Identity (SPIFFE/SPIRE)**.
 
@@ -126,7 +126,7 @@ Maia: "From the identity community's perspective, SPIFFE was a huge leap forward
 
 layout: false
 
-## The Blind Spot: Ephemeral CI vs. Microservices
+## Ephemeral CI vs. Microservices
 
 SPIFFE was designed with **long-running microservices** in mind:
 
@@ -153,7 +153,7 @@ Maia: "In a microservice, ServiceAccount ≈ Application. In CI/CD, ServiceAccou
 
 layout: false
 
-## The Supply Chain Threat: Confused Deputies in CI
+## Confused Deputies in CI
 
 When identity is coarse, every pipeline step becomes a potential **Confused Deputy**:
 
@@ -489,7 +489,7 @@ Maia starts Part 3:
 
 layout: false
 
-## The Implications: Breaking the Location Trap
+## Breaking the Location Trap
 
 So what did we actually get?
 
@@ -663,7 +663,7 @@ Andrew: "Conforma evaluates the in-toto attestation against this Rego policy. It
 
 layout: false
 
-## What Identity Alone Doesn't Solve: The Data Plane
+## What Identity Alone Doesn't Solve
 
 Does securing task identities protect the pipeline? **Not if tasks share a disk.**
 
