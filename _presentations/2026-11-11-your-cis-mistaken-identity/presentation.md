@@ -66,35 +66,60 @@ layout: false
 
 ## From Standard Identities to Task-Scoped Trust
 
-<div style="display: flex; flex-direction: column; gap: 0.7em; margin-top: 0.8em;">
+<div style="display: flex; flex-direction: column; gap: 0.8em; margin-top: 1.2em;">
   <div class="highlight-box">
-    <strong>What is standard today</strong> — identity by location and role assumption:<br>
-    Kubernetes ServiceAccounts (namespace + SA is the whole identity) &middot; GitHub Actions / GitLab CI
-    OIDC (repo + branch) &middot; Sigstore keyless (proves a container ran, not <em>which</em> task it was) &middot;
-    SPIFFE/SPIRE deployments that still select on namespace.
+    <strong>Part 1:</strong> Where standard practice falls short <em>(+ demo)</em>
   </div>
   <div class="highlight-box">
-    <strong>Generating task-scoped identities</strong> — provenance in, identity out:<br>
-    Kyverno classifies each TaskRun at admission from its bundle provenance (catalog path + digest pin +
-    Cosign signature) &rarr; stamps <code>trusted-task-role</code> &rarr; SPIRE mints the matching SVID
-    (per-task, per-pod, short-lived) &rarr; Fulcio laminates identities into signing certificates.
+    <strong>Part 2:</strong> Generating task-scoped identities <em>(+ demo)</em>
   </div>
   <div class="highlight-box">
-    <strong>What the identities unlock</strong> — authority without ambient secrets:<br>
-    <strong>Pattern 1:</strong> registry push gating (no <code>regcred</code>) &middot;
-    <strong>Pattern 2:</strong> secretless service access, plus Vault exchange for legacy static-token
-    services &middot; <strong>Pattern 3:</strong> role-scoped attestations with separation of duties &middot;
-    <strong>Dual-gated release:</strong> policy-verified signing authority.
+    <strong>Part 3:</strong> What task identities unlock
+  </div>
+  <div class="highlight-box">
+    <strong>Part 4:</strong> The next frontier
   </div>
 </div>
 
 ???
 
-Speaker: Andrew
+Speaker: Maia
 
-Andrew: "Where this sits: today's standard gives you location-shaped identity. We'll show the full
-path — provenance becomes a classification, the classification becomes a cryptographic identity, and the
-identity replaces every ambient secret in the pipeline. Every piece you see is in the repo."
+Maia: "Here's the roadmap. In Part 1 we show where standard practice breaks down for CI, with a demo of
+the attack it enables. In Part 2 we build task-scoped identities and demo admission-time verification.
+Part 3 shows what those identities unlock once you have them, and Part 4 looks at where this is headed.
+Every piece you see is in the repo."
+
+---
+
+layout: false
+
+## A Quick SPIFFE Primer
+
+```text
+   ┌────────────┐    1. request for SVID         ┌──────────────┐    public trust bundle
+   │            │ ─────────────────────────────► │              │ ───────────────────────●
+   │    Pod     │                                │    SPIFFE    │
+   │  (your     │    3. SVID (x509 cert / JWT    │  local agent │
+   │  workload) │ ◄──── carrying a SPIFFE ID)─── │  on the node │
+   │            │                                │              │
+   └─────▲──────┘                                └──────┬───────┘
+         │                                              │
+         │                             2. out-of-band   │
+         │                                attestation   ▼
+         │                                       ┌──────────────┐
+         └────────────────────────────────────── │   kubelet    │
+                                                 │  on the node │
+                                                 └──────────────┘
+
+   Example SPIFFE ID:  spiffe://konflux-ci.dev/trusted/kind-konflux/default/buildah-oci-ta
+```
+
+???
+
+Speaker: Maia
+
+Maia: "Quick primer before we go deeper. SPIFFE gives workloads a cryptographic identity with no static credential mounted into the pod. The pod asks a local agent for an SVID over a Unix socket. Out-of-band, the agent attests the caller — on Kubernetes it takes the caller's PID and asks the local kubelet which pod that process belongs to, which gives it the namespace, ServiceAccount, labels, and image. From that, it decides which SPIFFE ID this pod is entitled to and returns an SVID: an X.509 cert or a JWT that carries that SPIFFE ID. The ID itself is a URI-shaped name; treat the path as opaque. What makes it trustworthy is the attestation that bound it to this specific pod — not anything you can read off the path. Hold onto that: attestation inputs are the lever we're going to pull later in the talk."
 
 ---
 
@@ -147,7 +172,7 @@ SPIFFE was designed with **long-running microservices** in mind:
 
 Speaker: Maia
 
-Maia: "In a microservice, ServiceAccount ≈ Application. In CI/CD, ServiceAccount ≈ The entire factory. A single ServiceAccount represents everything from untrusted PR checkouts to production release signers. Location alone is not a role signal — and downstream services need role to authorize."
+In CI/CD, where we are concerned with not just one but a whole factory of pods, being able to distinguish among those pods is key to enforcing least privilege and mitigating risk upon compromise of one pod.
 
 ---
 
@@ -597,12 +622,21 @@ Internal cluster services authenticate callers using SPIRE JWTs directly:
   <strong>Benefit:</strong> Secrets cannot leak from compromised containers because the secrets simply do not exist in the tenant pod.
 </div>
 
+<div class="highlight-box" style="margin-top: 0.8em;">
+  <strong>Example use case — <a href="https://www.ibm.com/products/lightwell">Project Lightwell</a>:</strong>
+  the IBM + Red Hat remediated-package / vulnerability-remediation feed that pipelines pull from.
+  Instead of mounting a long-lived subscription token in every build pod, only the task roles
+  authorized to consume Lightwell (scanners, builders) present their JWT-SVID — the broker pattern
+  above exchanges it for the Lightwell credential, scoped per-run and per-SPIFFE-ID.
+</div>
+
 ???
 
 Speaker: Andrew & Maia
 
 Andrew: "In Pattern 2, internal services like our CVE database validate caller JWTs directly against SPIRE's JWKS. There are no secrets in the pod to steal."
 Andrew: "And when a service can't speak OIDC at all — say a legacy content repository that only takes a static API token — you don't fall back to mounting that token everywhere. A broker like Vault trusts SPIRE's OIDC endpoint and exchanges the task's JWT-SVID for the static credential, only for the specific SPIFFE IDs authorized to have it. We use this at Red Hat for pipeline access to our Pulp-based content repositories."
+Maia (plug): "Concrete example of this pattern in the wild — Project Lightwell, the IBM/Red Hat remediated-package feed announced last May. Pipelines consume it as a trusted package source; the broker pattern we just described is exactly how you'd gate access without pinning a long-lived subscription token in every tenant namespace."
 
 ---
 
