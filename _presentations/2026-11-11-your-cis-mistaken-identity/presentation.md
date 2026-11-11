@@ -360,11 +360,6 @@ Kyverno categorizes every task at admission, before execution — and only the T
   <strong>Result:</strong> identity follows cryptographically verified provenance — re-checked fail-closed on every write.
 </div>
 
-<div class="highlight-box" style="margin-top: 0.6em;">
-  <strong>All verification precedes execution.</strong> Everything above happens when the TaskRun is
-  created — before Tekton ever creates or schedules the pod. By the time a container exists, its
-  identity and role are already decided; no pod is ever scheduled first and verified later.
-</div>
 
 ???
 
