@@ -575,7 +575,7 @@ Internal cluster services authenticate callers using SPIRE JWTs directly:
 
 <div class="highlight-box" style="margin-top: 0.8em;">
   <strong>In the wild — <a href="https://www.ibm.com/products/lightwell">Project Lightwell</a>:</strong>
-  IBM + Red Hat's secured open-source supply chain initiative can use this broker pattern to gate access to its sensitive remediated-package feed — even though that feed has no native OIDC support.
+  IBM + Red Hat's secured open-source supply chain initiative exposes a sensitive remediated-package feed — customers can use this broker pattern to gate access to it, even though the feed has no native OIDC support.
 </div>
 
 ???
