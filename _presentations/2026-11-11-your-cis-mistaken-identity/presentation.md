@@ -146,33 +146,6 @@ Andrew (if asked about provenance): "Full PipelineRun provenance plus policy ver
 
 layout: false
 
-## Anatomy of an Attack: Ambient Authority Hijack
-
-How an attacker exploits shared namespace credentials — with one task added to the pipeline:
-
-<div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.72em; background: #f1f5f9; padding: 0.5em 0.9em; border-radius: 6px; margin: 0.6em 0;">
-init &rarr; clone-repository &rarr; prefetch-dependencies &rarr; build-container &rarr; <span style="color:#b91c1c; font-weight:600;">[registry-mirror]</span> &rarr; build-image-index &rarr; apply-tags &rarr; trivy-sbom-scan
-</div>
-
-1. **Injected Task:** A compromised PR adds one plausible-looking task — a registry mirror — between the build and the scan — same namespace, same ServiceAccount. The cluster cannot tell it apart from real work.
-2. **Ambient Credential Access:** The injected task reads the mounted `regcred` secret and the projected ServiceAccount token.
-3. **Identity Impersonation:** Because all tasks share the namespace identity, the injected task holds push and sign privileges.
-4. **Forged Integrity:** It overwrites the production tag with a backdoor — and the scan that follows simply scans whatever the tag points at now.
-
-<div class="warn-box" style="margin-top: 1em;">
-  <strong>The Fundamental Gap:</strong> The Pod ran with ambient cluster authority. The cluster had no verification of what code was executing inside the container.
-</div>
-
-???
-
-Speaker: Andrew
-
-Andrew: "OK, enough theory. Let me show you what actually happens in a real cluster right now — I'll switch to the terminal."
-
----
-
-layout: false
-
 ## Live Demo: Act 1 — The Breakdown (Ambient Authority & Secret Hijack)
 
 <div class="demo-slide-container" data-port="7681">
