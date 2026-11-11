@@ -508,7 +508,7 @@ class: center, middle, inverse
 Speaker: Maia
 
 Maia starts Part 3:
-"So what do fine-grained task identities get you inside the pipeline namespace?"
+"Taking a step back, now that we can assign granular, task-scoped identities to the individual pods in the pipeline, what do we get?"
 
 ---
 
@@ -536,37 +536,7 @@ So what did we actually get?
 
 Speaker: Maia
 
-Maia: "This is the conceptual pivot. In the identity world we always say: authentication is identity, authorization is policy. But if the identity only says 'Kubernetes Pod in Namespace X', downstream services have no signal to authorize against. Feeding admission-verified task roles into the SPIFFE ID hierarchy gives them the signal they need."
-
----
-
-layout: false
-
-## Generalizing Within the Namespace: Three Core Patterns
-
-Once tasks have fine-grained cryptographic identities, how do we use them inside the tenant namespace?
-
-<div style="display: flex; flex-direction: column; gap: 0.8em; margin-top: 1em;">
-  <div class="highlight-box">
-    <strong>Pattern 1: Federated OCI Push Gating</strong><br>
-    Eliminate ambient registry secrets (<code>regcred</code>). Configure the OCI registry with OIDC Bearer auth matching SPIFFE SVIDs—only vetted builder tasks can initiate push sessions.
-  </div>
-  <div class="highlight-box">
-    <strong>Pattern 2: Portable Secretless Service Access</strong><br>
-    Internal microservices (CVE databases, KMS, artifact stores) validate caller SVIDs directly against SPIRE's <code>/keys</code> JWKS endpoint without mounting static Kubernetes Secrets.
-  </div>
-  <div class="highlight-box">
-    <strong>Pattern 3: Separation of Duties Attestations</strong><br>
-    Tasks sign in-toto claims via Sigstore/Fulcio. Policy engines (Conforma / OPA) verify that the certificate SAN matches the authorized role (scanners sign CVEs, builders sign SBOMs).
-  </div>
-</div>
-
-???
-
-Speaker: Maia
-
-Maia outlines the three same-namespace patterns.
-"We now have three immediate use cases inside the same namespace that eliminate ambient secrets for these flows."
+Maia: "Combining SPIRE attestation with admission control, we not only get granular identities, but identities backed by strong assurances on what code is executing. And now consuming systems are going to be able to properly authorize only the pods that need the authorization."
 
 ---
 
@@ -595,9 +565,13 @@ Zot OCI registry validates bearer JWTs against SPIRE's OIDC discovery endpoint (
 
 ???
 
-Speaker: Andrew
+Speaker: Maia
 
-Andrew: "Notice we don't need dockerconfigjson secrets in the namespace anymore. Zot takes the SPIFFE JWT as an OIDC bearer token and checks the subject is the approved builder task."
+Maia: "We do not rely on secrets to gate pushing. Instead, Zot — the OCI registry — is configured as an OIDC relying party pointing at SPIRE's discovery endpoint."
+
+Maia: "At push time, the task fetches its own JWT-SVID from the SPIRE agent and presents it as a bearer token on the push handshake. Zot validates the signature against SPIRE's JWKS and then applies policy keyed on the SPIFFE ID in the token's subject."
+
+Maia: "The policy explicitly names which workload is the approved builder task. The rogue task's SVID gets a `403` on the handshake — before any bytes are uploaded. The vetted builder gets a `202`. And because no `dockerconfigjson` is mounted in the namespace at all, there is nothing for a compromised pod to steal."
 
 ---
 
@@ -623,20 +597,19 @@ Internal cluster services authenticate callers using SPIRE JWTs directly:
 </div>
 
 <div class="highlight-box" style="margin-top: 0.8em;">
-  <strong>Example use case — <a href="https://www.ibm.com/products/lightwell">Project Lightwell</a>:</strong>
-  the IBM + Red Hat remediated-package / vulnerability-remediation feed that pipelines pull from.
-  Instead of mounting a long-lived subscription token in every build pod, only the task roles
-  authorized to consume Lightwell (scanners, builders) present their JWT-SVID — the broker pattern
-  above exchanges it for the Lightwell credential, scoped per-run and per-SPIFFE-ID.
+  <strong>In the wild — <a href="https://www.ibm.com/products/lightwell">Project Lightwell</a>:</strong>
+  IBM + Red Hat's secured open-source supply chain initiative uses this broker pattern to gate pipeline access to its remediated-package feed.
 </div>
 
 ???
 
-Speaker: Andrew & Maia
+Speaker: Maia
 
-Andrew: "In Pattern 2, internal services like our CVE database validate caller JWTs directly against SPIRE's JWKS. There are no secrets in the pod to steal."
-Andrew: "And when a service can't speak OIDC at all — say a legacy content repository that only takes a static API token — you don't fall back to mounting that token everywhere. A broker like Vault trusts SPIRE's OIDC endpoint and exchanges the task's JWT-SVID for the static credential, only for the specific SPIFFE IDs authorized to have it. We use this at Red Hat for pipeline access to our Pulp-based content repositories."
-Maia (plug): "Concrete example of this pattern in the wild — Project Lightwell, the IBM/Red Hat remediated-package feed announced last May. Pipelines consume it as a trusted package source; the broker pattern we just described is exactly how you'd gate access without pinning a long-lived subscription token in every tenant namespace."
+Maia: "And not only does this hold for external components, but also internal components within the cluster, such as the CVE vulnerability feed."
+
+Maia: "Now sometimes, there are legacy components that don't know how to validate a JWT or x509 and require static secrets. In those cases, we still don't have to fall back to mounting tokens, but instead use Vault to securely store those credentials, only providing them based on a valid and specific JWT SVID."
+
+Maia: "This has been called the mailbox pattern — where Vault delivers the credential to the right owner as needed. And it's actually used in Project Lightwell, an initiative in Red Hat and IBM towards securing open source."
 
 ---
 
@@ -692,6 +665,36 @@ deny[msg] {
 Speaker: Andrew
 
 Andrew: "Conforma evaluates the in-toto attestation against this Rego policy. It checks the certificate SAN URI. The signature can be mathematically valid — but if it wasn't signed by trivy-sbom-scan, it's rejected."
+
+---
+
+layout: false
+
+## Three Patterns, One Namespace
+
+Task-scoped identity lets us replace three different ambient secrets with cryptographic proof of role:
+
+<div style="display: flex; flex-direction: column; gap: 0.8em; margin-top: 1em;">
+  <div class="highlight-box">
+    <strong>Pushing to the registry</strong><br>
+    Only the builder's identity can push — not every pod with <code>regcred</code> mounted.
+  </div>
+  <div class="highlight-box">
+    <strong>Calling internal services</strong><br>
+    The service checks who's calling — no shared API token sitting in the pod.
+  </div>
+  <div class="highlight-box">
+    <strong>Signing attestations</strong><br>
+    The scanner signs scans, the builder signs builds — policy rejects the rest.
+  </div>
+</div>
+
+???
+
+Speaker: Maia
+
+Maia recaps the three same-namespace patterns after walking through each.
+"Those are the three immediate use cases inside the same namespace that eliminate ambient secrets for these flows."
 
 ---
 
