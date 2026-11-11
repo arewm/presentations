@@ -244,6 +244,10 @@
   function setup() {
     if (window.slideshow) {
       window.slideshow.on('afterShowSlide', () => {
+        // Reclaim keyboard focus from any embedded terminal: navigating
+        // slides always returns arrow-key/PgDn control to the deck. The
+        // terminal regains focus only when the presenter clicks into it.
+        returnFocusToSlides();
         setTimeout(checkCurrentSlide, 100);
       });
     }
