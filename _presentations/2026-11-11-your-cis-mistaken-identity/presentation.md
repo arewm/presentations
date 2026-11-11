@@ -350,15 +350,13 @@ layout: false
 
 ## Policy Enforcement: Dynamic Role Promotion
 
-When a `TaskRun` is submitted, Kyverno intercepts it and categorizes the task — in the same order you will see in the live demo:
+Kyverno categorizes every task at admission, before execution:
 
-1. **Scope** — the policy only *fires* for TaskRuns referencing a bundle from the trusted catalog paths. Everything else never reaches these checks — and can never be promoted either.
-2. **Pin** — every in-scope bundle must be `@sha256:` digest-pinned. Floating tags can never be trusted.
-3. **Sign** — every in-scope bundle must carry a valid Cosign signature from the trusted catalog key.
-4. **Promote** — **dev by default**: every TaskRun is labeled `trusted-task-role: dev` (trust is opt-in, never assumed). Digest-pinned, signed catalog bundles are promoted to `prod` at admission. Failing either check **denies the whole TaskRun**: no TaskRun, no Pod, nothing scheduled.
-5. **Lock** — pods cannot self-assign the label, and it is immutable once stamped.
+* **Dev by default** — every TaskRun is labeled `trusted-task-role: dev`; trust is opt-in, never assumed.
+* **Prod is earned** — digest-pinned, signed catalog bundles are promoted to `prod` at admission.
+* **Labels are locked** — pods cannot self-assign the label, and it is immutable once stamped.
 
-<div class="highlight-box" style="margin-top: 0.8em;">
+<div class="highlight-box" style="margin-top: 1.2em;">
   <strong>Result:</strong> identity follows cryptographically verified provenance — re-checked fail-closed on every write.
 </div>
 
@@ -372,7 +370,7 @@ When a `TaskRun` is submitted, Kyverno intercepts it and categorizes the task �
 
 Speaker: Andrew
 
-Andrew: "Kyverno uses CEL image validation to check the bundle digest referenced in the TaskRun is signed by the trusted catalog key — scope, pin, sign, then promote. Dev is the default; prod is earned. Not signed? Denied on the spot. And note the timing: all of this happens at TaskRun creation, before Tekton ever creates the pod — verification strictly precedes execution. An anti-spoofing policy keeps pods from grabbing the label themselves."
+Andrew: "Note the separation of concerns: Kyverno inspects the TaskRun and controls the role promotion — dev is the default, prod is earned by a verified catalog bundle. If the bundle is not signed, the TaskRun is denied on the spot. An anti-spoofing policy keeps pods from grabbing the label themselves. And the timing matters: all of this happens at TaskRun creation, before Tekton ever creates the pod — verification strictly precedes execution. We will walk the exact scope-pin-sign order in the live demo."
 
 ---
 
