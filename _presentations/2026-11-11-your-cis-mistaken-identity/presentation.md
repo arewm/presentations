@@ -357,7 +357,7 @@ Kyverno categorizes every task at admission, before execution — and only the T
 * **Labels are locked** — pods cannot self-assign the label, and it is immutable once stamped.
 
 <div class="highlight-box" style="margin-top: 1.2em;">
-  <strong>Result:</strong> identity follows cryptographically verified provenance — re-checked fail-closed on every write.
+  <strong>Result:</strong> a task's identity is earned by its cryptographically verified task definition — never claimed, never changed after the fact.
 </div>
 
 
