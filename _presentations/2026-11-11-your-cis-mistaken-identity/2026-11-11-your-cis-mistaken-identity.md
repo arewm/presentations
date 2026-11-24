@@ -7,7 +7,7 @@ custom_css: custom.css
 custom_js: custom.js
 excerpt: "You wouldn't ask a plumber to sign off on your electrical work. Yet most CI/CD pipelines run under a single identity: one credential for signing SBOMs and reporting vulnerabilities alike. How Tekton, Kyverno, SPIFFE/SPIRE, and Sigstore close this gap."
 session: "https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/program/schedule/?id=1248924"
-# recording: "https://www.youtube.com/watch?v=..."
+recording: "https://www.youtube.com/watch?v=io9AdE2hbwo"
 demo: "https://github.com/arewm/slsa-konflux-example/tree/kubecon-na-2026-your-cis-mistaken-identity"
 ---
 
